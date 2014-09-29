@@ -11,7 +11,7 @@ import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 import org.nutz.json.Json;
 
-import com.kmetop.demsy.lang.Obj;
+import com.cocit.lang.Obj;
 
 public class $tojson extends LineFunction {
 

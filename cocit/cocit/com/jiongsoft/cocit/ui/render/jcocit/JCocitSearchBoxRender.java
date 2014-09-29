@@ -3,7 +3,7 @@ package com.jiongsoft.cocit.ui.render.jcocit;
 import java.io.Writer;
 import java.util.List;
 
-import com.jiongsoft.cocit.service.FieldService;
+import com.jiongsoft.cocit.entityservice.FieldService;
 import com.jiongsoft.cocit.ui.model.widget.SearchBoxWidget;
 import com.jiongsoft.cocit.ui.render.WidgetRender;
 import com.jiongsoft.cocit.util.KeyValue;

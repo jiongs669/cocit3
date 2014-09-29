@@ -3,10 +3,10 @@ package com.jiongsoft.cocit.impl.demsy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cocit.Demsy;
 import com.jiongsoft.cocit.impl.BaseActionContext;
 import com.jiongsoft.cocit.util.Log;
 import com.jiongsoft.cocit.util.StringUtil;
-import com.kmetop.demsy.Demsy;
 
 public class DemsyActionContext extends BaseActionContext {
 	private Demsy demsyContext;

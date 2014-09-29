@@ -2,7 +2,7 @@ package com.jiongsoft.cocit.ui.model.widget;
 
 import java.util.Properties;
 
-import com.jiongsoft.cocit.service.FieldService;
+import com.jiongsoft.cocit.entityservice.FieldService;
 
 public class Column {
 

@@ -4,9 +4,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.jiongsoft.cocit.entityservice.ServiceFactory;
+import com.jiongsoft.cocit.entityservice.SoftService;
 import com.jiongsoft.cocit.orm.OrmFactory;
-import com.jiongsoft.cocit.service.ServiceFactory;
-import com.jiongsoft.cocit.service.SoftService;
 import com.jiongsoft.cocit.sms.SmsClient;
 import com.jiongsoft.cocit.ui.model.widget.WidgetModelFactory;
 import com.jiongsoft.cocit.ui.render.WidgetRenderFactory;

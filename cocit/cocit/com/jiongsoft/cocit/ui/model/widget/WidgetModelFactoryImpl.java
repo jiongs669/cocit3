@@ -4,11 +4,11 @@ package com.jiongsoft.cocit.ui.model.widget;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jiongsoft.cocit.service.FieldGroupService;
-import com.jiongsoft.cocit.service.FieldService;
-import com.jiongsoft.cocit.service.ModuleService;
-import com.jiongsoft.cocit.service.OperationService;
-import com.jiongsoft.cocit.service.TableService;
+import com.jiongsoft.cocit.entityservice.FieldGroupService;
+import com.jiongsoft.cocit.entityservice.FieldService;
+import com.jiongsoft.cocit.entityservice.ModuleService;
+import com.jiongsoft.cocit.entityservice.OperationService;
+import com.jiongsoft.cocit.entityservice.TableService;
 import com.jiongsoft.cocit.ui.model.widget.EntityForm.FormField;
 import com.jiongsoft.cocit.util.UrlAPI;
 import com.jiongsoft.cocit.util.KeyValue;
@@ -39,7 +39,7 @@ public class WidgetModelFactoryImpl implements WidgetModelFactory {
 
 				model.setId("" + table.getID());
 				model.setName(table.getName());
-				model.set("fkfield", table.get("fkfield", ""));
+				// model.set("fkfield", table.get("fkfield", ""));
 
 				model.setLoadUrl(UrlAPI.GET_ENTITY_TABLE_UI.replace("*", UrlAPI.encodeArgs(entityModule.getID(), table.getID())));
 
@@ -220,7 +220,7 @@ public class WidgetModelFactoryImpl implements WidgetModelFactory {
 				child.set("opMode", op.getMode());
 				if (op.getActionWindow() != null)
 					child.set("actionWindow", op.getActionWindow());
-				child.setSequence(op.getSequence());
+				// child.setSequence(op.getSequence());
 
 			}
 		}
@@ -367,7 +367,7 @@ public class WidgetModelFactoryImpl implements WidgetModelFactory {
 					field.setMode(mode);
 					field.setType(fieldService.getType());
 					field.setPattern(fieldService.getPattern());
-					field.setProps(fieldService.getExtProps());
+					// field.setProps(fieldService.getExtProps());
 					field.setEntityField(fieldService);
 
 					groupField.addChild(field);

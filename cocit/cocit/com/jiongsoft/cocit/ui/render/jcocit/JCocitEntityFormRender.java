@@ -1,12 +1,12 @@
 package com.jiongsoft.cocit.ui.render.jcocit;
 
-import static com.jiongsoft.cocit.service.FieldService.TYPE_BOOL;
-import static com.jiongsoft.cocit.service.FieldService.TYPE_DATE;
-import static com.jiongsoft.cocit.service.FieldService.TYPE_FK;
-import static com.jiongsoft.cocit.service.FieldService.TYPE_NUMBER;
-import static com.jiongsoft.cocit.service.FieldService.TYPE_RICH_TEXT;
-import static com.jiongsoft.cocit.service.FieldService.TYPE_TEXT;
-import static com.jiongsoft.cocit.service.FieldService.TYPE_UPLOAD;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_BOOL;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_DATE;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_FK;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_NUMBER;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_RICH_TEXT;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_TEXT;
+import static com.jiongsoft.cocit.entityservice.FieldService.TYPE_UPLOAD;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.jiongsoft.cocit.Cocit;
-import com.jiongsoft.cocit.service.FieldService;
-import com.jiongsoft.cocit.service.TableService;
+import com.jiongsoft.cocit.entityservice.FieldService;
+import com.jiongsoft.cocit.entityservice.TableService;
 import com.jiongsoft.cocit.ui.model.widget.Column;
 import com.jiongsoft.cocit.ui.model.widget.EntityForm;
 import com.jiongsoft.cocit.ui.model.widget.EntityForm.FormField;

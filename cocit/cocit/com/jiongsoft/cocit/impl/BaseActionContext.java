@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.jiongsoft.cocit.Cocit;
 import com.jiongsoft.cocit.ActionContext;
-import com.jiongsoft.cocit.service.SoftService;
+import com.jiongsoft.cocit.entityservice.SoftService;
 import com.jiongsoft.cocit.util.Log;
 import com.jiongsoft.cocit.util.StringUtil;
 

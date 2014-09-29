@@ -11,7 +11,7 @@ import org.nutz.mvc.view.JspView;
 
 import com.jiongsoft.cocit.ActionContext;
 import com.jiongsoft.cocit.Cocit;
-import com.jiongsoft.cocit.service.FieldService;
+import com.jiongsoft.cocit.entityservice.FieldService;
 import com.jiongsoft.cocit.ui.model.WidgetModel;
 import com.jiongsoft.cocit.util.StringUtil;
 

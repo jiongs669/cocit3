@@ -37,7 +37,7 @@ public class FileManagerAction {
 	@At(UrlAPI.GET_FILE_MANAGER)
 	@Fail("redirect:/login/form")
 	public EntityModuleUI getFileManager(String dir) {
-		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.service.SecurityManager.ROLE_DP_SUPPORT);
+		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.entityservice.SecurityManager.ROLE_DP_SUPPORT);
 
 		if (StringUtil.isNil(dir)) {
 			dir = new File(Cocit.getContextDir()).getParentFile().getAbsolutePath();
@@ -86,7 +86,7 @@ public class FileManagerAction {
 
 	@At(UrlAPI.GET_FILE_GRID_DATA)
 	public GridWidgetData getFileGridData(String dir, String fileType) {
-		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.service.SecurityManager.ROLE_DP_SUPPORT);
+		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.entityservice.SecurityManager.ROLE_DP_SUPPORT);
 
 		if (StringUtil.isNil(dir)) {
 			dir = Cocit.getContextDir();
@@ -126,7 +126,7 @@ public class FileManagerAction {
 
 	@At(UrlAPI.GET_FILE_TREE_DATA)
 	public TreeWidgetData getFileTreeData(String dir) {
-		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.service.SecurityManager.ROLE_DP_SUPPORT);
+		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.entityservice.SecurityManager.ROLE_DP_SUPPORT);
 
 		if (StringUtil.isNil(dir)) {
 			dir = Cocit.getContextDir();
@@ -148,7 +148,7 @@ public class FileManagerAction {
 
 	@At(UrlAPI.DEL_DISK_FILES)
 	public AlertsModel deleteDiskFiles(String dirs) {
-		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.service.SecurityManager.ROLE_DP_SUPPORT);
+		Cocit.getServiceFactory().getSoftService(null).getSecurityManager().checkLoginRole(com.jiongsoft.cocit.entityservice.SecurityManager.ROLE_DP_SUPPORT);
 
 		try {
 			String[] dirArray = StringUtil.toArray(dirs);

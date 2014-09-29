@@ -11,12 +11,12 @@ import org.lilystudio.smarty4j.expression.IExpression;
 import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 
-import com.kmetop.demsy.Demsy;
-import com.kmetop.demsy.lang.Img;
-import com.kmetop.demsy.lang.Str;
-import com.kmetop.demsy.log.Log;
-import com.kmetop.demsy.log.Logs;
-import com.kmetop.demsy.mvc.MvcConst.MvcUtil;
+import com.cocit.Demsy;
+import com.cocit.lang.Img;
+import com.cocit.lang.Str;
+import com.cocit.log.Log;
+import com.cocit.log.Logs;
+import com.cocit.mvc.MvcConst.MvcUtil;
 
 public class $thumbs extends LineFunction {
 	protected Log log = Logs.get();

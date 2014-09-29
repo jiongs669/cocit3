@@ -10,8 +10,8 @@ import org.lilystudio.smarty4j.expression.IExpression;
 import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 
-import com.kmetop.demsy.lang.Obj;
-import com.kmetop.demsy.lang.Str;
+import com.cocit.lang.Obj;
+import com.cocit.lang.Str;
 
 public class $tohtml extends LineFunction {
 

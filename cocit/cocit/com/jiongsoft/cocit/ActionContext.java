@@ -3,7 +3,7 @@ package com.jiongsoft.cocit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jiongsoft.cocit.service.SoftService;
+import com.jiongsoft.cocit.entityservice.SoftService;
 
 /**
  * Cocit HTTP环境：用来管理HTTP请求的一次生命周期。

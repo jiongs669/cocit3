@@ -1,8 +1,8 @@
 package com.jiongsoft.cocit.ui.model.widget;
 
-import com.jiongsoft.cocit.service.ModuleService;
-import com.jiongsoft.cocit.service.OperationService;
-import com.jiongsoft.cocit.service.TableService;
+import com.jiongsoft.cocit.entityservice.ModuleService;
+import com.jiongsoft.cocit.entityservice.OperationService;
+import com.jiongsoft.cocit.entityservice.TableService;
 
 /**
  * UI窗体模型工厂：负责创建或管理用户窗体界面

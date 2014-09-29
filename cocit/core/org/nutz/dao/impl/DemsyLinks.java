@@ -7,7 +7,7 @@ import java.util.List;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.Link;
 
-import com.kmetop.demsy.comlib.biz.field.SubSystem;
+import com.cocit.api.entitydef.field.SubSystem;
 
 public final class DemsyLinks {
 

@@ -15,10 +15,10 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import com.jiongsoft.cocit.Cocit;
+import com.jiongsoft.cocit.entityservice.FieldService;
 import com.jiongsoft.cocit.mvc.adaptor.EntityParamAdaptor;
 import com.jiongsoft.cocit.mvc.adaptor.EntityParamNode;
 import com.jiongsoft.cocit.orm.expr.CndExpr;
-import com.jiongsoft.cocit.service.FieldService;
 import com.jiongsoft.cocit.ui.UIModelView;
 import com.jiongsoft.cocit.ui.model.AlertsModel;
 import com.jiongsoft.cocit.ui.model.widget.EntityForm;

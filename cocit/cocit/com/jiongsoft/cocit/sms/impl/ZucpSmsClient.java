@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 import com.jiongsoft.cocit.Cocit;
 import com.jiongsoft.cocit.ActionContext;
-import com.jiongsoft.cocit.service.ConfigManager;
-import com.jiongsoft.cocit.service.SoftService;
+import com.jiongsoft.cocit.entityservice.ConfigManager;
+import com.jiongsoft.cocit.entityservice.SoftService;
 import com.jiongsoft.cocit.sms.SmsClient;
 import com.jiongsoft.cocit.util.Log;
 
