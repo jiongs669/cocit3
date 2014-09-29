@@ -1,0 +1,55 @@
+.combodate-calendar-inner {
+	height: 180px;
+}
+
+.combodate-button {
+	height: 16px;
+	padding: 2px 5px 2px 5px;
+	font-size: 12px;
+	text-align: center;
+}
+
+.combodate-button a {
+	padding: 0;
+	margin: 0;
+}
+
+.combodate-today,.combodate-close,.combodate-ok {
+	text-decoration: none;
+	font-weight: bold;
+	opacity: 0.6;
+	filter: alpha(opacity = 60);
+}
+
+.combodate-today,.combodate-close {
+	float: left;
+}
+
+.combodate-close {
+	float: right;
+}
+
+.combodate-button-hover {
+	opacity: 1.0;
+	filter: alpha(opacity = 100);
+}
+
+.combodate .CbA {
+	margin: 1px 0 0 2px ;
+	height: 14px;
+	width: 16px;
+	background-image: url(images/entity.png);
+	background-position: -96px 0;
+}
+
+.combodate-button {
+	background-color: #F4F4F4;
+}
+
+.combodate-today,.combodate-close,.combodate-ok {
+	color: #444;
+}
+
+.combodate-panel .CbPnBC {
+	border-color: #95B8E7;
+}

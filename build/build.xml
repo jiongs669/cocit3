@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cocit" basedir="." default="run">
+
+	<!-- 
+		lib.dir: 开发环境依赖的第三方jar包
+		jars.dir: cocit编译成的jar包 
+	-->
+	<property name="env.java.home" value="${java.home}" />
+	<property name="env.proj.dir" value="${basedir}/.." />
+	<property name="env.tomcatlib.dir" value="${basedir}/tomcatlib" />
+	<property name="env.lib.dir" value="${basedir}/lib" />
+	<property name="env.jars.dir" value="${basedir}/jars" />
+
+	<property name="jdk_version" value="1.6" />
+	<property name="jar.name" value="demsy-2" />
+	<property name="java_home" value="${env.java.home}" />
+	<property name="proj.dir" value="${env.proj.dir}" />
+	<property name="tomcatlib.dir" value="${env.tomcatlib.dir}" />
+	<property name="lib.dir" value="${env.lib.dir}" />
+	<property name="jars.dir" value="${env.jars.dir}" />
+	<property name="patch.dir" location="${proj.dir}/build/patch" />
+	<property name="backup.dir" location="${proj.dir}/build/backup" />
+	<property name="src.dir" location="${proj.dir}/cocit" />
+	<property name="web.dir" location="${proj.dir}/web" />
+	<property name="tmp.dir" value="${basedir}/tmp" />
+	<tstamp>
+		<format property="NOW" pattern="yyyyMMdd-HH" locale="zh" />
+	</tstamp>
+
+	<path id="CLASSPATH">
+		<fileset casesensitive="no" dir="${tomcatlib.dir}">
+			<include name="*.jar" />
+		</fileset>
+
+		<fileset casesensitive="no" dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+
+		<pathelement location="${java_home}/jre/javaws/javaws.jar" />
+		<pathelement location="${java_home}/jre/lib/charsets.jar" />
+		<pathelement location="${java_home}/jre/lib/rt.jar" />
+		<pathelement location="${java_home}/lib/tools.jar" />
+		<pathelement location="${jars.dir}/nutz-1.jar" />
+	</path>
+
+	<!-- 编译 JAVA 文件，创建 JAR 包 -->
+	<target name="jar">
+
+		<echo message="清空${tmp.dir}目录 ..." />
+		<delete dir="${tmp.dir}" />
+		<mkdir dir="${tmp.dir}" />
+
+		<echo message="编译${src.dir}目录下的*.java文件到 ${tmp.dir} ..." />
+		<javac classpathref="CLASSPATH" debug="true" debuglevel="lines,vars,source" destdir="${tmp.dir}" encoding="UTF-8" fork="false" source="${jdk_version}" target="${jdk_version}">
+			<src path="${src.dir}/core" />
+			<src path="${src.dir}/basecomlib" />
+			<src path="${src.dir}/sftcomlib" />
+			<src path="${src.dir}/entity" />
+			<src path="${src.dir}/cocit" />
+		</javac>
+
+		<echo message="拷贝${src.dir}目录下的所有资资源文件到 ${tmp.dir} ..." />
+		<copy toDir="${tmp.dir}">
+			<fileset dir="${src.dir}/core">
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.dir}/basecomlib">
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.dir}/sftcomlib">
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.dir}/resources">
+				<include name="**/templates/**/*.*" />
+			</fileset>
+			<fileset dir="${src.dir}/cocit">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<echo message="打包${tmp.dir}目录到${jars.dir}/${jar.name}.jar ..." />
+		<delete dir="${jars.dir}/${jar.name}.jar" />
+		<jar basedir="${tmp.dir}" destfile="${jars.dir}/${jar.name}.jar" />
+	</target>
+
+	<!-- 打 PATCH，创建 WAR 包 -->
+	<target name="patch" depends="jar">
+		<echo message="清空${tmp.dir}和${patch.dir}目录 ..." />
+		<delete dir="${tmp.dir}" />
+		<delete dir="${patch.dir}" />
+		<mkdir dir="${tmp.dir}/WEB-INF/lib" />
+
+		<echo message="拷贝${web.dir}目录下的scripts2|themes2|index.html到${tmp.dir}目录 ..." />
+		<copy toDir="${tmp.dir}">
+			<fileset dir="${web.dir}">
+				<include name="index.html" />
+				<include name="jCocit/**/*.*" />
+				<!--
+					<include name="scripts2/**/*.*" />
+					<include name="themes2/**/*.*" />
+				-->
+				
+				<!-- 拷贝项目文件到 WAR 中 -->
+				<!--
+				<include name="www_yunnanbaiyao_com_cn/css/**/*.*" />
+				<include name="www_yunnanbaiyao_com_cn/js/**/*.*" />
+				<include name="www_yunnanbaiyao_com_cn/visit/*.jsp" />
+				<include name="www_yunnanbaiyao_com_cn/visit/css/**/*.*" />
+				<include name="www_yunnanbaiyao_com_cn/visit/js/**/*.*" />
+				<include name="www_yunnanbaiyao_com_cn/visit/images/**/*.*" />
+				<include name="www_yunnanbaiyao_com_cn/visit/images2/**/*.*" />
+				 -->
+			</fileset>
+		</copy>
+		<echo message="拷贝${web.dir}/WEB-INF目录下的配置文件到${tmp.dir}/WEB-INF目录 ..." />
+		<copy toDir="${tmp.dir}/WEB-INF">
+			<fileset dir="${web.dir}/WEB-INF">
+				<include name="web.xml" />
+				<include name="resin-web.xml" />
+				<include name="config/ckfinder-config.xml" />
+				<include name="config/log4j.properties" />
+				<include name="config/logback.xml" />
+				<!-- include name="config/ioc.js" / -->
+				<include name="jsp/**/*.*" />
+			</fileset>
+		</copy>
+		<echo message="拷贝${jars.dir}目录下的*.jar文件到${tmp.dir}/WEB-INF/lib目录 ..." />
+		<copy toDir="${tmp.dir}/WEB-INF/lib">
+			<fileset dir="${jars.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<echo message="打包${tmp.dir}目录到${patch.dir}/cocit-web-${NOW}.zip ..." />
+		<delete file="${patch.dir}/cocit-web-${NOW}.zip" />
+		<zip basedir="${tmp.dir}" destfile="${patch.dir}/cocit-web-${NOW}.zip" keepcompression="true" />
+
+		<echo message="删除${tmp.dir}目录下的scripts2|themes2|nutz1-jar ..." />
+		<delete dir="${tmp.dir}/jCocit" />
+		<delete dir="${tmp.dir}/scripts2" />
+		<delete dir="${tmp.dir}/themes2" />
+		<delete file="${tmp.dir}/WEB-INF/lib/nutz-1.jar" />
+
+		<echo message="打包${tmp.dir}目录到${patch.dir}/cocit-web-min-${NOW}.zip ..." />
+		<delete file="${patch.dir}/cocit-web-min-${NOW}.zip" />
+		<zip basedir="${tmp.dir}" destfile="${patch.dir}/cocit-web-min-${NOW}.zip" keepcompression="true" />
+		<delete dir="${tmp.dir}" />
+	</target>
+
+	<!-- 备份 -->
+	<target name="backup">
+		<delete file="${proj.dir}/git.zip" />
+		<delete file="${backup.dir}/cocit-${NOW}.zip" />
+
+		<!-- zip basedir="${proj.dir}/.git" destfile="${proj.dir}/git.zip" keepcompression="true" / -->
+		<zip destfile="${backup.dir}/cocit-${NOW}.zip" keepcompression="true">
+			<zipfileset dir="${proj.dir}" includes="src/**/*.*" />
+			<zipfileset dir="${proj.dir}" includes="git.zip" />
+			<zipfileset dir="${proj.dir}" includes="build/build.xml" />
+			<zipfileset dir="${proj.dir}" includes="build/build.nutz.xml" />
+			<zipfileset dir="${proj.dir}" includes="web/jCocit-src/**/*.*" />
+			<zipfileset dir="${proj.dir}" includes="web/WEB-INF/web.xml" />
+			<zipfileset dir="${proj.dir}" includes="web/WEB-INF/resin-web.xml" />
+			<zipfileset dir="${proj.dir}" includes="web/WEB-INF/config/**/*.*" />
+			<zipfileset dir="${proj.dir}" includes="web/WEB-INF/config-template/**/*.*" />
+
+			<!-- 备份  项目文件  -->
+			<!--
+			<zipfileset dir="${proj.dir}" includes="web/www_yunnanbaiyao_com_cn/css/**/*.*" />
+			<zipfileset dir="${proj.dir}" includes="web/www_yunnanbaiyao_com_cn/js/**/*.*" />
+			<zipfileset dir="${proj.dir}" includes="web/www_yunnanbaiyao_com_cn/visit/**/*.*" />
+			 -->
+		</zip>
+		<delete file="${proj.dir}/git.zip" />
+	</target>
+
+	<target name="run" depends="patch,backup">
+	</target>
+
+</project>

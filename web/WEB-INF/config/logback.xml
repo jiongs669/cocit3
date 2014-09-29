@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="System.out" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <!-- pattern>【%5p】%m###################################%caller{1}< /pattern -->
+            <pattern>[%d{MM-dd HH:mm:ss}][%5p]%m------%caller{1}</pattern>
+        </encoder>
+    </appender>
+    <appender name="DB" class="com.kmetop.demsy.log.db.LogbackAppender">
+    </appender>
+
+    <!-- 错误日志文件 -->
+    <appender name="info.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${path.logs}/info.log</File>
+        <append>true</append>
+        <encoder>
+            <pattern>[%d{MM-dd HH:mm:ss}]%m------[%t]%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>100</maxIndex>
+            <FileNamePattern>${path.logs}/info/info.%i.log</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <appender name="warn.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${path.logs}/warn.log</File>
+        <append>true</append>
+        <encoder>
+            <pattern>[%d{MM-dd HH:mm:ss}]%m------[%t]%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>50</maxIndex>
+            <FileNamePattern>${path.logs}/warn/warn.%i.log</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <appender name="error.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${path.logs}/error.log</File>
+        <append>true</append>
+        <encoder>
+            <pattern>[%d{MM-dd HH:mm:ss}]%m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>50</maxIndex>
+            <FileNamePattern>${path.logs}/error.%i.log</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+ 
+    <!-- TEST -->
+    <appender name="test.log" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <File>${path.logs}/test.log</File>
+        <append>true</append>
+        <encoder>
+            <pattern>[%d{MM-dd HH:mm:ss}]%m------[%logger{1}.%M:%L]%n%</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>20</maxIndex>
+            <FileNamePattern>${path.logs}/test.%i.log</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- 日志级别设置 -->
+
+
+    <!-- INFO -->
+    <logger name="com.kmetop.demsy" level="INFO"></logger>
+    <logger name="com.kmetop.demsy.actions" level="INFO"></logger>
+    <logger name="com.kmetop.demsy.plugins" level="INFO"></logger>
+
+    <!-- TEST -->
+    <logger name="com.kmetop.demsy.orm" level="ERROR"></logger>
+    <logger name="com.kmetop.demsy.mvc" level="ERROR"></logger>
+    <logger name="com.kmetop.demsy.engine" level="ERROR"></logger>
+    <logger name="com.kmetop.demsy.ui.datasource" level="ERROR"></logger>
+
+    <!-- 
+        Class 
+    -->
+    <!--  MVC -->
+    <logger name="com.kmetop.demsy.mvc.DemsyFilterProxy" level="ERROR"></logger>
+    <!-- ORM -->
+    <logger name="com.kmetop.demsy.orm.nutz.EnMappingMaker" level="ERROR"></logger>
+    <logger name="com.kmetop.demsy.orm.nutz.impl.MetaDaoImpl" level="ERROR"></logger>
+    <logger name="com.kmetop.demsy.orm.nutz.impl.OrmImpl" level="ERROR"></logger>
+    <!--  DAO -->
+    <logger name="com.kmetop.demsy.orm.nutz.impl.ExtDaoImpl" level="ERROR"></logger>
+    
+    <!-- 
+    <logger name="org.nutz.dao.impl.DemsyDaoRunner" level="DEBUG"></logger>
+    <logger name="org.nutz.dao.impl.DemsyDaoExecutor" level="DEBUG"></logger>
+    <logger name="com.kmetop.demsy.orm.nutz.impl.DemsyTransaction" level="DEBUG"></logger>
+    <logger name="om.kmetop.demsy.mvc.template" level="DEBUG"></logger>
+    <logger name="com.kmetop.demsy.engine" level="ALL"></logger>
+     -->
+     
+    <!-- 
+        Cocit 
+    -->
+    <logger name="com.jiongsoft" level="INFO"></logger>
+
+    <root level="ERROR">
+        <!-- appender-ref ref="DB"  / -->
+        
+        <appender-ref ref="info.log" />
+        <appender-ref ref="warn.log" />
+        <appender-ref ref="error.log" />
+    </root>
+</configuration>

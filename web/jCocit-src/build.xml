@@ -1,0 +1,343 @@
+<project name="jCocit" default="jCocit" basedir=".">
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="build/ant-contrib-0.6.jar" />
+		</classpath>
+	</taskdef>
+
+	<!-- 按步骤执行: clear, clearComment, minimize, package -->
+	<target name="jCocit" depends="clean,clearComment,min,pack">
+		<echo message="Compile JS Framework End." />
+	</target>
+
+	<!-- 设置JAR包 -->
+	<property name="BUILD_DIR" value="build" />
+	<property name="JS_JAR" value="${BUILD_DIR}/js.jar" />
+	<property name="YUI_JAR" value="${BUILD_DIR}/yuicompressor-2.4.2.jar" />
+
+	<!-- 设置JS源代码和目标代码目录 -->
+	<property name="JS_SRC_DIR" value="js" />
+	<property name="JS_DIST_DIR" value="../jCocit/js" />
+
+	<!-- 设置STYLE源代码和目标代码目录 -->
+	<property name="STYLE_SRC_DIR" value="css" />
+	<property name="STYLE_DIST_DIR" value="../jCocit/css" />
+
+	<!-- 设置UI模块 -->
+	<property name="JS.MODULES" value="utils,core,nls,cookie,parse,alerts,ui.draggable,ui.droppable,ui.resizable,ui.panel,ui.window,ui.dialog,ui.tree,ui.combo,ui.combotree,ui.treedialog,plugin.login,plugin.entity" />
+	<property name="CSS.MODULES" value="alerts,ui.panel,ui.window,ui.dialog,ui.tree,ui.combo,plugin.login,ui.icon,plugin.entity" />
+	<property name="JS.MODULES-UI" value="button,menu,validatebox,numberbox,spinner,spinnernumber,spinnertime,accordion,pagination,calendar,datagrid,datagrid.crud,combobox,combodate,combodatetime,combogrid,combodialog,menubar,toolbar,searchbox,slider,tabs,treegrid,propertygrid,tree.crud,upload" />
+	<property name="CSS.MODULES-UI" value="button,menu,validatebox,spinner,accordion,pagination,calendar,datagrid,combobox,combodate,menubar,toolbar,searchbox,slider,tabs,propertygrid,upload" />
+	<property name="JS.MODULES-WEB" value="web.KandyTabs,web.ad-gallery-v,web.ad-gallery" />
+	<property name="CSS.MODULES-WEB" value="web.KandyTabs,web.ad-gallery-v,web.ad-gallery" />
+	
+	<!-- 删除JS和STYLE目标目录 -->
+	<target name="clean">
+		<delete dir="${STYLE_DIST_DIR}" />
+		<delete dir="${JS_DIST_DIR}" />
+	</target>
+
+	<!-- 清除JS和CSS注释 -->
+	<target name="clearComment">
+		<mkdir dir="${JS_DIST_DIR}" />
+		<mkdir dir="${JS_DIST_DIR}/src" />
+
+		<!-- 清除JS模块注释 -->
+		<echo message="清除 JS 模块注释 ..." />
+		<for list="${JS.MODULES}" param="module">
+			<sequential>
+				<echo message="清除 JS 模块注释： jCocit.@{module}.js" />
+				<java jar="${JS_JAR}" fork="true">
+					<arg value="${BUILD_DIR}/config/min.js" />
+					<arg value="${JS_SRC_DIR}/jCocit.@{module}.js" />
+					<arg value="${JS_DIST_DIR}/src/jCocit.@{module}.js" />
+				</java>
+			</sequential>
+		</for>
+		<echo message="清除 JS UI 模块注释 ..." />
+		<for list="${JS.MODULES-UI}" param="module">
+			<sequential>
+				<echo message="清除 JS UI 模块注释：jCocit.ui.@{module}.js" />
+				<java jar="${JS_JAR}" fork="true">
+					<arg value="${BUILD_DIR}/config/min.js" />
+					<arg value="${JS_SRC_DIR}/jCocit.ui.@{module}.js" />
+					<arg value="${JS_DIST_DIR}/src/jCocit.ui.@{module}.js" />
+				</java>
+			</sequential>
+		</for>
+		<echo message="清除 JS WEB 模块注释 ..." />
+		<for list="${JS.MODULES-WEB}" param="module">
+			<sequential>
+				<echo message="清除 JS WEB 模块注释： jCocit.@{module}.js" />
+				<java jar="${JS_JAR}" fork="true">
+					<arg value="${BUILD_DIR}/config/min.js" />
+					<arg value="${JS_SRC_DIR}/jCocit.@{module}.js" />
+					<arg value="${JS_DIST_DIR}/src/jCocit.@{module}.js" />
+				</java>
+			</sequential>
+		</for>
+
+		<!-- 合并JS模块文件生成jCocit.all.js ... -->
+		<echo message="合并 JS 模块文件到jCocit.all.js ..." />
+		<for list="${JS.MODULES}" param="module">
+			<sequential>
+				<echo message="添加 JS 模块文件: jCocit.@{module}.js" />
+				<concat destfile="${JS_DIST_DIR}/jCocit.all.js" append="yes">
+					<fileset dir="${JS_SRC_DIR}" includes="jCocit.@{module}.js" />
+				</concat>
+			</sequential>
+		</for>
+		<echo message="合并 JS UI 模块文件到 jCocit.all.js..." />
+		<for list="${JS.MODULES-UI}" param="module">
+			<sequential>
+				<echo message="添加 JS UI 模块文件: jCocit.ui.@{module}.js" />
+				<concat destfile="${JS_DIST_DIR}/jCocit.all.js" append="yes">
+					<fileset dir="${JS_SRC_DIR}" includes="jCocit.ui.@{module}.js" />
+				</concat>
+			</sequential>
+		</for>
+
+		<!-- 清除jCocit.all.js注释生成jCocit.src.js -->
+		<echo message="清除 jCocit.all.js 注释生成 jCocit.src.js ..." />
+		<java jar="${JS_JAR}" fork="true">
+			<arg value="${BUILD_DIR}/config/min.js" />
+			<arg value="${JS_DIST_DIR}/jCocit.all.js" />
+			<arg value="${JS_DIST_DIR}/jCocit.src.js" />
+		</java>
+		
+	</target>
+
+	<!-- 压缩JS和CSS文件 -->
+	<target name="min" depends="clearComment">
+		<mkdir dir="${JS_DIST_DIR}/min" />
+		<mkdir dir="${STYLE_DIST_DIR}/min" />
+
+		<!-- 压缩JS模块文件 -->
+		<echo message="压缩 JS 模块文件 ..." />
+		<for list="${JS.MODULES}" param="module">
+			<sequential>
+				<echo message="压缩 JS 模块文件： jCocit.@{module}.js" />
+				<apply executable="java" parallel="false" dest="${JS_DIST_DIR}/min">
+					<fileset dir="${JS_SRC_DIR}" includes="jCocit.@{module}.js" />
+					<arg line="-jar" />
+					<arg path="${YUI_JAR}" />
+					<arg value="--charset" />
+					<arg value="UTF-8" />
+					<arg value="-o" />
+					<targetfile />
+					<mapper type="glob" from="jCocit.@{module}.js" to="jCocit.@{module}.js" />
+				</apply>
+			</sequential>
+		</for>
+		<echo message="压缩 JS UI 模块文件 ..." />
+		<for list="${JS.MODULES-UI}" param="module">
+			<sequential>
+				<echo message="压缩 JS UI 模块文件： jCocit.ui.@{module}.js" />
+				<apply executable="java" parallel="false" dest="${JS_DIST_DIR}/min">
+					<fileset dir="${JS_SRC_DIR}" includes="jCocit.ui.@{module}.js" />
+					<arg line="-jar" />
+					<arg path="${YUI_JAR}" />
+					<arg value="--charset" />
+					<arg value="UTF-8" />
+					<arg value="-o" />
+					<targetfile />
+					<mapper type="glob" from="jCocit.ui.@{module}.js" to="jCocit.ui.@{module}.js" />
+				</apply>
+			</sequential>
+		</for>
+		<echo message="压缩 JS WEB 模块文件 ..." />
+		<for list="${JS.MODULES-WEB}" param="module">
+			<sequential>
+				<echo message="压缩 JS WEB 模块文件： jCocit.@{module}.js" />
+				<apply executable="java" parallel="false" dest="${JS_DIST_DIR}/min">
+					<fileset dir="${JS_DIST_DIR}/src" includes="jCocit.@{module}.js" />
+					<arg line="-jar" />
+					<arg path="${YUI_JAR}" />
+					<arg value="--charset" />
+					<arg value="UTF-8" />
+					<arg value="-o" />
+					<targetfile />
+					<mapper type="glob" from="jCocit.@{module}.js" to="jCocit.@{module}.js" />
+				</apply>
+			</sequential>
+		</for>
+
+		<!-- 压缩jCocit.src.js文件生成 jCocit.min.js -->
+		<echo message="压缩 jCocit.src.js 文件生成  jCocit.min.js ..." />
+		<apply executable="java" parallel="false" dest="${JS_DIST_DIR}">
+			<fileset dir="${JS_DIST_DIR}">
+				<include name="jCocit.src.js" />
+			</fileset>
+			<arg line="-jar" />
+			<arg path="${YUI_JAR}" />
+			<arg value="--charset" />
+			<arg value="UTF-8" />
+			<arg value="-o" />
+			<targetfile />
+			<mapper type="glob" from="jCocit.src.js" to="jCocit.min.js" />
+		</apply>
+		
+		<!-- 压缩jCocit.nls.zh.js文件生成 jCocit.nls.zh.js -->
+		<echo message="压缩 JS NLS 模块文件： jCocit.nls.zh.js" />
+		<apply executable="java" parallel="false" dest="${JS_DIST_DIR}/min">
+			<fileset dir="${JS_SRC_DIR}" includes="jCocit.nls.zh.js" />
+			<arg line="-jar" />
+			<arg path="${YUI_JAR}" />
+			<arg value="--charset" />
+			<arg value="UTF-8" />
+			<arg value="-o" />
+			<targetfile />
+			<mapper type="glob" from="jCocit.nls.zh.js" to="jCocit.nls.zh.js" />
+		</apply>
+
+		<!-- 压缩CSS模块文件 -->
+		<echo message="压缩 CSS 模块文件 ..." />
+		<for list="${CSS.MODULES}" param="module">
+			<sequential>
+				<echo message="压缩 CSS 模块文件： jCocit.@{module}.css" />
+				<apply executable="java" parallel="false" dest="${STYLE_DIST_DIR}/min">
+					<fileset dir="${STYLE_SRC_DIR}" includes="jCocit.@{module}.css" />
+					<arg line="-jar" />
+					<arg path="${YUI_JAR}" />
+					<arg value="--charset" />
+					<arg value="UTF-8" />
+					<arg value="--type" />
+					<arg value="css" />
+					<arg value="-o" />
+					<targetfile />
+					<mapper type="glob" from="jCocit.@{module}.css" to="jCocit.@{module}.css" />
+				</apply>
+			</sequential>
+		</for>
+		<echo message="压缩 CSS UI 模块文件 ..." />
+		<for list="${CSS.MODULES-UI}" param="module">
+			<sequential>
+				<echo message="压缩 CSS UI 模块文件： jCocit.ui.@{module}.css" />
+				<apply executable="java" parallel="false" dest="${STYLE_DIST_DIR}/min">
+					<fileset dir="${STYLE_SRC_DIR}" includes="jCocit.ui.@{module}.css" />
+					<arg line="-jar" />
+					<arg path="${YUI_JAR}" />
+					<arg value="--charset" />
+					<arg value="UTF-8" />
+					<arg value="--type" />
+					<arg value="css" />
+					<arg value="-o" />
+					<targetfile />
+					<mapper type="glob" from="jCocit.ui.@{module}.css" to="jCocit.ui.@{module}.css" />
+				</apply>
+			</sequential>
+		</for>
+		<echo message="压缩 CSS WEB 模块文件 ..." />
+		<for list="${CSS.MODULES-WEB}" param="module">
+			<sequential>
+				<echo message="压缩 CSS WEB 模块文件： jCocit.@{module}.css" />
+				<apply executable="java" parallel="false" dest="${STYLE_DIST_DIR}/min">
+					<fileset dir="${STYLE_SRC_DIR}" includes="jCocit.@{module}.css" />
+					<arg line="-jar" />
+					<arg path="${YUI_JAR}" />
+					<arg value="--charset" />
+					<arg value="UTF-8" />
+					<arg value="--type" />
+					<arg value="css" />
+					<arg value="-o" />
+					<targetfile />
+					<mapper type="glob" from="jCocit.@{module}.css" to="jCocit.@{module}.css" />
+				</apply>
+			</sequential>
+		</for>
+
+		<!-- 合并压缩后的CSS模块文件到jCocit.min.css -->
+		<echo message="合并压缩后的 CSS 模块文件 ..." />
+		<for list="${CSS.MODULES}" param="module">
+			<sequential>
+				<echo message="添加 CSS 文件: jCocit.@{module}.css" />
+				<concat destfile="${STYLE_DIST_DIR}/jCocit.min.css" append="yes">
+					<fileset dir="${STYLE_DIST_DIR}/min" includes="jCocit.@{module}.css" />
+				</concat>
+			</sequential>
+		</for>
+		<echo message="合并压缩后的 CSS UI 模块文件 ..." />
+		<for list="${CSS.MODULES-UI}" param="module">
+			<sequential>
+				<echo message="添加 CSS UI 文件: jCocit.ui.@{module}.css" />
+				<concat destfile="${STYLE_DIST_DIR}/jCocit.min.css" append="yes">
+					<fileset dir="${STYLE_DIST_DIR}/min" includes="jCocit.ui.@{module}.css" />
+				</concat>
+			</sequential>
+		</for>
+
+		<!-- 拷贝CSS样式图片 -->
+		<echo message="拷贝 CSS 样式图片 ..." />
+		<copy toDir="${STYLE_DIST_DIR}">
+			<fileset dir="${STYLE_SRC_DIR}">
+				<include name="images/**/*.*" />
+			</fileset>
+		</copy>
+
+		<delete file="${JS_DIST_DIR}/jCocit.all.js" />
+	</target>
+
+	<!-- 加密JS文件 -->
+	<target name="pack" depends="min">
+		<!--
+		 -->
+	    <mkdir dir="${JS_DIST_DIR}/pack" />
+	    
+		<echo message="加密 JS 模块文件 ..." />
+		<for list="${JS.MODULES}" param="module">
+			<sequential>
+				<echo message="加密 JS 模块文件： jCocit.@{module}.js" />
+				<java jar="${JS_JAR}" fork="true">
+					<arg value="${BUILD_DIR}/config/pack.js" />
+					<arg value="${JS_DIST_DIR}/min/jCocit.@{module}.js" />
+					<arg value="${JS_DIST_DIR}/pack/jCocit.@{module}.js" />
+				</java>
+			</sequential>
+		</for>
+		<echo message="加密 JS UI 模块文件 ..." />
+		<for list="${JS.MODULES-UI}" param="module">
+			<sequential>
+				<echo message="加密 JS UI 模块文件： jCocit.ui.@{module}.js" />
+				<java jar="${JS_JAR}" fork="true">
+					<arg value="${BUILD_DIR}/config/pack.js" />
+					<arg value="${JS_DIST_DIR}/min/jCocit.ui.@{module}.js" />
+					<arg value="${JS_DIST_DIR}/pack/jCocit.ui.@{module}.js" />
+				</java>
+			</sequential>
+		</for>
+		<echo message="加密 JS WEB 模块文件 ..." />
+		<for list="${JS.MODULES-WEB}" param="module">
+			<sequential>
+				<echo message="加密 JS WEB 模块文件： jCocit.@{module}.js" />
+				<java jar="${JS_JAR}" fork="true">
+					<arg value="${BUILD_DIR}/config/pack.js" />
+					<arg value="${JS_DIST_DIR}/min/jCocit.@{module}.js" />
+					<arg value="${JS_DIST_DIR}/pack/jCocit.@{module}.js" />
+				</java>
+			</sequential>
+		</for>
+
+		<echo message="加密 jCocit.min.js 文件生成 jCocit.pack.js ..." />
+		<java jar="${JS_JAR}" fork="true">
+			<arg value="${BUILD_DIR}/config/pack.js" />
+			<arg value="${JS_DIST_DIR}/jCocit.min.js" />
+			<arg value="${JS_DIST_DIR}/jCocit.pack.js" />
+		</java>
+
+		<echo message="加密 JS NLS 模块文件： jCocit.nls.zh.js" />
+		<java jar="${JS_JAR}" fork="true">
+			<arg value="${BUILD_DIR}/config/pack.js" />
+			<arg value="${JS_DIST_DIR}/min/jCocit.nls.zh.js" />
+			<arg value="${JS_DIST_DIR}/pack/jCocit.nls.zh.js" />
+		</java>
+
+		<!-- 删除模块文件目录 -->
+		<!--
+		<delete dir="${JS_DIST_DIR}/src" />
+		<delete dir="${JS_DIST_DIR}/min" />
+		<delete dir="${JS_DIST_DIR}/pack" />
+		<delete dir="${STYLE_DIST_DIR}/min" />
+		 -->
+	</target>
+</project>

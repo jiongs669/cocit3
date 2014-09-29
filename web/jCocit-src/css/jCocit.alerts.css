@@ -1,0 +1,209 @@
+/* alerts container */
+#AlC {
+	/* auto adjust max width/height to window
+	min-width: 360px;
+	max-width: 600px;
+	*/
+}
+
+/* alerts box */
+#AlB {
+	/* auto adjust max width/height to window
+	min-width: 360px;
+	max-width: 600px;
+	*/
+	/* filter style for IE*/
+	filter: progid:DXImageTransform.Microsoft.Shadow(color='#CCCCCC', Direction=135, Strength=8);
+}
+
+/* alerts header left ,#AlHC,#AlFL,#AlFR*/
+#AlHL,#AlHT,#AlHR,#AlHC {
+	background-color: #E0ECFF;
+	background: -webkit-linear-gradient(top, #EFF5FF 0, #E0ECFF 100%);
+	background: -moz-linear-gradient(top, #EFF5FF 0, #E0ECFF 100%);
+	background: -o-linear-gradient(top, #EFF5FF 0, #E0ECFF 100%);
+	background: linear-gradient(to bottom, #EFF5FF 0, #E0ECFF 100%);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#EFF5FF,endColorstr=#E0ECFF,GradientType=0);
+}
+#AlHL {
+	width: 5px;
+	height: 27px;
+	/* left-top */
+	
+	border-top: 1px solid #95B8E7;
+	border-bottom: 1px solid #95B8E7;
+	border-left: 1px solid #95B8E7;
+	background-color: #E0ECFF;
+	-moz-border-radius: 3px 0px 0px 0px;
+	-webkit-border-radius: 3px 0px 0px 0px;
+	border-radius: 3px 0px 0px 0px;
+}
+
+/* alerts header title */
+#AlHT {
+	height: 27px;
+
+	color: #0E2D5F;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	vertical-align: middle;
+	padding-left: 7px;
+	
+	border-top: 1px solid #95B8E7;
+	border-bottom: 1px solid #95B8E7;
+}
+
+/* alerts header right */
+#AlHR {
+	width: 3px;
+	height: 27px;
+	/* right-top */
+	border-top: 1px solid #95B8E7;
+	border-bottom: 1px solid #95B8E7;
+	border-right: 1px solid #95B8E7;
+	-moz-border-radius: 0px 3px 0px 0px;
+	-webkit-border-radius: 0px 3px 0px 0px;
+	border-radius: 0px 3px 0px 0px;
+}
+
+/* alerts header close */
+#AlHC {
+	cursor: pointer;
+	text-align: right;
+	padding-right: 5px;
+	vertical-align: middle;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #000000;
+	border-top: 1px solid #95B8E7;
+	border-bottom: 1px solid #95B8E7;
+	background-color: #E0ECFF;
+}
+
+#AlHC div{
+	position: absolute;
+	right: 6px;
+	top: 6px;
+	width: 16px;
+	height: 16px;
+	background: url('images/ui_panel.png') no-repeat -16px 0px;
+}
+
+/* alerts body message */
+#AlBM {
+	font-family: Verdana, Arial, sans-serif;
+	color: #000000;
+	font-size: 12px;
+	overflow: auto;
+	/*white-space: nowrap;*/
+}
+
+/* alerts body panel */
+#AlBP {
+	padding: 12px 8px 12px 7px;
+	background-color: #EEEEEE;
+}
+
+/* alerts button panel */
+#AlBtP {
+	height: 20px;
+	text-align: right;
+	background-color: #EEEEEE;
+}
+
+/* alerts prompt */
+#AlP {
+	height: 17px;
+	margin: 2px 0;
+}
+
+/* alerts body left, alerts button left */
+#AlBL,#AlBtL {
+	width: 4px;
+	border-left: 1px solid #95B8E7;
+	background-color: #EEEEEE;
+}
+
+/* alerts body right, alerts button right */
+#AlBR,#AlBtR {
+	width: 4px;
+	border-right: 1px solid #95B8E7;
+	background-color: #EEEEEE;
+}
+
+/* alerts footer left */
+#AlFL {
+	width: 4px;
+	height: 11px;
+	border-bottom: 1px solid #95B8E7;
+	border-left: 1px solid #95B8E7;
+	-moz-border-radius: 0px 0px 0px 3px;
+	-webkit-border-radius: 0px 0px 0px 3px;
+	border-radius: 0px 0px 0px 3px;
+	background-color: #EEEEEE;
+}
+
+/* alerts footer center */
+#AlFC {
+	height: 11px;
+	border-bottom: 1px solid #95B8E7;
+	background-color: #EEEEEE;
+}
+
+/* alerts footer right */
+#AlFR {
+	width: 4px;
+	height: 11px;
+	border-bottom: 1px solid #95B8E7;
+	border-right: 1px solid #95B8E7;
+	-moz-border-radius: 0px 0px 3px 0px;
+	-webkit-border-radius: 0px 0px 3px 0px;
+	border-radius: 0px 0px 3px 0px;
+	background-color: #EEEEEE;
+}
+
+/* alerts button */
+#AlC .AlBt {
+	width: 80px;
+	height: 23px;
+	margin: 0 7px 0 0;
+	color: #000000;
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	cursor: pointer;
+}
+
+/* alerts body icon */
+#AlBI {
+	width: 32px;
+	height: 32px;
+	background-repeat: no-repeat;
+	background-image: url(./images/alerts.png);
+}
+
+#AlBI.confirm {
+	background-position: 0 0;
+}
+
+#AlBI.prompt {
+	background-position: 0 0;
+}
+
+#AlBI.info {
+	background-position: -32px 0;
+}
+
+#AlBI.warn {
+	background-position: -64px 0;
+}
+
+#AlBI.success {
+	background-position: -96px 0;
+}
+
+#AlBI.error {
+	background-position: -128px 0;
+}

@@ -1,0 +1,82 @@
+/*
+Uploadify
+Copyright (c) 2012 Reactive Apps, Ronnie Garcia
+Released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
+*/
+
+.uploadify {
+	position: absolute;
+	margin-bottom: 1em;
+	top: 2px;
+	right: 1px;
+	z-index: 1;
+}
+.uploadify-button {
+	font: 12px Arial, Helvetica, sans-serif;
+	text-align: center;
+	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+	width: 100%;
+	opacity: 1;
+	filter: alpha(opacity = 100);
+	background: #ffffff;
+	color: #000000;
+	-moz-border-radius: 2px 2px 2px 2px;
+	-webkit-border-radius: 2px 2px 2px 2px;
+	border-radius: 2px 2px 2px 2px;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.uploadify:hover .uploadify-button {
+}
+.uploadify-button.disabled {
+	background-color: #D0D0D0;
+	color: #808080;
+}
+.uploadify-queue {
+	margin-bottom: 1em;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 9;
+}
+.uploadify-queue-item {
+	background-color: #F5F5F5;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+	font: 11px Verdana, Geneva, sans-serif;
+	margin: 1px;
+	max-width: 350px;
+	padding: 0px;
+}
+.uploadify-error {
+	background-color: #FDE5DD !important;
+}
+.uploadify-queue-item .cancel {
+	float: right;
+	height:	16px;
+	width: 16px;
+	padding: 0;
+	margin: 1px;
+	cursor: pointer;
+	background: url('images/cancel.png') 0 0 no-repeat;
+}
+.uploadify-queue-item .cancel a {
+	padding: 0;
+	margin: 0;
+	height:	16px;
+	width: 16px;
+}
+.uploadify-queue-item.completed {
+	background-color: #E5E5E5;
+}
+.uploadify-progress {
+	background-color: #E5E5E5;
+	margin-top: 0px;
+	width: 100%;
+}
+.uploadify-progress-bar {
+	background-color: #0099FF;
+	height: 18px;
+	width: 1px;
+}

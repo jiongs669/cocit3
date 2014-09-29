@@ -1,0 +1,105 @@
+
+/* Login Dialog*/
+
+.logindialog .dialogHeader, .logindialog .dialogHeader_r, .logindialog .dialogHeader_c, .logindialog .dialogFooter, .logindialog .dialogFooter_r, .logindialog .dialogFooter_c{
+	background: url(./images/login/dialog.png) no-repeat;
+}
+
+.logindialog .dialogHeader {
+	padding-left: 5px;
+	background-position: 0 0;
+	position: relative;
+}
+
+.logindialog .dialogHeader_r {
+	padding-right: 5px;
+	background-position: 100% -72px;
+}
+
+.logindialog .dialogHeader_c {
+	background-position: 0 -144px;
+	background-repeat: repeat-x;
+}
+
+.logindialog .dialogBody {
+	padding: 0 10px;
+	border-color: #bcbcbc;
+	background: #f1f1f1;
+}
+
+.logindialog .dialogContent {
+	padding: 0 5px;
+}
+
+.logindialog .dialogFooter_r, .logindialog .dialogFooter_c {
+	height: 8px;
+}
+
+.logindialog .dialogFooter {
+	padding-left: 5px;
+	background-position: 0 -216px;
+}
+
+.logindialog .dialogFooter_r {
+	padding-right: 5px;
+	background-position: 100% -288px;
+}
+
+.logindialog .dialogFooter_c {
+	background-position: 0 -185px;
+	background-repeat: repeat-x;
+}
+
+/* loginform CSS*/
+
+.loginform {
+	font-size: 11px;
+	font-family: Verdana;
+}
+
+.loginform .message {
+	color: #cd0303;
+	font-size: 11px;
+	font-family: Verdana;
+	margin-top: -5px;
+}
+
+.loginform .label,.loginform .input,.loginform .rememberMe {
+	padding: 0 5px 10px 0;
+	font-size: 11px;
+	font-family: Verdana;
+	white-space: nowrap;
+}
+
+.loginform .input input {
+	width: 270px;
+	height: 18px;
+	border: 1px solid #c0c0c0;
+}
+
+.loginform .headerTitle {
+	position: absolute;
+	top: 8px;
+	font-weight: bold;
+	font-family: Verdana;
+	font-size: 12px;
+}
+
+.loginform .headerSubTitle {
+	position: absolute;
+	top: 28px;
+	font-family: Verdana;
+	color: #666666;
+}
+
+.loginform .reset {
+	margin-left: 6px;
+}
+
+.loginform .rememberMe {
+	margin-left: 10px;
+}
+
+.loginform .rememberMeLabel {
+	padding-top: 6px;
+}

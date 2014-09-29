@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="System.out" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <pattern>[%d{MM-dd HH:mm:ss}][%5p]%m------[%t]%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.kmetop.demsy" level="INFO"></logger>
+    <logger name="com.kmetop.demsy.orm" level="INFO"></logger>
+    <logger name="com.jiongsoft" level="INFO"></logger>
+    
+    <logger name="org.nutz.dao.impl.DemsyDaoRunner" level="DEBUG"></logger>
+    <logger name="org.nutz.dao.impl.DemsyDaoExecutor" level="DEBUG"></logger>
+    <logger name="com.kmetop.demsy.orm.nutz.impl.DemsyTransaction" level="DEBUG"></logger>
+    <logger name="om.kmetop.demsy.mvc.template" level="DEBUG"></logger>
+
+    <root level="ERROR">
+        <appender-ref ref="System.out" />
+    </root>
+</configuration>

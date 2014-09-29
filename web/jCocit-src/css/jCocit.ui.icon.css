@@ -1,0 +1,88 @@
+a.l-btn div.l-btn-icon{
+	position: relative;
+	float: left;
+	height: 16px;
+	width: 16px;
+	margin: 1px 3px 0 0;
+	/*
+	border: 1px solid #2f9b94;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background-color: #79c4bf;
+	*/
+}
+.icon-logo {
+}
+.icon-check{
+	background: url('images/icon/check.gif') no-repeat center center;
+}
+.icon-uncheck{
+	background: url('images/icon/uncheck.gif') no-repeat center center;
+}
+.icon-setting {
+	background: url('images/icon/setting.png') no-repeat left center;
+}
+.icon-101,.icon-102,.icon-103,.icon-107,.icon-199,.icon-250,.icon-251,.icon-252,.icon-253,.icon-256,.icon-299,.icon-204 {
+	background-image: url('images/entity.png');
+	background-repeat: no-repeat;
+}
+/* 格式：icon-操作码 */
+/* 添加 */
+.icon-101 {
+	background-position: 0 -16px;
+}
+/* 修改 */
+.icon-102 {
+	background-position: -16px -16px;
+}
+.icon-102-v {
+	background-position: -48px -16px;
+}
+/* 删除 */
+.icon-299 {
+	background-position: -32px -16px;
+}
+/* 批量修改 */
+.icon-103 {
+	background-position: -80px -16px;
+}
+/* EXCEL */
+.icon-107 {
+	background-position: -96px -16px;
+}
+/* Synchronized Task */
+.icon-204 {
+	background-position: 0 -32px;
+}
+/* 详情 */
+.icon-199,.icon-250,.icon-251,.icon-252,.icon-253,.icon-256 {
+	background-position: -112px -16px;
+}
+/* 排序 */
+.icon-250 {
+	
+}
+/* 上移 */
+.icon-251 {
+	
+}
+/* 下移 */
+.icon-252 {
+	
+}
+/* 倒排序 */
+.icon-253 {
+	
+}
+/* 取消排序 */
+.icon-256 {
+	
+}
+
+.icon-mode-M {
+	background: url('images/required.gif') no-repeat 0 0;
+	padding: 0 2px 0 2px;
+	height: 16px;
+	
+}

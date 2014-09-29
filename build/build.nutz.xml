@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="nutz" default="run" basedir=".">
+	<!-- 开发环境相关的属性 -->
+	<property name="env.NUTZ_PROJECT_HOME" value="${basedir}/.." />
+
+	<!-- 开发环境无关的属性 -->
+	<property name="env.JAVA_HOME" value="${java.home}" />
+	<property name="env.DEPS" value="${basedir}/deps" />
+	<property name="env.TOMCAT_LIB" value="${basedir}/tomcatlib" />
+	<property name="env.OUTPUT" value="${basedir}/jars" />
+
+	<property name="TOMCAT_LIB" value="${env.TOMCAT_LIB}" />
+	<property name="JAVA_HOME" value="${env.JAVA_HOME}" />
+	<property name="DEPHOME" value="${env.DEPS}" />
+	<property name="JARS" value="${env.OUTPUT}" />
+	<property name="NUTZ_PROJECT_HOME" value="${env.NUTZ_PROJECT_HOME}" />
+
+	<property name="SRC" location="${NUTZ_PROJECT_HOME}/src/java/nutz" />
+	<property name="TMP" value="${basedir}/temp" />
+
+	<property name="JDK_VERSION" value="1.6" />
+
+	<property name="v" value="-1" />
+	<property name="zlang" value="org/nutz/lang/**,org/nutz/castor/**,org/nutz/*.*" />
+	<property name="zplugin" value="org/nutz/plugin/**" />
+	<property name="zlog" value="org/nutz/log/**" />
+	<property name="zjson" value="org/nutz/json/**" />
+	<property name="zdao" value="org/nutz/dao/**,org/nutz/service/**,org/nutz/trans/**" />
+	<property name="zioc" value="org/nutz/ioc/**,org/nutz/aop/**" />
+	<property name="zmvc" value="org/nutz/mvc/**,org/nutz/filepool/**,org/nutz/http/**" />
+
+	<property name="zall" value="/**/*.*" />
+
+	<path id="CLASSPATH">
+		<fileset dir="${TOMCAT_LIB}" casesensitive="no">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${DEPHOME}" casesensitive="no">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement location="${JAVA_HOME}/jre/javaws/javaws.jar" />
+		<pathelement location="${JAVA_HOME}/jre/lib/charsets.jar" />
+		<pathelement location="${JAVA_HOME}/jre/lib/rt.jar" />
+		<pathelement location="${JAVA_HOME}/lib/tools.jar" />
+	</path>
+
+	<target name="init">
+		<delete dir="${JARS}/nutz${v}.jar" />
+		<delete dir="${JARS}/nutz-source${v}.zip" />
+		<delete dir="${TMP}" />
+		<mkdir dir="${TMP}" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="${SRC}" destdir="${TMP}" debuglevel="lines,vars,source" debug="true"
+			source="${JDK_VERSION}" target="${JDK_VERSION}" encoding="utf-8">
+			<classpath refid="CLASSPATH" />
+		</javac>
+		<copy toDir="${TMP}">
+			<fileset dir="${SRC}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" depends="compile">
+		<echo message="TMP: ${TMP}" />
+		<!--jar destfile="${JARS}/nutz-all${v}.jar" basedir="${TMP}" />
+			<jar destfile="${JARS}/nutz.lang${v}.jar" basedir="${TMP}" includes="${zlang}" />
+			<jar destfile="${JARS}/nutz.json${v}.jar" basedir="${TMP}" includes="${zlang},${zjson}" />
+			<jar destfile="${JARS}/nutz.dao${v}.jar" basedir="${TMP}" includes="${zlang},${zdao}" />
+			<jar destfile="${JARS}/nutz.ioc${v}.jar" basedir="${TMP}" includes="${zlang},${zjson},${zdao},${zioc}" /-->
+		<jar destfile="${JARS}/nutz${v}.jar" basedir="${TMP}" keepcompression="true" update="true" />
+		<zip destfile="${JARS}/nutz-source${v}.zip" basedir="${SRC}" keepcompression="true" />
+	</target>
+
+	<target name="run" depends="jar">
+		<delete dir="${TMP}" />
+	</target>
+</project>

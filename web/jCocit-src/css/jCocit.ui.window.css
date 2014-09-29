@@ -1,0 +1,229 @@
+/**
+ * Window, Window Shadow
+ */
+.Wd {
+	/*不能hidden,否则Combobox下拉框等将不能显示*/
+	/*overflow: hidden;*/
+}
+
+.Wd,.WdS {
+	position: absolute;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	
+	/* 圆角 */
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px 3px 3px 3px;
+	border-radius: 3px 3px 3px 3px;
+}
+
+/**
+ * Window Header
+ */
+.WdH,.WdH .PnHR,.WdH .PnHC,.WdH .PnHT {
+	display: block;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+.WdH {
+	height: 23px;
+}
+
+.WdH .PnHR,.WdH .PnHC,.WdH .PnHT {
+	height: 100%;
+}
+
+/* Window Header */
+.WdH { 
+	/**
+	 * 1. Using image set header radius border and gradient background 
+	 */
+	 /*
+	background: url(./images/dialog/dialog_top_left.gif) no-repeat;
+	padding-left: 5px;
+	border-bottom: 0px solid #8a8a8a;
+	*/
+
+	/**
+	 * 2. Using CSS set header radius border and gradient background
+	 */
+	/* Radius Border */
+	border: 1px solid #2f9b94;
+	border-bottom: 0px;
+	-moz-border-radius: 3px 3px 0px 0px;
+	-webkit-border-radius: 3px 3px 0px 0px;
+	border-radius: 3px 3px 0px 0px;
+	
+	/* Header Gradient Background Color */
+	background: -webkit-linear-gradient(top, #79c4bf 0, #dbf4f0 100%);
+	background: -moz-linear-gradient(top, #79c4bf 0, #dbf4f0 100%);
+	background: -o-linear-gradient(top, #79c4bf 0, #dbf4f0 100%);
+	background: linear-gradient(to bottom, #79c4bf 0, #dbf4f0 100%);
+	background-repeat: repeat-x;
+	filter: progid : DXImageTransform.Microsoft.gradient ( startColorstr = #79c4bf, endColorstr = #dbf4f0, GradientType = 0 );
+}
+
+/* Window Header > Panel Header Right */
+.WdH .PnHR { 
+	/*  Using image set header radius border and gradient background */
+	/*
+	background: url(./images/dialog/dialog_top_right.gif) no-repeat 100% 0;
+	*/
+	padding-right: 5px;
+}
+
+/* Window Header > Panel Header Center */
+.WdH .PnHC { 
+	/*  Using image set header radius border and gradient background */
+	/*
+	background: url(./images/dialog/dialog_top_mid.gif) repeat-x;
+	*/
+}
+
+/* Window Header > Panel Header Title*/
+.WdH .PnHT {
+	padding: 5px 0 0 8px;
+}
+
+/**
+ * Window Header Title With Logo
+ */
+.WdH .PnHT-WL {
+	padding-left: 25px;
+}
+
+
+/* Window Header > Panel Header Button */
+.WdH .PnHB {
+}
+
+/**
+ * Window Body 
+ */
+.WdB {
+	overflow: hidden;
+	border-color: #2f9b94;
+	border-style: solid;
+	padding: 0 1px 0 1px;
+	border-width: 0 1px 0 1px;
+	background-color: #dbf4f0;
+}
+
+/* Window Header Body No Header*/
+.WdB-NH {
+	border-top-width: 1px;
+}
+
+/* Window Content */
+.WdB > .PnBC {
+	border: 1px solid #79c4bf;
+	margin: 8px;
+	padding: 6px;
+	background-color: #ffffff;
+}
+
+/**
+ * Window Footer
+ */
+.WdF,.WdF .PnFR,.WdF .PnFC {
+	display: block;
+	overflow: hidden;
+	height: 12px;
+	padding: 0;
+	margin: 0;
+}
+
+/* Window Footer */
+.WdF { 
+	/*  Using image set footer radius border */
+	/*
+	background: url(./images/dialog/dialog_bottom_left.gif) no-repeat 0 -8px;
+	padding-left: 5px;
+	*/
+	height: 2px;
+	background-color: #dbf4f0;
+	border: 1px solid #2f9b94;
+	border-top: 0px;
+	-moz-border-radius: 0px 0px 3px 3px;
+	-webkit-border-radius: 0px 0px 3px 3px;
+	border-radius: 0px 0px 3px 3px;
+}
+
+/* Window Footer > Panel Footer Right */
+.WdF .PnFR { 
+	/* Using image set footer radius border */
+	/*
+	background: url(./images/dialog/dialog_bottom_right.gif) no-repeat 100% -8px;
+	padding-right: 5px;
+	*/
+}
+
+/* Window Footer > Panel Footer Center */
+.WdF .PnFC { 
+	/*Dialog bottom-middle background image*/
+	/*
+	background: url(./images/dialog/dialog_bottom_mid.gif) repeat-x 0 -8px;
+	*/
+}
+
+/**
+ * Window Proxy for Dragging or Resizing 
+ */
+.WdP {
+	position: absolute;
+	overflow: hidden;
+	border: 1px dashed #5c5c5c;
+}
+
+/**
+ * Window Proxy Mask for Resizing 
+ */
+.WdPM {
+	position: absolute;
+	filter: alpha(opacity = 5);
+	opacity: 0.05;
+	background: #ccc;
+}
+
+/**
+ * Window Mask 
+ */
+.WdM {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	filter: alpha(opacity = 40);
+	opacity: 0.40;
+	font-size: 1px;
+	*zoom: 1;
+	overflow: hidden;
+	background: #ccc;
+}
+
+/** 
+ * Window Shadow 
+ */
+.WdS {
+	background: #ccc;
+	/* Shadow Radius */
+	-moz-box-shadow: 2px 2px 3px #cccccc;
+	-webkit-box-shadow: 2px 2px 3px #cccccc;
+	box-shadow: 2px 2px 3px #cccccc;
+	filter: progid : DXImageTransform.Microsoft.Blur ( pixelRadius = 2, MakeShadow = false, ShadowOpacity = 0.2 );
+}
+
+/* Simple Window: Content Without Border */
+.window-simple .WdB > .PnBC {
+	border: 0px solid #bcbcbc;
+	margin: 8px;
+	background-color: transparent;
+}
+
+.window-noheader .PnHL,.window-noheader .PnHT,.window-noheader .PnHB {
+	display: none;
+}

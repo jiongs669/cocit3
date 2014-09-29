@@ -1,0 +1,279 @@
+
+/* Dialog CSS */
+
+.dialogHeader,.dialogHeader_r,.dialogHeader_c,.dialogFooter,.dialogFooter_r,.dialogFooter_c{
+	/*background: url(./images/dialog/dialog.png) no-repeat;*/
+}
+
+.dialogHeader .close,.dialogHeader .maximize,.dialogHeader .restore,.dialogHeader .minimize{
+	background: url(./images/dialog/dialog_icon.png) no-repeat;
+	margin: 0;
+	padding: 0;
+}
+
+.dialog {
+	display: block;
+	text-align: left;
+	position: absolute;
+	z-index: 42;
+}
+
+.dialogHeader,.dialogHeader_r,.dialogHeader_c {
+	display: block;
+	overflow: hidden;
+}
+
+.dialogHeader .close,.dialogHeader .maximize,.dialogHeader .restore,.dialogHeader .minimize
+	{
+	display: block;
+	overflow: hidden;
+	text-indent: -1000px;
+	width: 19px;
+	height: 19px;
+	position: absolute;
+	top: 5px;
+}
+
+.dialogHeader .headerTitle {
+	display: block;
+	overflow: auto;
+	height: 27px;
+	line-height: 27px;
+	background-position: 0 -450px;
+	color: #ffffff;
+	margin: 0;
+	font-family: Verdana, Arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.dialogHeader .headerSubTitle {
+	position: absolute; 
+	top: 30px; 
+	left: 25px;
+	font-size: 12px;
+	font-family: Verdana, Arial, sans-serif;
+	color: #666666;
+}
+
+.dialogHeader {
+	padding-left: 12px;
+	position: relative;
+	
+	/*Dialog top-left background image*/
+	/*background-position: 0 0;*/
+	background-image: url(./images/dialog/dialog_top_left.gif);
+	background-repeat: no-repeat;
+}
+
+.dialogHeader_r {
+	padding-right: 12px;
+	
+	/*Dialog top-right background image*/
+	/*background-position: 100% -72px;*/
+	background-image: url(./images/dialog/dialog_top_right.gif);
+	background-repeat: no-repeat;
+	background-position: 100% 0;
+}
+
+.dialogHeader_c {
+	background-repeat: repeat-x;
+	
+	/*Dialog top-middle background image*/
+	/*background-position: 0 -144px;*/
+	background-image: url(./images/dialog/dialog_top_mid.gif);
+}
+
+.dialogHeader .close {
+	background-position: 0 0;
+	right: 4px;
+}
+
+.dialogHeader .close:hover {
+	background-position: 0 -50px;
+}
+
+.dialogHeader .maximize {
+	background-position: 0 -100px;
+	right: 23px;
+}
+
+.dialogHeader .maximize:hover {
+	background-position: 0 -150px;
+}
+
+.dialogHeader .restore {
+	display: none;
+	background-position: 0 -200px;
+	right: 23px;
+}
+
+.dialogHeader .restore:hover {
+	background-position: 0 -250px;
+}
+
+.dialogHeader .minimize {
+	background-position: 0 -300px;
+	right: 42px;
+}
+
+.dialogHeader .minimize:hover {
+	background-position: 0 -350px;
+}
+
+.dialogBody {
+	display: block;
+	overflow: hidden;
+	padding: 12px;
+	border-color: #5c5c5c;
+	border-style: solid;
+	border-width: 0 1px 0 1px;
+	background: #f1f1f1;
+}
+
+.dialogContent {
+	padding: 5px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 11px;
+	overflow: auto;
+}
+
+.dialogFooter_r,.dialogFooter_c {
+	display: block;
+	overflow: hidden;
+	height: 12px;
+}
+
+.dialogFooter {
+	padding-left: 12px;
+	
+	/*Dialog bottom-left background image*/
+	/*background-position: 0 -216px;*/
+	background-image: url(./images/dialog/dialog_bottom_left.gif);
+	background-repeat: no-repeat;
+	background-position: 0 -9px;
+}
+
+.dialogFooter_r {
+	padding-right: 12px;
+	
+	/*Dialog bottom-right background image*/
+	/*background-position: 100% -288px;*/
+	background-image: url(./images/dialog/dialog_bottom_right.gif);
+	background-repeat: no-repeat;
+	background-position: 100% -9px;
+}
+
+.dialogFooter_c {
+	padding: 0;
+	
+	/*Dialog bottom-middle background image*/
+	/*background-position: 0 -185px;*/
+	background-image: url(./images/dialog/dialog_bottom_mid.gif);
+	background-repeat: repeat-x;
+	background-position: 0 -9px;
+}
+
+.dialog2 .dialogContent {
+	border: 1px solid #336699;
+	background-color: #ffffff;
+}
+
+/* Shadow */
+
+.shadow_h_l {
+	background: url(./images/dialog/shadow_h_l.png) no-repeat;
+}
+
+.shadow_h_r {
+	background: url(./images/dialog/shadow_h_r.png) no-repeat;
+}
+
+.shadow_h_c {
+	background: url(./images/dialog/shadow_h_c.png) repeat-x;
+}
+
+.shadow_c_l {
+	background: url(./images/dialog/shadow_c_l.png) repeat-y;
+}
+
+.shadow_c_r {
+	background: url(./images/dialog/shadow_c_r.png) repeat-y;
+}
+
+.shadow_c_c {
+	background: url(./images/dialog/shadow_c_c.png) repeat;
+}
+
+.shadow_f_l {
+	background: url(./images/dialog/shadow_f_l.png) no-repeat;
+}
+
+.shadow_f_r {
+	background: url(./images/dialog/shadow_f_r.png) no-repeat;
+}
+
+.shadow_f_c {
+	background: url(./images/dialog/shadow_f_c.png) repeat-x;
+}
+
+.shadow {
+	display: none;
+	overflow: hidden;
+	position: absolute;
+	z-index: 41;
+}
+
+.shadow_h,.shadow_h_l,.shadow_h_r,.shadow_h_c,.shadow_f,.shadow_f_l,.shadow_f_r,.shadow_f_c
+	{
+	display: block;
+	overflow: hidden;
+	height: 6px;
+}
+
+.shadow_h,.shadow_c,.shadow_f {
+	position: relative;
+}
+
+.shadow_h_l,.shadow_c_l,.shadow_f_l {
+	width: 6px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.shadow_h_r,.shadow_c_r,.shadow_f_r {
+	width: 6px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.shadow_h_c,.shadow_c_c,.shadow_f_c {
+	margin: 0 6px;
+}
+
+.shadow_c,.shadow_c_l,.shadow_c_r,.shadow_c_c {
+	display: block;
+	overflow: hidden;
+	height: 100%;
+}
+
+/*dialogBackground*/
+.dialogBackground {
+	display: none;
+	width: 100%;
+	height: 100%;
+	opacity: 0.4;
+	filter: alpha(opacity =         40);
+	background: #FFF;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 900;
+}
+
+.dialogProxy {
+	opacity: 0.8;
+	filter: alpha(opacity = 80);
+}

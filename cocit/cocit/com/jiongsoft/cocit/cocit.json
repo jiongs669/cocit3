@@ -1,0 +1,23 @@
+{
+	beanFactory: {
+		type: "com.jiongsoft.cocit.BeanFactory",
+		fields: {
+			actionContext: "com.jiongsoft.cocit.impl.demsy.DemsyActionContext",
+			smsClient_zucp: "com.jiongsoft.cocit.sms.impl.ZucpSmsClient",
+			smsClient_zr: "com.jiongsoft.cocit.sms.impl.ZrSmsClient",
+			smsClient_emay: "com.jiongsoft.cocit.sms.impl.EmaySDKSmsClient",
+			permissionEntityType: "com.kmetop.demsy.comlib.impl.base.security.Permission",
+			webCatalogEntityType: "com.kmetop.demsy.comlib.impl.sft.web.content.WebContentCategory",
+			webContentEntityType: "com.kmetop.demsy.comlib.impl.sft.web.content.WebContent"
+		}
+	},
+	serviceFactory: {
+		type: "com.jiongsoft.cocit.service.impl.demsy.DemsyServiceFactory"
+	},
+	widgetModelFactory: {
+		type:"com.jiongsoft.cocit.ui.model.widget.WidgetModelFactoryImpl"
+	},
+	widgetRenderFactory: {
+		type:"com.jiongsoft.cocit.ui.render.jcocit.JCocitWidgetRenderFactory"
+	}
+}

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+	<display-name>DEMSY</display-name>
+
+	<!-- 监听器 -->
+	<listener>
+		<listener-class>com.kmetop.demsy.mvc.DemsyListenerProxy</listener-class>
+	</listener>
+
+	<!-- 代理过滤器 -->
+	<filter>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<filter-class>com.kmetop.demsy.mvc.DemsyFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/login</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/login/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/logout</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/logout/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/config</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/config/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/admin</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/admin/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/index</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/index/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/ul/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/bz/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/ui/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/app/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/coc/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>/jsp/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
+	<!-- the following request will send 500 error. -->
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>*.php</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>*.asp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>DemsyFilterProxy</filter-name>
+		<url-pattern>*.aspx</url-pattern>
+	</filter-mapping>
+
+	<!-- 会话时长 -->
+	<session-config>
+		<session-timeout>5</session-timeout>
+	</session-config>
+
+	<!-- 默认目录首页 -->
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+        <welcome-file>index</welcome-file>
+	</welcome-file-list>
+
+</web-app>

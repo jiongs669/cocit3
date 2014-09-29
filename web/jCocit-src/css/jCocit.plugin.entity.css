@@ -1,0 +1,92 @@
+/* 业务表单 */
+form.entity-form {
+	padding: 0 5px 0 0;
+}
+
+/*业务分组TABLE*/
+.entity-group {
+	width: 100%;
+	border: 1px solid #dee1e4;
+	background-color: transparent;
+	margin: 2px 5px 2px 0;
+	padding: 2px 2px 3px 2px;
+}
+
+.entity-group > table {
+	BORDER-COLLAPSE: collapse;	
+	border: 0;
+	cell-padding: 0;
+	cell-spacing: 0;
+}
+
+.entity-group-header {
+	padding: 5px;
+	border: 1px solid #dee1e4;
+	background: #f0f4f6;
+	text-align: center;
+	font-weight: bold;
+	font-size: 12px;
+	color: #1d4d5b;
+	margin-bottom: 1px;
+}
+/*业务字段名称TD*/
+.entity-field-header,.entity-field-grid-header {
+	width: 80px;
+	height: 24px;
+	white-space: nowrap;
+	background-color: #f0f4f6;
+	border: 1px solid #dee1e4;
+	color: #1d4d5b;
+	text-align: right;
+	padding: 2px 5px 2px 2px;
+	font-weight: normal;
+	font-size: 12px;
+}
+.entity-field-grid-header{
+	text-align: center;
+}
+/*业务字段输入框TD*/
+.entity-field-box,.entity-field-grid-box {
+	background-color: #fcfdfd;
+	border: 1px solid #dee1e4;
+	padding: 2px 2px 2px 3px;
+	height: 24px;
+}
+
+.entity-field-box,.entity-field-box input,.entity-field-box textarea {
+	font-size: 12px;
+}
+
+.entity-field-box .CbB, .entity-field-grid-box .CbB {
+	height: 20px;
+}
+/*INPUT/SELECT/TEXTAREA等输入框*/
+.entity-field-box .input,.entity-field-box .select,.entity-field-box .textarea {
+	width: 200px;
+	height: 20px;
+	margin: 0;
+	border: 1px solid #dee1e4;
+	padding: 0px;
+	font-family: "Lucida Grande", "Arial", "Lucida", "Verdana", "Helvetica","宋体", "sans-serif";
+}
+
+.entity-field-box .select {
+	width: 202px;
+	height: 22px;
+	padding: 1px;
+	font-size: 12px;
+}
+
+.entity-field-box .select option {
+	height: 20px;
+}
+
+.entity-field-box .textarea {
+	width: 570px;
+	height: 60px;
+	overflow: auto;
+}
+/**/
+.entity-field-box .CbB {
+	border: 1px solid #dee1e4;
+}

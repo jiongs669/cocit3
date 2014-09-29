@@ -1,0 +1,101 @@
+.listtree .TrD,.listtree .TrH,.listtree .TrN {
+	display: none;
+}
+/* Current Folder Node */
+.listtree DIV.TrN-CF,.listtree UL.TrN-CF DIV>LI>.TrN {
+	display: block;
+}
+/* Current Root */
+.listtree DIV.TrN-CR {
+	display: block;
+}
+
+.listtree div.back-to  span.TrC {
+	position: relative;
+	left: 0;
+}
+
+.listtree span.TrN-all-text {
+	margin: 0;
+	padding: 0;
+	font-family: helvetica, tahoma, verdana, sans-serif;
+	font-size: 12px;
+	display: inline-block;
+	text-decoration: none;
+	vertical-align: top;
+	white-space: nowrap;
+	margin: 0 2px 0 4px;
+	height: 18px;
+	line-height: 18px;
+}
+
+.listtree div.back-to span.back-to {
+	display: inline-block;
+	width: 16px;
+	height: 20px;
+	vertical-align: top;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	background-image: url('images/ui_tree.png');
+	background-position: -144px 0;
+	background-repeat: no-repeat;
+}
+
+.listtree div.TrN {
+	height: 21px;
+}
+
+.listtree div.TrN-H {
+	border: 1px solid transparent;
+}
+
+/**
+ * Tree Checkbox on the Left side of Icon 
+ */
+.listtree-CL .TrI {
+	position: relative;
+	left: 20px;
+}
+
+.listtree-CL .TrC {
+	position: relative;
+	left: -21px;
+}
+
+/* Node No Checkbox */
+.listtree-CL .TrN-no-checkbox .TrI {
+	position: relative;
+	left: 0px;
+}
+
+.listtree-CL span.back-to {
+	position: relative;
+	left: 17px;
+}
+
+.listtree-CL div.back-to span.TrC {
+	position: relative;
+	left: -21px;
+}
+
+.listtree-CL .LtN-no-icon span.TrC {
+	position: relative;
+	left: -8px;
+}
+
+/* no back icon */
+.listtree-CL .LtN-no-back span.TrC {
+	position: relative;
+	left: 0px;
+}
+
+/* Node No Checkbox */
+.listtree-CL .TrN-no-checkbox span.back-to {
+	position: relative;
+	left: 0;
+}
+
+.listtree span.TrC,.listtree span.TrI,.listtree span.TrT,.listtree div.back-to span.back-to {
+	margin: 0 2px 0 3px;
+}

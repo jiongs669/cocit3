@@ -1,0 +1,46 @@
+.l-btn span.m-btn-downarrow {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	line-height: 16px;
+	_vertical-align: middle;
+}
+
+.l-btn span.m-btn-downarrow-split {
+	margin: 0 0 0 4px;
+	padding: 0 0 0 1px;
+	border-width: 0;
+	border-style: solid;
+	background-position: 1px center;
+	padding: 0;
+	border-width: 0 0 0 1px;
+}
+
+a.m-btn-active {
+	background-position: bottom right;
+}
+
+a.m-btn-active span.l-btn-left {
+	background-position: bottom left;
+}
+
+a.m-btn-plain-active {
+	background: transparent;
+	padding: 0 2px 0 0;
+	border-width: 1px;
+	border-style: solid;
+	-moz-border-radius: 2px 2px 2px 2px;
+	-webkit-border-radius: 2px 2px 2px 2px;
+	border-radius: 2px 2px 2px 2px;
+}
+
+.m-btn-downarrow {
+	background: url('images/ui_menu.png') no-repeat 2px center;
+	border-color: #aac5e7;
+}
+
+a.m-btn-plain-active {
+	border-color: #b7d2ff;
+	background-color: #eaf2ff;
+	color: #000000;
+}

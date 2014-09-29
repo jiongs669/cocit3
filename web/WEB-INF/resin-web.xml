@@ -1,0 +1,22 @@
+<web-app xmlns="http://caucho.com/ns/resin">
+	<servlet-mapping url-pattern='/login' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/login/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/logout' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/logout/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/config' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/config/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/admin' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/admin/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/index' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/index/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/ul/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/bz/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/ui/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/app/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/coc/*' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='/jsp/*' servlet-name='plugin_match' />
+	<!-- the following request will send 500 error. -->
+	<servlet-mapping url-pattern='*.php' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='*.asp' servlet-name='plugin_match' />
+	<servlet-mapping url-pattern='*.aspx' servlet-name='plugin_match' />
+</web-app>

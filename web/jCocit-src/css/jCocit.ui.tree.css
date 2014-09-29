@@ -1,0 +1,307 @@
+.tree_container{
+	 position: relative; 
+	 border:1px solid #79c4bf; 
+	 padding: 2px; 
+	 overflow: hidden;
+}
+/**
+ * Tree Global CSS
+ */
+.Tr {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	overflow: auto;
+}
+.Tr li {
+	white-space: nowrap;
+	margin: 0;
+	padding: 0;
+	-moz-user-select: none; /* for Firefox */
+	-webkit-user-select: none; /* for Chrome */
+}
+
+span.TrD,span.TrH,span.TrI,span.TrC,span.TrT {
+	margin: 0;
+	padding: 0;
+}
+
+/* Sub Tree */
+.Tr li ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+/**
+ * Tree Node
+ */
+.TrN {
+	position: relative; /* specified position, context menu can be shown correctly when scroll tree. */
+	height: 18px;
+	padding: 1px;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	cursor: pointer;
+	padding: 0;
+	margin: 0;
+	color: #000000;
+}
+
+span.TrT-keywords {
+	font-weight: bold;
+	background: highlight;
+	color: white;
+	padding: 0;
+	margin: 0
+}
+
+/* Tree Node Hover */
+.TrN-H {
+	border: 1px solid #ffbe6a;
+	background: #ffe6a3;
+}
+
+/* Tree Node Selected */
+.TrN-S {
+	border: 1px solid #ffab40;
+	background: #ffbe6a;
+}
+
+.TrN-P {
+	
+}
+
+/**
+ * Tree Node Indent, Hit(Expanded,Collapsed), Icon(Folder,Leaf), Checkbox
+ */
+.TrD,.TrH-E,.TrH-C,.TrI-F,.TrI-L,.TrC {
+	display: inline-block;
+	width: 16px;
+	height: 20px;
+	vertical-align: top;
+	overflow: hidden;
+}
+
+/**
+ * Tree Node Hit
+ */
+.TrH {
+	cursor: pointer;
+}
+
+.TrH-E,.TrH-C,.TrN-O .TrI-F,.TrI-F .TrI-FO,.TrI-F,.TrI-FO,.TrI-L,.TrC {
+	background-image: url('images/ui_tree.png');
+	background-repeat: no-repeat;
+}
+
+/* Tree Node Hit - Expanded/Hover*/
+.TrH-E,.TrH-EH {
+	background-position: 0 0;
+}
+
+/* Tree Node Hit - Collapsed/Hover */
+.TrH-C,.TrH-CH {
+	background-position: -16px 0;
+}
+
+/**
+ * Tree Node One/Tree Node First - Root Tree Node Icon - Folder
+ */
+.TrN-O .TrI-F,.TrI-F .TrI-FO {
+	background-position: -32px 0;
+}
+
+/* Tree Node Icon - Folder */
+.TrI-F {
+	background-position: -64px 0;
+}
+
+/* Tree Node Icon - Folder Open */
+.TrI-FO {
+	background-position: -48px 0;
+}
+
+/* Tree Node Icon - Leaf */
+.TrI-L {
+	background-position: -128px 0;
+}
+
+/*
+ Tree Node Checkbox
+*/
+/* cancel TrC0, direct using TrC to default 0*/
+span.TrC {
+	margin-left: 3px;
+	background-position: -80px 0;
+}
+
+span.TrC1 {
+	background-position: -96px 0;
+}
+
+span.TrC2 {
+	background-position: -112px 0;
+}
+
+/* Tree Loading */
+.TrL {
+	background: url('images/loading.gif') no-repeat left center;
+}
+
+/*
+ Tree Node Title. "span" prefix is required.
+*/
+span.TrT {
+	font-family: helvetica, tahoma, verdana, sans-serif;
+	font-size: 12px;
+	display: inline-block;
+	text-decoration: none;
+	vertical-align: top;
+	white-space: nowrap;
+	margin: 0 2px 0 3px;
+	padding: 0;
+	height: 18px;
+	line-height: 18px;
+}
+
+/**
+ * Dragging Node Proxy for Dragging
+ */
+.TrP {
+	font-size: 12px;
+	line-height: 20px;
+	padding: 1px 5px 1px 20px;
+	border: 1px solid #95B8E7;
+	z-index: 9900000;
+	background-color: #ffffff;
+	color: #000000;
+}
+
+/* Dragging Node Proxy - Icon */
+.TrP-I {
+	display: inline-block;
+	position: absolute;
+	width: 16px;
+	height: 18px;
+	left: -8px;
+	top: 50%;
+	margin-top: -9px;
+}
+
+/* Dragging Node Proxy - Icon - Yes */
+.TrP-Y {
+	background: url('images/tree/tree_icons.png') no-repeat -256px 0;
+}
+
+/* Dragging Node Proxy - Icon - No */
+.TrP-N {
+	background: url('images/tree/tree_icons.png') no-repeat -256px -18px;
+}
+
+/* Drag Node to before of target(Top) */
+.TrP-T {
+	border-top: 1px dotted red;
+}
+
+/* Drag Node to after of target(Bottom) */
+.TrP-B {
+	border-bottom: 1px dotted red;
+}
+
+/* Drag Node to inner of target(Append) */
+.TrP-A .TrT {
+	border: 1px dotted red;
+}
+
+/**
+ * Node Editor
+ */
+.TrE {
+	border: 1px solid #ccc;
+	font-size: 12px;
+	height: 14px !important;
+	height: 18px;
+	line-height: 14px;
+	padding: 1px 2px;
+	width: 80px;
+	position: absolute;
+	top: 0;
+}
+
+/**
+ * Tree Checkbox on the Left side of Icon 
+ */
+.Tr-CL .TrI {
+	position: relative;
+	left: 17px;
+}
+
+.Tr-CL .TrC {
+	position: relative;
+	left: -20px;
+}
+
+/* Node No Checkbox */
+.Tr-CL .TrN-no-checkbox .TrI {
+	position: relative;
+	left: 0px;
+}
+
+/* 
+ Tree Lines 
+*/
+/* Tree Node Indent */
+.tree-lines .TrD-I { /*background: url('images/tree/tree_icons.png') no-repeat -176px 0;*/
+	background: url('images/tree/I.gif') no-repeat left center;
+}
+
+.tree-lines .TrD-T { /*background: url('images/tree/tree_icons.png') no-repeat -192px 0;*/
+	background: url('images/tree/T.gif') no-repeat left center;
+}
+
+.tree-lines .TrD-L { /*background: url('images/tree/tree_icons.png') no-repeat -160px 0;*/
+	background: url('images/tree/L.gif') no-repeat left center;
+}
+
+/* Tree Node Hit */
+.tree-lines .TrH-E { /*background: url('images/tree/tree_icons.png') no-repeat -144px 0;*/
+	background: url('images/tree/Tminus.gif') no-repeat left center;
+}
+
+.tree-lines .TrH-C { /*background: url('images/tree/tree_icons.png') no-repeat -128px 0;*/
+	background: url('images/tree/Tplus.gif') no-repeat left center;
+}
+
+.tree-lines .TrN-F .TrH-E { /*background: url('images/tree/tree_icons.png') no-repeat -112px 0;*/
+	background: url('images/tree/minus.gif') no-repeat left center;
+}
+
+.tree-lines .TrN-F .TrH-C { /*background: url('images/tree/tree_icons.png') no-repeat -96px 0;*/
+	background: url('images/tree/plus.gif') no-repeat left center;
+}
+
+.tree-lines .TrN-L .TrH-E { /*background: url('images/tree/tree_icons.png') no-repeat -80px 0;*/
+	background: url('images/tree/Lminus.gif') no-repeat left center;
+}
+
+.tree-lines .TrN-L .TrH-C { /*background: url('images/tree/tree_icons.png') no-repeat -64px 0;*/
+	background: url('images/tree/Lplus.gif') no-repeat left center;
+}
+
+.tree-lines .TrN-O .TrH-E { /*background: url('images/tree/tree_icons.png') no-repeat -288px 0;*/
+	background: url('images/tree/minus.gif') no-repeat left center;
+}
+
+.tree-lines .TrN-O .TrH-C { /*background: url('images/tree/tree_icons.png') no-repeat -272px 0;*/
+	background: url('images/tree/plus.gif') no-repeat left center;
+}
+
+/*
+ Folder Tree: leaf node using folder icon
+*/
+.folder-tree .TrI-L {
+	background-image: url('images/ui_tree.png');
+	background-repeat: no-repeat;
+	background-position: -64px 0;
+}
