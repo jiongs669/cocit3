@@ -1,5 +1,6 @@
 package com.cocit.api.entitydef;
 
+import com.cocit.api.entity.IEntityOfTenant;
 import com.cocit.api.entity.INamedEntity;
 
 /**
@@ -7,7 +8,7 @@ import com.cocit.api.entity.INamedEntity;
  * 
  * @author yongshan.ji
  */
-public interface IEntityDefinition extends INamedEntity {
+public interface IEntityDefinition extends INamedEntity, IEntityOfTenant {
 	public static final byte IGLORE_SECURITY = 1;
 
 	boolean isDisabled();

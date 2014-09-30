@@ -1,5 +1,6 @@
 package com.cocit.api.security;
 
+import com.cocit.api.entity.IEntityOfTenant;
 import com.cocit.api.entity.INamedEntity;
 import com.cocit.api.entity.ITreeEntity;
 import com.cocit.api.entitydef.field.Upload;
@@ -30,7 +31,7 @@ import com.cocit.config.IDatasourceConfig;
  * 
  * @author yongshan.ji
  */
-public interface IModule<T> extends INamedEntity, ITreeEntity<T> {
+public interface IModule<T> extends INamedEntity, IEntityOfTenant, ITreeEntity<T> {
 	public static final int TYPE_FOLDER = 90;
 
 	public static final int TYPE_STATIC = 1;

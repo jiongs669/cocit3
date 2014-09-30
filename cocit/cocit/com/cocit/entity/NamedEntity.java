@@ -2,10 +2,11 @@ package com.cocit.entity;
 
 import javax.persistence.Column;
 
+import com.cocit.api.entity.IEntityOfTenant;
 import com.cocit.api.entity.INamedEntity;
 import com.jiongsoft.cocit.util.StringUtil;
 
-public abstract class NamedEntity extends DataEntity implements INamedEntity {
+public abstract class NamedEntity extends DataEntity implements INamedEntity, IEntityOfTenant {
 
 	@Column(length = 255)
 	protected String name;
