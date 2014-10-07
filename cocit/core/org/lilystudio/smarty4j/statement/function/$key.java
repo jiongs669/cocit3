@@ -10,7 +10,7 @@ import org.lilystudio.smarty4j.expression.IExpression;
 import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 
-import com.cocit.lang.Obj;
+import com.jiongsoft.cocit.lang.Obj;
 
 public class $key extends LineFunction {
 

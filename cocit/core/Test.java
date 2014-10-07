@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.util.Enumeration;
 
-import com.cocit.lang.Img;
+import com.jiongsoft.cocit.lang.Img;
 
 public class Test {
 

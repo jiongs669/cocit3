@@ -12,8 +12,8 @@ import org.lilystudio.smarty4j.expression.StringExpression;
 import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 
-import com.cocit.mvc.render.IRender;
-import com.cocit.mvc.ui.IUIView;
+import com.jiongsoft.cocit.mvc.render.IRender;
+import com.jiongsoft.cocit.mvc.ui.IUIView;
 
 public class $render extends LineFunction {
 

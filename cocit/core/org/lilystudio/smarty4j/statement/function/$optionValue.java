@@ -11,7 +11,7 @@ import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 import org.nutz.lang.Strings;
 
-import com.cocit.lang.Obj;
+import com.jiongsoft.cocit.lang.Obj;
 
 public class $optionValue extends LineFunction {
 

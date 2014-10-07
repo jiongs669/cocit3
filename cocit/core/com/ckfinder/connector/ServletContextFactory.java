@@ -13,7 +13,7 @@ package com.ckfinder.connector;
 
 import javax.servlet.ServletContext;
 
-import com.cocit.Demsy;
+import com.jiongsoft.cocit.Demsy;
 
 /**
  * Access to servletcontex outside from servlet.

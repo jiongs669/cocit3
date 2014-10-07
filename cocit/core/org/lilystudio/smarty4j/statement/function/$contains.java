@@ -11,7 +11,7 @@ import org.lilystudio.smarty4j.expression.IExpression;
 import org.lilystudio.smarty4j.statement.LineFunction;
 import org.lilystudio.smarty4j.statement.ParameterCharacter;
 
-import com.cocit.lang.Str;
+import com.jiongsoft.cocit.lang.Str;
 
 public class $contains extends LineFunction {
 

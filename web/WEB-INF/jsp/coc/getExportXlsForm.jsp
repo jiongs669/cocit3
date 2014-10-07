@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.*,com.jiongsoft.cocit.*,com.jiongsoft.cocit.orm.*,com.jiongsoft.cocit.orm.expr.*,com.jiongsoft.cocit.entity.*,com.jiongsoft.cocit.ui.model.widget.*,com.jiongsoft.cocit.action.*"%>
+<%@ page import="java.util.*,com.jiongsoft.cocit.*,com.kmjsoft.cocit.orm.*,com.kmjsoft.cocit.orm.expr.*,com.jiongsoft.cocit.entity.*,com.kmjsoft.cocit.ui.model.widget.*,com.kmjsoft.cocit.action.*"%>
 <%
 	/*
 	 * 该JSP对应的Action方法是： EntityAction.getExportXlsForm()

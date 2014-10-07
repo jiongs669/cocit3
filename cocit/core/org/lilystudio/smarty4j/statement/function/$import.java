@@ -5,7 +5,7 @@ import java.io.Writer;
 import org.lilystudio.smarty4j.Context;
 import org.lilystudio.util.StringWriter;
 
-import com.cocit.mvc.template.SmartyTemplate.DemsyTemplate;
+import com.jiongsoft.cocit.mvc.template.SmartyTemplate.DemsyTemplate;
 
 public class $import extends $include {
 

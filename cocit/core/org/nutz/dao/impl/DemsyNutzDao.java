@@ -47,7 +47,7 @@ import org.nutz.log.Logs;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
-import com.cocit.api.entitydef.field.SubSystem;
+import com.jiongsoft.cocit.entitydef.field.SubSystem;
 
 /**
  * @author zozoh(zozohtnt@gmail.com)
