@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.entitydef.field;
 
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
 
 /**
  * 运行时可配置接口： 即可以在运行时自定义新字段或重新设置原有的物理字段

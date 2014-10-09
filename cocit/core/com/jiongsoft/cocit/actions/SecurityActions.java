@@ -143,7 +143,7 @@ public class SecurityActions extends ModuleActions {
 				f.saveUser(user);
 			} else {
 				ExtOrm orm = Demsy.orm();
-				user = (IUser) orm.load(user.getClass(), Expr.eq(EntityConst.F_SOFT_ID, ctx.getTenant()).and(Expr.eq(EntityConst.F_CODE, username)));
+				user = (IUser) orm.load(user.getClass(), Expr.eq(EntityConst.F_TENANT_OWNER_GUID, ctx.getTenant()).and(Expr.eq(EntityConst.F_CODE, username)));
 				if (user == null) {
 					throw new DemsyException("登录用户不存在!");
 				}

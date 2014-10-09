@@ -2,8 +2,8 @@ package com.jiongsoft.cocit.mvc.ui;
 
 import static com.jiongsoft.cocit.mvc.MvcConst.URL_UI;
 import static com.kmjsoft.cocit.Demsy.appconfig;
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
-import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
+import static com.kmjsoft.cocit.Demsy.funMenuManager;
 import static com.kmjsoft.cocit.entity.EntityConst.F_CREATED;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ORDER_BY;
 
@@ -27,10 +27,10 @@ import com.jiongsoft.cocit.mvc.MvcConst.MvcUtil;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.IDataEntity;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IFieldDataType;
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.module.IFieldDataType;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entity.web.IWebContent;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
 import com.kmjsoft.cocit.entity.webdef.IPage;
@@ -78,16 +78,16 @@ public class UIBlockContext {
 	 */
 
 	// 板块标题数据来自哪个模块？
-	private IModule catalogModule;
+	private IFunMenu catalogModule;
 
 	// 板块明细数据来自哪个模块？
-	private IModule module;
+	private IFunMenu funMenu;
 
 	// 板块标题数据来自哪个业务系统？
-	private IEntityDefinition catalogSystem;
+	private IEntityModule catalogSystem;
 
 	// 板块明细数据来自哪个业务系统？
-	private IEntityDefinition system;
+	private IEntityModule system;
 
 	// 栏目字段
 	private IEntityColumn catalogField;
@@ -163,7 +163,7 @@ public class UIBlockContext {
 	private static void inherit(UIBlockContext context) {
 		if (context.parent != null) {
 			context.catalogModule = context.parent.catalogModule;
-			context.module = context.parent.module;
+			context.funMenu = context.parent.funMenu;
 			context.catalogSystem = context.parent.catalogSystem;
 			context.system = context.parent.system;
 			context.catalogField = context.parent.catalogField;
@@ -332,9 +332,9 @@ public class UIBlockContext {
 
 		// 解析数据源模块
 		String moduleGuid = datasource.getModuleGuid();
-		module = moduleManager.getModule(moduleGuid);
-		system = moduleManager.getSystem(module);
-		type = entityDefManager.getType(system);
+		funMenu = funMenuManager.getModule(moduleGuid);
+		system = funMenuManager.getSystem(funMenu);
+		type = entityModuleManager.getType(system);
 
 		// 解析排序字段
 		orderBy = datasource.getOrderBy();
@@ -355,7 +355,7 @@ public class UIBlockContext {
 		groupBy = datasource.getGroupBy();
 
 		// 解析栏目模块
-		Map<String, IEntityColumn> fldmap = entityDefManager.getFieldsMap(system);
+		Map<String, IEntityColumn> fldmap = entityModuleManager.getFieldsMap(system);
 		for (String srcRule : srcRuleArray) {
 			// 构造查询条件
 			ExprRule exprRule = new ExprRule(srcRule);
@@ -370,10 +370,10 @@ public class UIBlockContext {
 				catalogField = fldmap.get(fkfldName);
 
 				// 栏目模块解析成功
-				if (catalogField != null && entityDefManager.isSystemFK(catalogField)) {
-					catalogModule = moduleManager.getModule(Demsy.me().getTenant(), catalogField.getRefrenceSystem());
-					catalogSystem = moduleManager.getSystem(catalogModule);
-					catalogType = entityDefManager.getType(catalogSystem);
+				if (catalogField != null && entityModuleManager.isSystemFK(catalogField)) {
+					catalogModule = funMenuManager.getModule(Demsy.me().getTenant(), catalogField.getRefrenceSystem());
+					catalogSystem = funMenuManager.getSystem(catalogModule);
+					catalogType = entityModuleManager.getType(catalogSystem);
 
 					break;
 				}
@@ -381,24 +381,24 @@ public class UIBlockContext {
 		}
 
 		if (log.isTraceEnabled())
-			log.tracef("板块数据集查询规则: [moduleGuid=%s, rules=%s, rules2=%s, ui:%s] moduleID=%s, catalogModule=%s", moduleGuid, datasource.getRules(), datasource.getRules2(), block.getViewType(), module, catalogModule);
+			log.tracef("板块数据集查询规则: [moduleGuid=%s, rules=%s, rules2=%s, ui:%s] moduleID=%s, catalogModule=%s", moduleGuid, datasource.getRules(), datasource.getRules2(), block.getViewType(), funMenu, catalogModule);
 
 		// 解析动态模块
 		boolean isFullDynaCatalogModule = false;
 		boolean isDynaCatalogModule = false;
 		boolean isDynaDataModule = false;
 		if (datasource.isDynamic() && dynamicModuleID != null && dynamicModuleID > 0) {
-			IModule dModule = moduleManager.getModule(dynamicModuleID);
+			IFunMenu dModule = funMenuManager.getModule(dynamicModuleID);
 			if (dModule != null) {
 				if (dModule.equals(catalogModule)) {
 					isDynaCatalogModule = true;
-				} else if (dModule.equals(module)) {
+				} else if (dModule.equals(funMenu)) {
 					isDynaDataModule = true;
 				} else if (catalogModule == null) {
 					// 全动态：数据源中没有指定外键字段，运行时自动获取外键字段
 					catalogModule = dModule;
-					catalogSystem = moduleManager.getSystem(catalogModule);
-					catalogType = entityDefManager.getType(catalogSystem);
+					catalogSystem = funMenuManager.getSystem(catalogModule);
+					catalogType = entityModuleManager.getType(catalogSystem);
 
 					isDynaCatalogModule = true;
 					isFullDynaCatalogModule = true;
@@ -411,12 +411,12 @@ public class UIBlockContext {
 
 			// 添加全动态外键字段作为板块数据集查询条件
 			if (isFullDynaCatalogModule) {
-				List<? extends IEntityColumn> fields = entityDefManager.getFieldsOfEnabled(system);
-				IEntityDefinition refSystem = moduleManager.getSystem(catalogModule);
-				Class refType = entityDefManager.getType(refSystem);
+				List<? extends IEntityColumn> fields = entityModuleManager.getFieldsOfEnabled(system);
+				IEntityModule refSystem = funMenuManager.getSystem(catalogModule);
+				Class refType = entityModuleManager.getType(refSystem);
 				for (IEntityColumn fld : fields) {
-					if (entityDefManager.getType(fld).equals(refType)) {
-						srcRuleArray.add(entityDefManager.getPropName(fld) + ".id eq " + catalogModule.getId());
+					if (entityModuleManager.getType(fld).equals(refType)) {
+						srcRuleArray.add(entityModuleManager.getPropName(fld) + ".id eq " + catalogModule.getId());
 
 						break;
 					}
@@ -424,15 +424,15 @@ public class UIBlockContext {
 			}
 
 			// 按上级板块过滤数据集：即查询主从属表
-			if (this.isInherit() && parent.module != null && parent.itemObjs != null && parent.itemObjs.size() > 0) {
-				List<? extends IEntityColumn> fields = entityDefManager.getFieldsOfEnabled(system);
-				IEntityDefinition parentSystem = moduleManager.getSystem(parent.module);
-				Class parentType = entityDefManager.getType(parentSystem);
+			if (this.isInherit() && parent.funMenu != null && parent.itemObjs != null && parent.itemObjs.size() > 0) {
+				List<? extends IEntityColumn> fields = entityModuleManager.getFieldsOfEnabled(system);
+				IEntityModule parentSystem = funMenuManager.getSystem(parent.funMenu);
+				Class parentType = entityModuleManager.getType(parentSystem);
 				for (IEntityColumn fld : fields) {
-					if (entityDefManager.getType(fld).equals(parentType)) {
+					if (entityModuleManager.getType(fld).equals(parentType)) {
 
 						for (Object parentItem : parent.itemObjs) {
-							srcRuleArray.add(entityDefManager.getPropName(fld) + ".id eq " + Obj.getId(parentItem));
+							srcRuleArray.add(entityModuleManager.getPropName(fld) + ".id eq " + Obj.getId(parentItem));
 						}
 
 						break;
@@ -462,9 +462,9 @@ public class UIBlockContext {
 				}
 
 				// 是外键字段且没有被解析过
-				if (fkFld != null && entityDefManager.isSystemFK(fkFld)) {
+				if (fkFld != null && entityModuleManager.isSystemFK(fkFld)) {
 					// 外键字段类型
-					Class fldClass = entityDefManager.getType(fkFld);
+					Class fldClass = entityModuleManager.getType(fkFld);
 
 					// 解析栏目对象
 					Object catalogEntity = null;
@@ -542,16 +542,16 @@ public class UIBlockContext {
 		return imageFld;
 	}
 
-	private String getImageField(IEntityDefinition system) {
-		IFieldDataType fldlib = entityDefManager.getFieldTypes().get("Upload");
-		for (IEntityColumn f : entityDefManager.getFieldsOfEnabled(system)) {
+	private String getImageField(IEntityModule system) {
+		IFieldDataType fldlib = entityModuleManager.getFieldTypes().get("Upload");
+		for (IEntityColumn f : entityModuleManager.getFieldsOfEnabled(system)) {
 			if (fldlib != null && !fldlib.equals(f.getType())) {
 				continue;
 			}
 
 			String fileType = f.getUploadType();
 			if (fileType != null && (fileType.indexOf(".jpeg") > -1 || fileType.indexOf(".jpg") > 0 || fileType.indexOf(".gif") > 0) || fileType.indexOf(".png") > 0) {
-				String imgFld = entityDefManager.getPropName(f);
+				String imgFld = entityModuleManager.getPropName(f);
 
 				if (block.getDataset() != null) {
 					String fldRule = block.getDataset().getFieldRule();
@@ -573,7 +573,7 @@ public class UIBlockContext {
 	}
 
 	public UIBlockDataModel makeDataModel(Object obj) {
-		return makeDataModel(obj, null, module == null ? null : module.getId());
+		return makeDataModel(obj, null, funMenu == null ? null : funMenu.getId());
 	}
 
 	public UIBlockDataModel makeDataModel(Object obj, Long linkID, Long moduleID) {
@@ -829,15 +829,15 @@ public class UIBlockContext {
 		return rules;
 	}
 
-	public IModule getCatalogModule() {
+	public IFunMenu getCatalogModule() {
 		return catalogModule;
 	}
 
-	public IModule getModule() {
-		return module;
+	public IFunMenu getModule() {
+		return funMenu;
 	}
 
-	public IEntityDefinition getSystem() {
+	public IEntityModule getSystem() {
 		return system;
 	}
 
@@ -932,8 +932,8 @@ public class UIBlockContext {
 				catalog.setName(block.getName(), getTitleLen());
 			} else if (catalogObj != null) {
 				catalog.setName(catalogObj.toString() + t.replace(postFlag, ""), titleLen);
-			} else if (module != null) {
-				catalog.setName(module.getName() + t.replace(postFlag, ""), titleLen);
+			} else if (funMenu != null) {
+				catalog.setName(funMenu.getName() + t.replace(postFlag, ""), titleLen);
 			} else {
 				catalog.setName(t.replace(postFlag, ""), titleLen);
 			}
@@ -1017,7 +1017,7 @@ public class UIBlockContext {
 		return items;
 	}
 
-	public IEntityDefinition getCatalogSystem() {
+	public IEntityModule getCatalogSystem() {
 		return catalogSystem;
 	}
 

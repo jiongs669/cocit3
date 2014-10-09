@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.kmjsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.impl.definition.EntityColumnGroup;
-import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
+import com.kmjsoft.cocit.entity.impl.module.EntityColumnGroup;
+import com.kmjsoft.cocit.entityengine.module.impl.BizEngine;
 import com.kmjsoft.cocit.entityengine.service.FieldGroupService;
 import com.kmjsoft.cocit.entityengine.service.FieldService;
 
@@ -78,7 +78,7 @@ public class DemsyEntityGroupService implements FieldGroupService {
 	@Override
 	public String getMode(String opCode) {
 
-		return ((BizEngine) Demsy.entityDefManager).parseMode(opCode, entity.getMode());
+		return ((BizEngine) Demsy.entityModuleManager).parseMode(opCode, entity.getMode());
 
 	}
 

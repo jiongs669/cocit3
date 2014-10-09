@@ -3,8 +3,8 @@ package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 
 import java.util.Date;
 
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
-import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
+import com.kmjsoft.cocit.entity.impl.module.EntityAction;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
 import com.kmjsoft.cocit.entityengine.service.OperationService;
 
 public class DemsyEntityOperationService implements OperationService {

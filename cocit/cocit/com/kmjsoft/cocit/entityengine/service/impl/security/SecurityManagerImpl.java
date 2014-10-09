@@ -150,136 +150,136 @@ public class SecurityManagerImpl implements SecurityManager {
 		List<String> funcRulesList;
 		String[] funcRules;
 		for (Permission entity : entityList) {
-			if (entity.isDisabled())
-				continue;
-
-			funcRulesList = Json.fromJson(entity.getFuncRule());
-			for (String funcRuleStr : funcRulesList) {
-				// 创建模块许可项
-				perm = new RuntimePermission();
-
-				/*
-				 * 设置基本信息
-				 */
-				perm.expiredFrom = entity.getExpiredFrom();
-				perm.expiredTo = entity.getExpiredTo();
-				perm.denied = entity.isDenied();
-
-				/*
-				 * 用户实体表ID和用户过滤器
-				 */
-				str = entity.getUserType();
-				try {
-					perm.userTableID = Long.parseLong(str);
-				} catch (Throwable e) {
-					tmpTable = serviceFactory.getTable(str);
-					perm.userTableID = tmpTable.getID();
-				}
-
-				/*
-				 * 解析“用户群体”过滤器
-				 */
-				perm.userFilter = CndExpr.make(entity.getUserRule());
-
-				//
-				funcRules = StringUtil.toArray(funcRuleStr, ":");
-
-				/*
-				 * 解析功能权限
-				 */
-				// 解析模块
-				if (funcRules.length > 0)
-					str = funcRules[0];
-				else
-					str = "";
-
-				if (StringUtil.isNil(str)) {
-					perm.module = "";
-				} else if (str.charAt(0) == '*') {
-					perm.module = "*";
-				} else {
-					// 解析模块ID
-					try {
-						perm.module = "" + Long.parseLong(str);
-					} catch (Throwable e) {
-						ModuleService module = serviceFactory.getModule(str);
-						if (module == null)
-							perm.module = "";
-						else
-							perm.module = "" + module.getID();
-					}
-				}
-
-				// 解析实体表
-				if (funcRules.length > 1)
-					str = funcRules[1];
-				else
-					str = "";
-
-				if (StringUtil.isNil(str) || str.charAt(0) == '*') {
-					if (StringUtil.isNil(perm.module) || perm.module.charAt(0) == '*') {
-						perm.table = str;
-					} else {
-						// 通过模块查找绑定的“实体表”
-						ModuleService module = serviceFactory.getModule(Long.parseLong(perm.module));
-						TableService table = module.getTable();
-						if (table != null)
-							perm.table = "" + table.getID();
-						else
-							perm.table = "";
-					}
-				} else {
-					// 解析实体表ID
-					try {
-						perm.table = "" + Long.parseLong(str);
-					} catch (Throwable e) {
-						TableService table = serviceFactory.getTable(str);
-						if (table != null)
-							perm.table = "" + table.getID();
-						else
-							perm.table = "";
-					}
-				}
-
-				// 授权必须指定“模块”或“实体表/报表/流程”
-				if (StringUtil.isNil(perm.module) || StringUtil.isNil(perm.table)) {
-					continue;
-				}
-
-				// 解析表操作
-				if (funcRules.length > 2)
-					str = funcRules[2];
-				else
-					str = "";
-				perm.opModes = StringUtil.toList(str, ",");
-
-				/*
-				 * 解析数据权限
-				 */
-				perm.dataFilter = CndExpr.make(entity.getDataRule());
-
-				/*
-				 * 缓存权限条目
-				 */
-				// 加入模块权限缓存
-				if (!StringUtil.isNil(perm.module)) {
-					runtimePermissions = this.permissionsModuleMap.get(perm.module);
-					if (runtimePermissions == null) {
-						runtimePermissions = new ArrayList();
-						permissionsModuleMap.put(perm.module, runtimePermissions);
-					}
-					runtimePermissions.add(perm);
-				}
-				// 加入表权限缓存
-				if (!StringUtil.isNil(perm.table)) {
-					runtimePermissions = this.permissionsTableMap.get(perm.table);
-					if (runtimePermissions == null) {
-						runtimePermissions = new ArrayList();
-						permissionsModuleMap.put(perm.table, runtimePermissions);
-					}
-					runtimePermissions.add(perm);
-				}
-			}
+			// if (entity.isDisabled())
+			// continue;
+			//
+			// funcRulesList = Json.fromJson(entity.getFuncRule());
+			// for (String funcRuleStr : funcRulesList) {
+			// // 创建模块许可项
+			// perm = new RuntimePermission();
+			//
+			// /*
+			// * 设置基本信息
+			// */
+			// perm.expiredFrom = entity.getExpiredFrom();
+			// perm.expiredTo = entity.getExpiredTo();
+			// perm.denied = entity.isDenied();
+			//
+			// /*
+			// * 用户实体表ID和用户过滤器
+			// */
+			// str = entity.getUserType();
+			// try {
+			// perm.userTableID = Long.parseLong(str);
+			// } catch (Throwable e) {
+			// tmpTable = serviceFactory.getTable(str);
+			// perm.userTableID = tmpTable.getID();
+			// }
+			//
+			// /*
+			// * 解析“用户群体”过滤器
+			// */
+			// perm.userFilter = CndExpr.make(entity.getUserRule());
+			//
+			// //
+			// funcRules = StringUtil.toArray(funcRuleStr, ":");
+			//
+			// /*
+			// * 解析功能权限
+			// */
+			// // 解析模块
+			// if (funcRules.length > 0)
+			// str = funcRules[0];
+			// else
+			// str = "";
+			//
+			// if (StringUtil.isNil(str)) {
+			// perm.module = "";
+			// } else if (str.charAt(0) == '*') {
+			// perm.module = "*";
+			// } else {
+			// // 解析模块ID
+			// try {
+			// perm.module = "" + Long.parseLong(str);
+			// } catch (Throwable e) {
+			// ModuleService module = serviceFactory.getModule(str);
+			// if (module == null)
+			// perm.module = "";
+			// else
+			// perm.module = "" + module.getID();
+			// }
+			// }
+			//
+			// // 解析实体表
+			// if (funcRules.length > 1)
+			// str = funcRules[1];
+			// else
+			// str = "";
+			//
+			// if (StringUtil.isNil(str) || str.charAt(0) == '*') {
+			// if (StringUtil.isNil(perm.module) || perm.module.charAt(0) == '*') {
+			// perm.table = str;
+			// } else {
+			// // 通过模块查找绑定的“实体表”
+			// ModuleService module = serviceFactory.getModule(Long.parseLong(perm.module));
+			// TableService table = module.getTable();
+			// if (table != null)
+			// perm.table = "" + table.getID();
+			// else
+			// perm.table = "";
+			// }
+			// } else {
+			// // 解析实体表ID
+			// try {
+			// perm.table = "" + Long.parseLong(str);
+			// } catch (Throwable e) {
+			// TableService table = serviceFactory.getTable(str);
+			// if (table != null)
+			// perm.table = "" + table.getID();
+			// else
+			// perm.table = "";
+			// }
+			// }
+			//
+			// // 授权必须指定“模块”或“实体表/报表/流程”
+			// if (StringUtil.isNil(perm.module) || StringUtil.isNil(perm.table)) {
+			// continue;
+			// }
+			//
+			// // 解析表操作
+			// if (funcRules.length > 2)
+			// str = funcRules[2];
+			// else
+			// str = "";
+			// perm.opModes = StringUtil.toList(str, ",");
+			//
+			// /*
+			// * 解析数据权限
+			// */
+			// perm.dataFilter = CndExpr.make(entity.getDataRule());
+			//
+			// /*
+			// * 缓存权限条目
+			// */
+			// // 加入模块权限缓存
+			// if (!StringUtil.isNil(perm.module)) {
+			// runtimePermissions = this.permissionsModuleMap.get(perm.module);
+			// if (runtimePermissions == null) {
+			// runtimePermissions = new ArrayList();
+			// permissionsModuleMap.put(perm.module, runtimePermissions);
+			// }
+			// runtimePermissions.add(perm);
+			// }
+			// // 加入表权限缓存
+			// if (!StringUtil.isNil(perm.table)) {
+			// runtimePermissions = this.permissionsTableMap.get(perm.table);
+			// if (runtimePermissions == null) {
+			// runtimePermissions = new ArrayList();
+			// permissionsModuleMap.put(perm.table, runtimePermissions);
+			// }
+			// runtimePermissions.add(perm);
+			// }
+			// }
 		}
 
 	}

@@ -2,7 +2,7 @@ package com.kmjsoft.cocit.entityengine.service;
 
 import java.util.List;
 
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 
 /**
  * 模块服务类：服务对象将为模块提供一对一的服务。
@@ -41,7 +41,7 @@ import com.kmjsoft.cocit.entity.security.IModule;
  * 
  * @param <T>
  */
-public interface ModuleService extends EntityService<IModule> {
+public interface ModuleService extends EntityService<IFunMenu> {
 	int getType();
 
 	/**
@@ -76,5 +76,5 @@ public interface ModuleService extends EntityService<IModule> {
 	 */
 	List<ModuleService> getChildrenModules();
 
-	IModule getEntity();
+	IFunMenu getEntity();
 }

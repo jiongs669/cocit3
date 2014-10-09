@@ -4,7 +4,7 @@ public interface EntityConst {
 	/*
 	 * 实体属性(字段)名称
 	 */
-	static final String F_SOFT_ID = "softID";
+	static final String F_TENANT_OWNER_GUID = "tenantOwnerGuid";
 
 	static final String F_TYPE = "type";
 
@@ -12,7 +12,7 @@ public interface EntityConst {
 
 	static final String F_ID = "id";
 
-	static final String F_GUID = "dataGuid";
+	static final String F_DATA_GUID = "dataGuid";
 
 	static final String F_CREATED = "createdDate";
 

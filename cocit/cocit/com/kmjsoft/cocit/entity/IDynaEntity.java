@@ -7,7 +7,7 @@ import java.util.Properties;
  * 
  * @author yongshan.ji
  */
-public interface IDynaEntity extends IDataEntity {
+public interface IDynaEntity {
 
 	Object get(String extField);
 

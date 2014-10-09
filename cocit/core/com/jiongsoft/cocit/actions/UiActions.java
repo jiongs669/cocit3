@@ -1,8 +1,8 @@
 package com.jiongsoft.cocit.actions;
 
 import static com.jiongsoft.cocit.mvc.MvcConst.VW_BIZ;
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
-import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
+import static com.kmjsoft.cocit.Demsy.funMenuManager;
 import static com.kmjsoft.cocit.Demsy.security;
 import static com.kmjsoft.cocit.Demsy.uIEngine;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_UIUDF_PAGE;
@@ -27,8 +27,8 @@ import com.jiongsoft.cocit.mvc.ui.model.UIBlockViewModel;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBlockView;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
 import com.kmjsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entity.web.IWebContent;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
 import com.kmjsoft.cocit.entity.webdef.IPageBlock;
@@ -97,13 +97,13 @@ public class UiActions extends ModuleActions {
 		} catch (Throwable e) {
 		}
 
-		IModule pathModule = null;
+		IFunMenu pathModule = null;
 		Object pathData = null;
 		if (mid != null && mid > 0) {
 			if (did != null && did >= 0) {
-				pathModule = moduleManager.getModule(mid);
-				IEntityDefinition pathSystem = moduleManager.getSystem(pathModule);
-				pathData = Demsy.orm().load(entityDefManager.getType(pathSystem), Expr.eq(F_ID, did));
+				pathModule = funMenuManager.getModule(mid);
+				IEntityModule pathSystem = funMenuManager.getSystem(pathModule);
+				pathData = Demsy.orm().load(entityModuleManager.getType(pathSystem), Expr.eq(F_ID, did));
 			}
 		}
 		UIBlockViewModel block = uIEngine.makeBlockView(uIEngine.loadPageBlock(Long.parseLong(blockID)), mid, did, pathModule, pathData);
@@ -192,29 +192,29 @@ public class UiActions extends ModuleActions {
 		pageView.set("loadPageUrl", MvcUtil.contextPath(URL_ADMIN_UI, ""));
 		pageView.set("loadUilibUrl", MvcUtil.contextPath(URL_ADMIN_UILIB, ""));
 
-		long pageMdl = moduleManager.getModule(me.getTenant(), entityDefManager.getSystem(BIZSYS_UIUDF_PAGE)).getId();
+		long pageMdl = funMenuManager.getModule(me.getTenant(), entityModuleManager.getSystem(BIZSYS_UIUDF_PAGE)).getId();
 		pageView.set("editPageUrl", MvcUtil.contextPath(URL_BZFORM_EDIT, pageMdl + ":", "e:"));
 		pageView.set("edit1PageUrl", MvcUtil.contextPath(URL_BZFORM_EDIT, pageMdl + ":", "e1:"));
 		pageView.set("savePageUrl", MvcUtil.contextPath(URL_BZ_SAVE, pageMdl, "e:"));
 
-		long blockMdl = moduleManager.getModule(me.getTenant(), entityDefManager.getSystem(BIZSYS_UIUDF_PAGE_BLOCK)).getId();
+		long blockMdl = funMenuManager.getModule(me.getTenant(), entityModuleManager.getSystem(BIZSYS_UIUDF_PAGE_BLOCK)).getId();
 		pageView.set("createUrl", MvcUtil.contextPath(URL_BZFORM_ADD, blockMdl + ":", "c1"));
 		pageView.set("editUrl", MvcUtil.contextPath(URL_BZFORM_EDIT, blockMdl + ":", "e:"));
 		pageView.set("edit1Url", MvcUtil.contextPath(URL_BZFORM_EDIT, blockMdl + ":", "e1:"));
 		pageView.set("saveUrl", MvcUtil.contextPath(URL_BZ_SAVE, blockMdl, "e:"));
 		pageView.set("loadUrl", MvcUtil.contextPath(URL_UI_BLOCK, ""));
 
-		long styleMdl = moduleManager.getModule(me.getTenant(), entityDefManager.getSystem(BIZSYS_UIUDF_STYLE)).getId();
+		long styleMdl = funMenuManager.getModule(me.getTenant(), entityModuleManager.getSystem(BIZSYS_UIUDF_STYLE)).getId();
 		pageView.set("createStyleUrl", MvcUtil.contextPath(URL_BZFORM_ADD, styleMdl + ":", "c"));
 		pageView.set("editStyleUrl", MvcUtil.contextPath(URL_BZFORM_EDIT, styleMdl + ":", "e:"));
 		pageView.set("saveStyleUrl", MvcUtil.contextPath(URL_BZ_SAVE, styleMdl, "e:"));
 		pageView.set("loadStyleUrl", MvcUtil.contextPath(URL_UI_STYLE, ""));
 
-		long webCataMdl = moduleManager.getModule(me.getTenant(), entityDefManager.getSystem(IWebContentCatalog.SYS_CODE)).getId();
+		long webCataMdl = funMenuManager.getModule(me.getTenant(), entityModuleManager.getSystem(IWebContentCatalog.SYS_CODE)).getId();
 		pageView.set("createWebCataUrl", MvcUtil.contextPath(URL_BZFORM_ADD, webCataMdl + ":", "c"));
 		pageView.set("saveWebCataUrl", MvcUtil.contextPath(URL_BZ_SAVE, webCataMdl, "e:"));
 
-		long webContMdl = moduleManager.getModule(me.getTenant(), entityDefManager.getSystem(IWebContent.SYS_CODE)).getId();
+		long webContMdl = funMenuManager.getModule(me.getTenant(), entityModuleManager.getSystem(IWebContent.SYS_CODE)).getId();
 		pageView.set("createWebContUrl", MvcUtil.contextPath(URL_BZFORM_ADD, webContMdl, "e"));
 
 		return pageView;

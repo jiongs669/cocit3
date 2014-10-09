@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.DataEntity;
 import com.kmjsoft.cocit.entity.IDataEntity;
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
-import com.kmjsoft.cocit.entityengine.definition.IEntityDefManager;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
+import com.kmjsoft.cocit.entityengine.module.IEntityModuleManager;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.util.ExcelUtil;
 
@@ -31,7 +31,7 @@ import com.kmjsoft.cocit.util.ExcelUtil;
 public class SystemExcel {
 	public final Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private IEntityDefManager entityDefManager;
+	private IEntityModuleManager entityModuleManager;
 
 	private Class systemClass;
 
@@ -41,16 +41,16 @@ public class SystemExcel {
 
 	private List<String[]> excelRows;
 
-	public SystemExcel(IEntityDefinition system, IEntityAction entityAction, File excel) throws FileNotFoundException, IOException, DemsyException {
-		this.entityDefManager = Demsy.entityDefManager;
-		systemClass = entityDefManager.getType(system);
+	public SystemExcel(IEntityModule system, IEntityAction entityAction, File excel) throws FileNotFoundException, IOException, DemsyException {
+		this.entityModuleManager = Demsy.entityModuleManager;
+		systemClass = entityModuleManager.getType(system);
 
 		// 处理自定义系统相关信息
-		List<IEntityColumn> datas = (List<IEntityColumn>) entityDefManager.getFieldsOfEnabled(system);
+		List<IEntityColumn> datas = (List<IEntityColumn>) entityModuleManager.getFieldsOfEnabled(system);
 		for (IEntityColumn data : datas) {
 			String name = data.getName();
 			boolean valid = !data.isDisabled();
-			String mode = entityDefManager.getMode(data, entityAction, false, "E");
+			String mode = entityModuleManager.getMode(data, entityAction, false, "E");
 			valid = valid && (mode.equals("E") || mode.equals("M"));
 
 			if (valid)
@@ -63,7 +63,7 @@ public class SystemExcel {
 				if (fields.get(fld.getName()) == null) {
 					continue;
 				}
-				sb.append(fld.getName()).append("：").append(entityDefManager.getPropName(fld));
+				sb.append(fld.getName()).append("：").append(entityModuleManager.getPropName(fld));
 				sb.append("\n");
 			}
 			log.info(sb.toString());
@@ -118,12 +118,12 @@ public class SystemExcel {
 		}
 	}
 
-	public SystemExcel(IEntityDefinition system, File excel) throws FileNotFoundException, IOException, DemsyException {
-		this.entityDefManager = Demsy.entityDefManager;
-		systemClass = entityDefManager.getType(system);
+	public SystemExcel(IEntityModule system, File excel) throws FileNotFoundException, IOException, DemsyException {
+		this.entityModuleManager = Demsy.entityModuleManager;
+		systemClass = entityModuleManager.getType(system);
 
 		// 处理自定义系统相关信息
-		List<IEntityColumn> datas = (List<IEntityColumn>) entityDefManager.getFieldsOfEnabled(system);
+		List<IEntityColumn> datas = (List<IEntityColumn>) entityModuleManager.getFieldsOfEnabled(system);
 		for (IEntityColumn data : datas) {
 			String name = data.getName();
 
@@ -136,7 +136,7 @@ public class SystemExcel {
 				if (fields.get(fld.getName()) == null) {
 					continue;
 				}
-				sb.append(fld.getName()).append("：").append(entityDefManager.getPropName(fld));
+				sb.append(fld.getName()).append("：").append(entityModuleManager.getPropName(fld));
 				sb.append("\n");
 			}
 			log.info(sb.toString());
@@ -180,10 +180,10 @@ public class SystemExcel {
 				}
 				try {
 					IEntityColumn fld = fields.get(excelHeads[i]);
-					String propName = entityDefManager.getPropName(fld);
+					String propName = entityModuleManager.getPropName(fld);
 					String propValue = row[i];
 
-					IEntityDefinition fkSystem = fld.getRefrenceSystem();
+					IEntityModule fkSystem = fld.getRefrenceSystem();
 					if (fkSystem != null) {
 						int dot = propName.indexOf(".");
 						if (dot < 0) {
@@ -209,7 +209,7 @@ public class SystemExcel {
 						}
 						Object fkValue = null;
 						if (!Str.isEmpty(propValue)) {
-							Class fkClass = entityDefManager.getType(fkSystem);
+							Class fkClass = entityModuleManager.getType(fkSystem);
 							fkValue = session.load(fkClass, Expr.eq(nextProp, propValue));
 							if (fkValue == null) {
 								// throw new DemsyException("Excel表中的第 " + colIndex + " 列【" + fld.getName() + "】是外键字段，但第 " + rowIndex + " 行【" + propValue + "】在【" + fkSystem.getName() + "】模块中不存在！");
@@ -222,7 +222,7 @@ public class SystemExcel {
 						/*
 						 * 解析字典字段
 						 */
-						Option[] options = entityDefManager.getOptions(fld);
+						Option[] options = entityModuleManager.getOptions(fld);
 						if (options != null && options.length > 0) {
 							for (Option option : options) {
 								if (option.getText().equals(propValue)) {
@@ -260,7 +260,7 @@ public class SystemExcel {
 		int colIndex = 0;
 		for (String[] row : excelRows) {
 			rowIndex++;
-			DataEntity data = (DataEntity) session.load(systemClass, Expr.eq(entityDefManager.getPropName(pkfld), row[0]));
+			DataEntity data = (DataEntity) session.load(systemClass, Expr.eq(entityModuleManager.getPropName(pkfld), row[0]));
 			if (data == null) {
 				data = (DataEntity) systemClass.newInstance();
 			}
@@ -268,10 +268,10 @@ public class SystemExcel {
 				colIndex = i + 1;
 				try {
 					IEntityColumn fld = fields.get(excelHeads[i]);
-					String propname = entityDefManager.getPropName(fld);
+					String propname = entityModuleManager.getPropName(fld);
 					String propvalue = row[i];
 
-					IEntityDefinition fksystem = fld.getRefrenceSystem();
+					IEntityModule fksystem = fld.getRefrenceSystem();
 					if (fksystem != null) {
 						int dot = propname.indexOf(".");
 						if (dot < 0) {
@@ -295,7 +295,7 @@ public class SystemExcel {
 						}
 						Object fkvalue = null;
 						if (!Str.isEmpty(propvalue)) {
-							fkvalue = session.load(entityDefManager.getType(fksystem), Expr.eq(nextprop, propvalue));
+							fkvalue = session.load(entityModuleManager.getType(fksystem), Expr.eq(nextprop, propvalue));
 							if (fkvalue == null) {
 								throw new DemsyException("Excel表中的第 " + colIndex + " 列【" + fld.getName() + "】是外键字段，但第 " + rowIndex + " 行【" + propvalue + "】在【" + fksystem.getName() + "】模块中不存在！");
 							}

@@ -110,10 +110,10 @@ public abstract class BaseConfig implements IConfig, IDynaEntity {
 		return properties;
 	}
 
-	@Override
-	public boolean is(byte index) {
-		return false;
-	}
+	// @Override
+	// public boolean is(byte index) {
+	// return false;
+	// }
 
 	protected void init() {
 		InputStream is = null;

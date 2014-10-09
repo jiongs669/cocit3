@@ -73,9 +73,9 @@ public class Permission extends TenantOwnerEntity implements IPermission {
 
 	protected String principalGuid;
 
-	protected String moduleGuid;
+	protected String funMenuGuid;
 
-	protected String moduleActionsRule;
+	protected String actionsRule;
 
 	protected String dataRowsRule;
 
@@ -103,20 +103,20 @@ public class Permission extends TenantOwnerEntity implements IPermission {
 		this.principalGuid = principalGuid;
 	}
 
-	public String getModuleGuid() {
-		return moduleGuid;
+	public String getFunMenuGuid() {
+		return funMenuGuid;
 	}
 
-	public void setModuleGuid(String moduleGuid) {
-		this.moduleGuid = moduleGuid;
+	public void setFunMenuGuid(String moduleGuid) {
+		this.funMenuGuid = moduleGuid;
 	}
 
-	public String getModuleActionsRule() {
-		return moduleActionsRule;
+	public String getActionsRule() {
+		return actionsRule;
 	}
 
-	public void setModuleActionsRule(String moduleActionsRule) {
-		this.moduleActionsRule = moduleActionsRule;
+	public void setActionsRule(String moduleActionsRule) {
+		this.actionsRule = moduleActionsRule;
 	}
 
 	public String getDataRowsRule() {

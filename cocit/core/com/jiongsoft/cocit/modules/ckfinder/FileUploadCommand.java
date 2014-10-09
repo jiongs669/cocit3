@@ -227,7 +227,7 @@ public class FileUploadCommand extends Command {
 	}
 
 	private void saveToDB(FileItem item, String folder) {
-		IUploadInfo info = (IUploadInfo) Mirror.me(Demsy.entityDefManager.getStaticType(EntityConst.BIZSYS_ADMIN_UPLOAD)).born();
+		IUploadInfo info = (IUploadInfo) Mirror.me(Demsy.entityModuleManager.getStaticType(EntityConst.BIZSYS_ADMIN_UPLOAD)).born();
 		Demsy me = Demsy.me();
 		if (me.getTenant() != null)
 			info.setTenantId(me.getTenant().getId());

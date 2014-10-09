@@ -363,7 +363,7 @@ public interface MvcConst {
 			if (soft == null || soft.getId() == null)
 				throw new DemsyException("非法软件编号");
 
-			String softCode = soft.getCode();
+			String softCode = soft.getDataGuid();
 			String softContextPath = softCode.replace('.', '_');
 
 			return "/" + softContextPath + uploadFolder;

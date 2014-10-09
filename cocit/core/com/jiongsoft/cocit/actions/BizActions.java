@@ -1,12 +1,12 @@
 package com.jiongsoft.cocit.actions;
 
 import static com.jiongsoft.cocit.mvc.MvcConst.VW_BIZ;
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
-import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
+import static com.kmjsoft.cocit.Demsy.funMenuManager;
 import static com.kmjsoft.cocit.Demsy.uIEngine;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ID;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ORDER_BY;
-import static com.kmjsoft.cocit.entity.EntityConst.F_SOFT_ID;
+import static com.kmjsoft.cocit.entity.EntityConst.F_TENANT_OWNER_GUID;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,10 +50,10 @@ import com.jiongsoft.cocit.mvc.ui.widget.UIBizSystem;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIToolbarMenu;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entityengine.manager.BizConst;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
 import com.kmjsoft.cocit.orm.ExtOrm;
@@ -150,7 +150,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 
 	public UIWidgetModel<UIBizModule, Object> tabs(final String moduleParam) throws DemsyException {
 		return (UIWidgetModel<UIBizModule, Object>) buildModel("TABS界面", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule masterModule, String pageID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu masterModule, String pageID, boolean ajaxData) throws DemsyException {
 				String idfld = getIdField(manager.getType());
 
 				UIBizModule mainUI = uIEngine.makeModuleView(masterModule, getGridColumns(), idfld);
@@ -161,14 +161,14 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 					mainUI.getMaster().setData(masterRoot);
 				} else {
 					if (mainUI.getNaviMenu() != null) {
-						Nodes naviData = entityDefManager.makeNaviNodes(moduleManager.getSystem(masterModule), idfld, false);
+						Nodes naviData = entityModuleManager.makeNaviNodes(funMenuManager.getSystem(masterModule), idfld, false);
 						if (naviData.getSize() > 0) {
 							mainUI.getNaviMenu().setData(naviData);
 						} else {
 							mainUI.setNaviMenu(null);
 						}
 					}
-					mainUI.getToolbarMenu().setData(moduleManager.makeNodesByAction(masterModule));
+					mainUI.getToolbarMenu().setData(funMenuManager.makeNodesByAction(masterModule));
 				}
 
 				// 主系统和从系统分属不同的TABS中
@@ -203,7 +203,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	@At(URL_BZSYS_COMB_EXPR)
 	public UIWidgetModel<UIBizSystem, Object> systemCombExpr(String moduleParam, final String dataID) throws DemsyException {
 		return (UIWidgetModel<UIBizSystem, Object>) buildModel("系统条件引用", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule mdl, String comboboxFieldID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu mdl, String comboboxFieldID, boolean ajaxData) throws DemsyException {
 				String idfld = getIdField(manager.getType());
 
 				UIBizSystem modelUI = uIEngine.makeSystemView(mdl, getGridColumns(), idfld);
@@ -213,7 +213,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 				grid.setSearch(false);
 				grid.setRowList(null);
 
-				Nodes naviData = entityDefManager.makeNaviNodes(moduleManager.getSystem(mdl), idfld, false);
+				Nodes naviData = entityModuleManager.makeNaviNodes(funMenuManager.getSystem(mdl), idfld, false);
 				if (naviData.getSize() > 0) {
 					modelUI.getNaviMenu().setData(naviData);
 				} else {
@@ -258,7 +258,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	@At(URL_BZSYS_COMB_FK)
 	public UIWidgetModel<UIBizSystem, Object> systemCombFK(String moduleParam, final String dataID) throws DemsyException {
 		return (UIWidgetModel<UIBizSystem, Object>) buildModel("系统外键引用", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule mdl, String comboboxFieldID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu mdl, String comboboxFieldID, boolean ajaxData) throws DemsyException {
 				String idfld = getIdField(manager.getType());
 
 				UIBizSystem modelUI = uIEngine.makeSystemView(mdl, getGridColumns(), idfld);
@@ -268,7 +268,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 				grid.setSearch(false);
 				grid.setRowList(null);
 
-				Nodes naviData = entityDefManager.makeNaviNodes(moduleManager.getSystem(mdl), idfld, false);
+				Nodes naviData = entityModuleManager.makeNaviNodes(funMenuManager.getSystem(mdl), idfld, false);
 				if (naviData.getSize() > 0) {
 					modelUI.getNaviMenu().setData(naviData);
 				} else {
@@ -305,18 +305,18 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	@At(URL_BZSYS)
 	public UIWidgetModel<UIBizSystem, Object> system(String moduleParam) throws DemsyException {
 		return (UIWidgetModel<UIBizSystem, Object>) buildModel("系统主界面", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule mdl, String pageID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu mdl, String pageID, boolean ajaxData) throws DemsyException {
 				String idfld = getIdField(manager.getType());
 
 				UIBizSystem modelUI = uIEngine.makeSystemView(mdl, getGridColumns(), idfld);
 
-				Nodes naviData = entityDefManager.makeNaviNodes(moduleManager.getSystem(mdl), idfld, false);
+				Nodes naviData = entityModuleManager.makeNaviNodes(funMenuManager.getSystem(mdl), idfld, false);
 				if (naviData.getSize() > 0) {
 					modelUI.getNaviMenu().setData(naviData);
 				} else {
 					modelUI.setNaviMenu(null);
 				}
-				modelUI.getToolbarMenu().setData(moduleManager.makeNodesByAction(mdl));
+				modelUI.getToolbarMenu().setData(funMenuManager.makeNodesByAction(mdl));
 
 				String queryString = MvcUtil.requestQueryJsonString(Demsy.me().request());
 				if (!Str.isEmpty(queryString)) {
@@ -374,13 +374,13 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	@At(URL_BZGRID)
 	public UIBizGridModel grid(String moduleParam) throws DemsyException {
 		return (UIBizGridModel) buildModel("数据网格", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule mdl, String pageID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu mdl, String pageID, boolean ajaxData) throws DemsyException {
 				String idfld = getIdField(manager.getType());
 
 				UIBizGridModel dataModel = uIEngine.makeSystemGridView(mdl, getGridColumns(), idfld, false).setDacorator(pageID).setAjaxData(ajaxData);
 
 				if (ajaxData) {
-					Class bizClass = entityDefManager.getType(moduleManager.getSystem(mdl));
+					Class bizClass = entityModuleManager.getType(funMenuManager.getSystem(mdl));
 					log.tracef("获取业务类 [%s]", bizClass);
 
 					Pager pager = new Pager(bizClass);
@@ -411,13 +411,13 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	@At(URL_BZNAVI)
 	public UIBizNaviModel navi(String moduleParam) throws DemsyException {
 		return (UIBizNaviModel) buildModel("导航菜单", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule mdl, String pageID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu mdl, String pageID, boolean ajaxData) throws DemsyException {
 				String idfld = getIdField(manager.getType());
 
 				UIBizNaviModel dataModel = uIEngine.makeSystemNaviView(mdl);
 				if (dataModel != null) {
 					dataModel.setDacorator(pageID).setAjaxData(ajaxData);
-					dataModel.setData(entityDefManager.makeNaviNodes(moduleManager.getSystem(mdl), idfld, true));
+					dataModel.setData(entityModuleManager.makeNaviNodes(funMenuManager.getSystem(mdl), idfld, true));
 				}
 
 				return dataModel;
@@ -434,10 +434,10 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	@At(URL_BZMENU)
 	public UIBizMenuModel<UIToolbarMenu> tmenu(String moduleParam) throws DemsyException {
 		return (UIBizMenuModel<UIToolbarMenu>) buildModel("工具栏菜单", moduleParam, new WidgetBuilder() {
-			public UIWidgetModel build(IBizManager manager, IModule mdl, String pageID, boolean ajaxData) throws DemsyException {
+			public UIWidgetModel build(IBizManager manager, IFunMenu mdl, String pageID, boolean ajaxData) throws DemsyException {
 				UIBizMenuModel<UIToolbarMenu> dataModel = uIEngine.makeSystemActionView(mdl).setDacorator(pageID).setAjaxData(ajaxData);
 
-				dataModel.setData(moduleManager.makeNodesByAction(mdl));
+				dataModel.setData(funMenuManager.makeNodesByAction(mdl));
 
 				return dataModel;
 			}
@@ -459,12 +459,12 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			String dataID = aParams[1];
 
 			IBizManager bizManager = getBizManager(moduleID);
-			IModule mdl = bizManager.getModule();
+			IFunMenu mdl = bizManager.getModule();
 
-			IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+			IEntityAction entityAction = funMenuManager.getAction(mdl, actionID);
 			log.tracef("获取模块操作 [actionMode=%s]", actionID);
 
-			Class bizClass = entityDefManager.getType(moduleManager.getSystem(mdl));
+			Class bizClass = entityModuleManager.getType(funMenuManager.getSystem(mdl));
 			log.tracef("获取业务类 [%s]", bizClass);
 
 			Mirror mirror = Mirror.me(bizClass);
@@ -495,7 +495,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			}
 			if (dataNode != null)
 				data = dataNode.inject(mirror, data, null);
-			entityDefManager.loadFieldValue(data, moduleManager.getSystem(mdl));
+			entityModuleManager.loadFieldValue(data, funMenuManager.getSystem(mdl));
 
 			log.tracef("加载并注入业务数据 [dataID=%s]", dataID);
 
@@ -573,12 +573,12 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			String dataID = aParams[1];
 
 			IBizManager bizManager = getBizManager(moduleID);
-			IModule mdl = bizManager.getModule();
+			IFunMenu mdl = bizManager.getModule();
 
-			IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+			IEntityAction entityAction = funMenuManager.getAction(mdl, actionID);
 			if (entityAction == null) {
 				try {
-					entityAction = moduleManager.getAction(mdl, Long.parseLong(actionID));
+					entityAction = funMenuManager.getAction(mdl, Long.parseLong(actionID));
 				} catch (Throwable e) {
 					log.warnf("获取模块操作出错! %s", e);
 				}
@@ -592,15 +592,15 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			}
 			log.tracef("获取模块操作 [actionID=%s]", actionID);
 
-			Class bizClass = entityDefManager.getType(moduleManager.getSystem(mdl));
+			Class bizClass = entityModuleManager.getType(funMenuManager.getSystem(mdl));
 			log.tracef("获取业务类 [%s]", bizClass);
 
 			Mirror mirror = Mirror.me(bizClass);
 			Object data = dataNode.inject(mirror, null, null);
 
-			Map<String, String> fieldMode = entityDefManager.getMode(bizManager.getSystem(), entityAction, data);
+			Map<String, String> fieldMode = entityModuleManager.getMode(bizManager.getSystem(), entityAction, data);
 
-			Long softID = (Long) Obj.getValue(data, F_SOFT_ID);
+			Long softID = (Long) Obj.getValue(data, F_TENANT_OWNER_GUID);
 			List list = null;
 			switch (entityAction.getTypeCode()) {
 			case BizConst.TYPE_BZ_DEL:
@@ -639,33 +639,33 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			}
 			if (list == null || list.size() == 0) {
 				data = dataNode.inject(mirror, null, fieldMode);
-				entityDefManager.loadFieldValue(data, moduleManager.getSystem(mdl));
+				entityModuleManager.loadFieldValue(data, funMenuManager.getSystem(mdl));
 
-				entityDefManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
+				entityModuleManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
 
-				if (Cls.hasField(bizClass, F_SOFT_ID) && (softID == null || softID <= 0)) {
-					Obj.setValue(data, F_SOFT_ID, mdl.getTenantOwnerGuid());
+				if (Cls.hasField(bizClass, F_TENANT_OWNER_GUID) && (softID == null || softID <= 0)) {
+					Obj.setValue(data, F_TENANT_OWNER_GUID, mdl.getTenantOwnerGuid());
 				}
 
 				executor.exec(bizManager, data, entityAction);
 			} else {
 				data = null;
-				if (Cls.hasField(bizClass, F_SOFT_ID) && (softID == null || softID <= 0)) {
+				if (Cls.hasField(bizClass, F_TENANT_OWNER_GUID) && (softID == null || softID <= 0)) {
 					if (list.size() == 1) {
 						data = list.get(0);
 						dataNode.inject(mirror, data, fieldMode);
 
-						entityDefManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
+						entityModuleManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
 
-						Obj.setValue(data, F_SOFT_ID, mdl.getTenantOwnerGuid());
+						Obj.setValue(data, F_TENANT_OWNER_GUID, mdl.getTenantOwnerGuid());
 						executor.exec(bizManager, data, entityAction);
 					} else {
 						for (Object ele : list) {
 							dataNode.inject(mirror, ele, fieldMode);
 
-							entityDefManager.validate(bizManager.getSystem(), entityAction, ele, fieldMode);
+							entityModuleManager.validate(bizManager.getSystem(), entityAction, ele, fieldMode);
 
-							Obj.setValue(ele, F_SOFT_ID, mdl.getTenantOwnerGuid());
+							Obj.setValue(ele, F_TENANT_OWNER_GUID, mdl.getTenantOwnerGuid());
 						}
 						executor.exec(bizManager, list, entityAction);
 					}
@@ -674,14 +674,14 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 						data = list.get(0);
 						dataNode.inject(mirror, data, fieldMode);
 
-						entityDefManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
+						entityModuleManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
 
 						executor.exec(bizManager, data, entityAction);
 					} else {
 						for (Object ele : list) {
 							dataNode.inject(mirror, ele, fieldMode);
 
-							entityDefManager.validate(bizManager.getSystem(), entityAction, ele, fieldMode);
+							entityModuleManager.validate(bizManager.getSystem(), entityAction, ele, fieldMode);
 						}
 						executor.exec(bizManager, list, entityAction);
 					}
@@ -739,12 +739,12 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 				String actionID = aParams[0];
 
 				IBizManager bizManager = getBizManager(moduleID);
-				IModule mdl = bizManager.getModule();
+				IFunMenu mdl = bizManager.getModule();
 
-				IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+				IEntityAction entityAction = funMenuManager.getAction(mdl, actionID);
 				if (entityAction == null) {
 					try {
-						entityAction = moduleManager.getAction(mdl, Long.parseLong(actionID));
+						entityAction = funMenuManager.getAction(mdl, Long.parseLong(actionID));
 					} catch (Throwable e) {
 						log.warnf("获取模块操作出错! %s", e);
 					}
@@ -758,10 +758,10 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 				}
 				log.tracef("获取模块操作 [actionID=%s]", actionID);
 
-				Class bizClass = entityDefManager.getType(moduleManager.getSystem(mdl));
+				Class bizClass = entityModuleManager.getType(funMenuManager.getSystem(mdl));
 				log.tracef("获取业务类 [%s]", bizClass);
 
-				SystemExcel excel = new SystemExcel(bizManager.getSystem(), moduleManager.getAction(mdl, "c"), tmpfile.getFile());
+				SystemExcel excel = new SystemExcel(bizManager.getSystem(), funMenuManager.getAction(mdl, "c"), tmpfile.getFile());
 				excel.save();
 
 				info.append("从Excel导入数据成功！");
@@ -804,7 +804,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				File file = null;
 				try {
-					Map<String, IEntityColumn> fieldMap = entityDefManager.getFieldsMap(manager.getSystem());
+					Map<String, IEntityColumn> fieldMap = entityModuleManager.getFieldsMap(manager.getSystem());
 					Demsy ctx = Demsy.me();
 					String filename = Demsy.appconfig.getTempDir() + File.separator + "exportToXls" + File.separator
 					// + entityManager.getSystem().getName() + "("
@@ -874,12 +874,12 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			String dataID = aParams[1];
 
 			IBizManager bizManager = getBizManager(moduleID);
-			IModule mdl = bizManager.getModule();
+			IFunMenu mdl = bizManager.getModule();
 
-			IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+			IEntityAction entityAction = funMenuManager.getAction(mdl, actionID);
 			if (entityAction == null) {
 				try {
-					entityAction = moduleManager.getAction(mdl, Long.parseLong(actionID));
+					entityAction = funMenuManager.getAction(mdl, Long.parseLong(actionID));
 				} catch (Throwable e) {
 					log.warnf("获取模块操作出错! %s", e);
 				}
@@ -893,7 +893,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			}
 			log.tracef("获取模块操作 [actionID=%s]", actionID);
 
-			Class bizClass = entityDefManager.getType(moduleManager.getSystem(mdl));
+			Class bizClass = entityModuleManager.getType(funMenuManager.getSystem(mdl));
 			log.tracef("获取业务类 [%s]", bizClass);
 
 			List list = null;
@@ -990,13 +990,13 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 						list.add(obj);
 					}
 
-					IEntityDefinition sys = manager.getSystem();
-					List<? extends IEntityColumn> exportFlds = entityDefManager.getFieldsOfExport(sys);
+					IEntityModule sys = manager.getSystem();
+					List<? extends IEntityColumn> exportFlds = entityModuleManager.getFieldsOfExport(sys);
 					for (IEntityColumn fk : exportFlds) {
-						IEntityDefinition slaveSys = fk.getSystem();
-						if (entityDefManager.isSlave(slaveSys)) {
-							Class slaveType = entityDefManager.getType(slaveSys);
-							String prop = entityDefManager.getPropName(fk);
+						IEntityModule slaveSys = fk.getSystem();
+						if (entityModuleManager.isSlave(slaveSys)) {
+							Class slaveType = entityModuleManager.getType(slaveSys);
+							String prop = entityModuleManager.getPropName(fk);
 							for (Object ele : list) {
 								manager.orm().deleteMore(slaveType, Expr.eq(prop, ele));
 							}
@@ -1279,6 +1279,6 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	}
 
 	private interface WidgetBuilder {
-		UIWidgetModel build(IBizManager manager, IModule mdl, String pageID, boolean ajaxData) throws DemsyException;
+		UIWidgetModel build(IBizManager manager, IFunMenu mdl, String pageID, boolean ajaxData) throws DemsyException;
 	}
 }

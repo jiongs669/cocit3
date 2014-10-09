@@ -1,7 +1,7 @@
 // $codepro.audit.disable unnecessaryCast
 package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 
-import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.funMenuManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,9 +15,9 @@ import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.config.ITenantPreference;
 import com.kmjsoft.cocit.entity.impl.config.Dic;
 import com.kmjsoft.cocit.entity.impl.config.DicCategory;
-import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
-import com.kmjsoft.cocit.entity.impl.definition.EntityColumn;
-import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
+import com.kmjsoft.cocit.entity.impl.module.EntityColumn;
+import com.kmjsoft.cocit.entity.impl.module.EntityModule;
+import com.kmjsoft.cocit.entityengine.module.impl.BizEngine;
 import com.kmjsoft.cocit.entityengine.service.FieldService;
 import com.kmjsoft.cocit.entityengine.service.TableService;
 import com.kmjsoft.cocit.util.KeyValue;
@@ -98,7 +98,7 @@ public class DemsyEntityFieldService implements FieldService {
 
 	@Override
 	public byte getType() {
-		BizEngine bizEngine = (BizEngine) Demsy.entityDefManager;
+		BizEngine bizEngine = (BizEngine) Demsy.entityModuleManager;
 		if (bizEngine.isBoolean(entity))
 			return TYPE_BOOL;
 		if (bizEngine.isDate(entity))
@@ -210,7 +210,7 @@ public class DemsyEntityFieldService implements FieldService {
 			}
 		} else if (str.charAt(0) == '{') {
 			String key = str.substring(1, str.length() - 1);
-			ITenantPreference config = moduleManager.getSoftConfig(key);
+			ITenantPreference config = funMenuManager.getSoftConfig(key);
 			if (config != null && !StringUtil.isNil(config.getValue())) {
 				return convertStringToOptions(config.getValue());
 			}
@@ -253,7 +253,7 @@ public class DemsyEntityFieldService implements FieldService {
 
 	@Override
 	public TableService getFkEntityTable() {
-		EntityDefinition sys = entity.getRefrenceSystem();
+		EntityModule sys = entity.getRefrenceSystem();
 		if (sys == null)
 			return null;
 

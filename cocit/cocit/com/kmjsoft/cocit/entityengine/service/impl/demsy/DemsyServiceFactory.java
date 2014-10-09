@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.kmjsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
-import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
-import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
-import com.kmjsoft.cocit.entity.impl.security.Module;
+import com.kmjsoft.cocit.entity.impl.module.EntityAction;
+import com.kmjsoft.cocit.entity.impl.module.EntityModule;
+import com.kmjsoft.cocit.entity.impl.security.FunMenu;
 import com.kmjsoft.cocit.entity.impl.security.Tenant;
-import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
-import com.kmjsoft.cocit.entityengine.definition.impl.ModuleEngine;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
+import com.kmjsoft.cocit.entityengine.module.impl.BizEngine;
+import com.kmjsoft.cocit.entityengine.module.impl.ModuleEngine;
 import com.kmjsoft.cocit.entityengine.service.ModuleService;
 import com.kmjsoft.cocit.entityengine.service.OperationService;
 import com.kmjsoft.cocit.entityengine.service.ServiceFactory;
@@ -35,8 +35,8 @@ public class DemsyServiceFactory implements ServiceFactory {
 	private Map<String, SoftService> cacheSoft;
 
 	public DemsyServiceFactory() {
-		moduleEngine = (ModuleEngine) Demsy.moduleManager;
-		bizEngine = (BizEngine) Demsy.entityDefManager;
+		moduleEngine = (ModuleEngine) Demsy.funMenuManager;
+		bizEngine = (BizEngine) Demsy.entityModuleManager;
 		cacheSoft = new Hashtable();
 	}
 
@@ -60,7 +60,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 	}
 
-	private DemsyEntityTableService makeBizTable(EntityDefinition system) {
+	private DemsyEntityTableService makeBizTable(EntityModule system) {
 		DemsyEntityTableService ret = new DemsyEntityTableService(system);
 
 		return ret;
@@ -68,26 +68,26 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 	@Override
 	public ModuleService getModule(Serializable moduleID) {
-		Module module;
+		FunMenu funMenu;
 		if (moduleID instanceof Long)
-			module = (Module) moduleEngine.getModule((Long) moduleID);
+			funMenu = (FunMenu) moduleEngine.getModule((Long) moduleID);
 		else
-			module = (Module) moduleEngine.getModule(moduleID.toString());
+			funMenu = (FunMenu) moduleEngine.getModule(moduleID.toString());
 
-		if (module == null)
+		if (funMenu == null)
 			return null;
 
-		EntityDefinition mainSystem = (EntityDefinition) moduleEngine.getSystem(module);
+		EntityModule mainSystem = (EntityModule) moduleEngine.getSystem(funMenu);
 
 		//
 		TableService mainDataTable = this.makeBizTable(mainSystem);
-		DemsyModuleService ret = new DemsyModuleService(module, mainDataTable);
+		DemsyModuleService ret = new DemsyModuleService(funMenu, mainDataTable);
 
 		//
 		List<TableService> childrenDataTables = new ArrayList();
 		List<IEntityColumn> fkFields = bizEngine.getFieldsOfSlave(mainSystem);
 		for (IEntityColumn fkField : fkFields) {
-			EntityDefinition fkSystem = (EntityDefinition) fkField.getSystem();
+			EntityModule fkSystem = (EntityModule) fkField.getSystem();
 
 			DemsyEntityTableService bizTable = this.makeBizTable(fkSystem);
 			childrenDataTables.add(bizTable);
@@ -106,14 +106,14 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 	@Override
 	public TableService getTable(Serializable tableID) {
-		EntityDefinition system;
+		EntityModule system;
 		if (tableID == null)
 			return null;
 
 		if (tableID instanceof Long)
-			system = (EntityDefinition) bizEngine.getSystem((Long) tableID);
+			system = (EntityModule) bizEngine.getSystem((Long) tableID);
 		else
-			system = (EntityDefinition) bizEngine.getSystem(tableID.toString());
+			system = (EntityModule) bizEngine.getSystem(tableID.toString());
 
 		// TODO:应通过模块表达式来解析数据表对象，目前暂时不支持模块对数据表的引用表达式。
 
@@ -137,7 +137,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 		if (opMode == null)
 			return null;
 
-		EntityAction action = (EntityAction) moduleEngine.getAction((IModule) module.getEntity(), opMode);
+		EntityAction action = (EntityAction) moduleEngine.getAction((IFunMenu) module.getEntity(), opMode);
 		if (action == null)
 			return null;
 
@@ -146,9 +146,9 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 	@Override
 	public TableService getTable(ModuleService moduleService) {
-		Module module = (Module) moduleService.getEntity();
+		FunMenu funMenu = (FunMenu) moduleService.getEntity();
 
-		EntityDefinition system = (EntityDefinition) moduleEngine.getSystem(module);
+		EntityModule system = (EntityModule) moduleEngine.getSystem(funMenu);
 
 		return this.makeBizTable(system);
 	}

@@ -2,7 +2,7 @@ package com.jiongsoft.cocit.security;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
@@ -36,7 +36,7 @@ public interface ISecurity {
 	 * @param igloreDynamic
 	 * @return
 	 */
-	boolean allowVisitModule(IModule module, boolean igloreDynamic);
+	boolean allowVisitModule(IFunMenu funMenu, boolean igloreDynamic);
 
 	/**
 	 * 检查当前登录用户是否具有指定的角色权限
@@ -127,7 +127,7 @@ public interface ISecurity {
 	 * @param fkField
 	 * @return
 	 */
-	CndExpr getFkDataFilter(IModule module, String fkField);
+	CndExpr getFkDataFilter(IFunMenu funMenu, String fkField);
 
 	/**
 	 * 获取模块数据过滤器：用来过滤模块GRID中的数据。即表示当前登录用户只能访问权限范围内的数据。
@@ -135,7 +135,7 @@ public interface ISecurity {
 	 * @param moduleID
 	 * @return
 	 */
-	CndExpr getDataFilter(IModule module);
+	CndExpr getDataFilter(IFunMenu funMenu);
 
 	/**
 	 * 动态授权指定角色的用户可以访问的哪些模块操作。

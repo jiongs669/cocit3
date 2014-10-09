@@ -166,8 +166,8 @@ public class UIBlockDataModel implements IDynaEntity {
 		return dynaProps;
 	}
 
-	@Override
-	public boolean is(byte index) {
-		return false;
-	}
+	// @Override
+	// public boolean is(byte index) {
+	// return false;
+	// }
 }

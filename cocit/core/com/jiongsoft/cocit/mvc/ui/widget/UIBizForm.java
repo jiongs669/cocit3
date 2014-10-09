@@ -8,7 +8,7 @@ import java.util.Map;
 import com.jiongsoft.cocit.mvc.ui.model.UIWidgetModel;
 import com.jiongsoft.cocit.mvc.ui.widget.field.UIGroupFld;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIButtonMenu;
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
 
 /**
  * 业务表单：是一个业务窗体，用来表示业务窗体为一个表单。

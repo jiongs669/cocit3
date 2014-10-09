@@ -2,7 +2,7 @@ package com.kmjsoft.cocit.entityengine.service;
 
 import java.util.Map;
 
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
 import com.kmjsoft.cocit.util.KeyValue;
 
 /**

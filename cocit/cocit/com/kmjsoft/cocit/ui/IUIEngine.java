@@ -5,7 +5,6 @@ import java.util.List;
 import com.jiongsoft.cocit.entitydef.field.FakeSubSystem;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Nodes;
-import com.jiongsoft.cocit.mvc.ui.IUIViewController;
 import com.jiongsoft.cocit.mvc.ui.model.UIBizFormModel;
 import com.jiongsoft.cocit.mvc.ui.model.UIBizGridModel;
 import com.jiongsoft.cocit.mvc.ui.model.UIBizMenuModel;
@@ -16,8 +15,8 @@ import com.jiongsoft.cocit.mvc.ui.widget.UIBizModule;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizSystem;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIToolbarMenu;
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.web.IStatistic;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
@@ -55,7 +54,7 @@ public interface IUIEngine {
 	 * @return
 	 * @throws DemsyException
 	 */
-	public UIBizModule makeModuleView(IModule module, String gridColumns, String idField) throws DemsyException;
+	public UIBizModule makeModuleView(IFunMenu funMenu, String gridColumns, String idField) throws DemsyException;
 
 	/**
 	 * 创建系统主界面
@@ -65,7 +64,7 @@ public interface IUIEngine {
 	 * @return 业务模块主界面
 	 * @throws DemsyException
 	 */
-	public UIBizSystem makeSystemView(IModule module, String gridColumns, String idField) throws DemsyException;
+	public UIBizSystem makeSystemView(IFunMenu funMenu, String gridColumns, String idField) throws DemsyException;
 
 	/**
 	 * 获取系统数据网格
@@ -77,7 +76,7 @@ public interface IUIEngine {
 	 * @return 业务模块主界面
 	 * @throws DemsyException
 	 */
-	public UIBizGridModel makeSystemGridView(IModule module, String gridColumns, String idField, boolean existNaviTree) throws DemsyException;
+	public UIBizGridModel makeSystemGridView(IFunMenu funMenu, String gridColumns, String idField, boolean existNaviTree) throws DemsyException;
 
 	/**
 	 * 创建系统数据分类导航菜单
@@ -87,7 +86,7 @@ public interface IUIEngine {
 	 * @return 业务模块导航菜单
 	 * @throws DemsyException
 	 */
-	public UIBizNaviModel makeSystemNaviView(IModule module) throws DemsyException;
+	public UIBizNaviModel makeSystemNaviView(IFunMenu funMenu) throws DemsyException;
 
 	/**
 	 * 获取系统工具栏操作菜单
@@ -96,7 +95,7 @@ public interface IUIEngine {
 	 * @return
 	 * @throws DemsyException
 	 */
-	public UIBizMenuModel<UIToolbarMenu> makeSystemActionView(IModule module) throws DemsyException;
+	public UIBizMenuModel<UIToolbarMenu> makeSystemActionView(IFunMenu funMenu) throws DemsyException;
 
 	/**
 	 * 获取子模块界面
@@ -115,7 +114,7 @@ public interface IUIEngine {
 	 * @return
 	 * @throws DemsyException
 	 */
-	public UIBizFormModel makeSystemFormView(IModule module, IEntityAction entityAction, Object data) throws DemsyException;
+	public UIBizFormModel makeSystemFormView(IFunMenu funMenu, IEntityAction entityAction, Object data) throws DemsyException;
 
 	/*
 	 * 获取内置模块业务窗体模型
@@ -142,7 +141,7 @@ public interface IUIEngine {
 
 	public IUIViewComponent loadViewComponent(Long id);
 
-	public IUIViewController getUIController(String classname);
+	// public IUIViewController getUIController(String classname);
 
 	public UIPageView makePageView(Long pageID, Long dynamicBlockID, Long dynamicModuleID, Long dynamicDataID);
 
@@ -166,7 +165,7 @@ public interface IUIEngine {
 	 *            URL路径模块指定的数据
 	 * @return
 	 */
-	public UIBlockViewModel makeBlockView(IPageBlock pageBlock, Long dynamicModuleID, Long dynamicDataID, IModule pathModule, Object pathData);
+	public UIBlockViewModel makeBlockView(IPageBlock pageBlock, Long dynamicModuleID, Long dynamicDataID, IFunMenu pathModule, Object pathData);
 
 	public IStyle loadStyle(Long styleID);
 

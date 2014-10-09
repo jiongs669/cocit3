@@ -36,7 +36,7 @@ public class SmartyView extends AbstractView {
 			ITenant soft = Demsy.me().getTenant();
 			String softCode = Demsy.appconfig.getDefaultSoftCode();
 			if (soft != null) {
-				softCode = soft.getCode();
+				softCode = soft.getDataGuid();
 			}
 			contextPath = "/" + softCode.replace(".", "_");
 		} catch (Throwable e) {

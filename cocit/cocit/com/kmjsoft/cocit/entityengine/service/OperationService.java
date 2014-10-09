@@ -1,6 +1,6 @@
 package com.kmjsoft.cocit.entityengine.service;
 
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
 
 /**
  * 操作服务类：为每个操作提供一对一的服务。

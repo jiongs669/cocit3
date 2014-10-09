@@ -3,8 +3,8 @@ package com.kmjsoft.cocit.entity.web;
 import java.util.Date;
 
 import com.jiongsoft.cocit.entitydef.field.Upload;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 
 /**
  * 上传文件信息接口
@@ -68,8 +68,8 @@ public interface IUploadInfo {
 
 	void setPath(Upload path);
 
-	void setModule(IModule module);
+	void setModule(IFunMenu module);
 
-	void setBzfield(IEntityField field);
+	void setBzfield(IEntityColumn field);
 
 }

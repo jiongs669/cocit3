@@ -3,8 +3,8 @@ package com.kmjsoft.cocit.entityengine.manager;
 import java.util.List;
 
 import com.jiongsoft.cocit.lang.DemsyException;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
@@ -28,9 +28,9 @@ public interface IBizManager<T> {
 
 	public Class getType();
 
-	public IModule getModule();
+	public IFunMenu getModule();
 
-	public IEntityDefinition getSystem();
+	public IEntityModule getSystem();
 
 	/**
 	 * 保存实体对象： 可以保存单个实体、实体集合、数组、Map等。

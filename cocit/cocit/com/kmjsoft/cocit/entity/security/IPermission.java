@@ -33,18 +33,18 @@ public interface IPermission extends ITenantOwnerEntity {
 	String getPrincipalGuid();
 
 	/**
-	 * 功能模块：逻辑外键，关联到“{@link IModule#getDataGuid()}”字段。
+	 * 功能菜单：逻辑外键，关联到“{@link IFunMenu#getDataGuid()}”字段。
 	 * 
 	 * @return
 	 */
-	String getModuleGuid();
+	String getFunMenuGuid();
 
 	/**
 	 * 操作权限：操作权限由模块操作GUID组成，多个操作之间用 | 分隔。
 	 * 
 	 * @return
 	 */
-	String getModuleActionsRule();
+	String getActionsRule();
 
 	/**
 	 * 数据行权限：数据查询过滤表达式。

@@ -2,7 +2,7 @@ package com.jiongsoft.cocit.actions;
 
 import static com.jiongsoft.cocit.mvc.MvcConst.VW_BIZ;
 import static com.kmjsoft.cocit.Demsy.me;
-import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.funMenuManager;
 import static com.kmjsoft.cocit.Demsy.security;
 import static com.kmjsoft.cocit.Demsy.uIEngine;
 
@@ -13,7 +13,6 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 
-import com.jiongsoft.cocit.config.TenantPreferenceManager;
 import com.jiongsoft.cocit.entitydef.field.Upload;
 import com.jiongsoft.cocit.lang.ConfigException;
 import com.jiongsoft.cocit.lang.DemsyException;
@@ -29,6 +28,7 @@ import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 import com.kmjsoft.cocit.entity.webdef.IPage;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
+import com.kmjsoft.cocit.entityengine.service.impl.TenantPreferenceService;
 
 @Ok(VW_BIZ)
 @Fail(VW_BIZ)
@@ -81,9 +81,9 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		}
 		context.put("rightUrl", Str.isEmpty(rightUrl) ? "#" : rightUrl);
 
-		TenantPreferenceManager config = TenantPreferenceManager.me();
-		context.put("topHeight", config.getInt(TenantPreferenceManager.ADMIN_UI_TOP_HEIGHT, 95) + 33);
-		context.put("leftWidth", config.get(TenantPreferenceManager.ADMIN_UI_LEFT_WIDTH, "20%"));
+		TenantPreferenceService config = TenantPreferenceService.me();
+		context.put("topHeight", config.getInt(TenantPreferenceService.ADMIN_UI_TOP_HEIGHT, 95) + 33);
+		context.put("leftWidth", config.get(TenantPreferenceService.ADMIN_UI_LEFT_WIDTH, "20%"));
 
 		log.debug("访问后台主页成功.");
 
@@ -112,8 +112,8 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		}
 		context.put("rightUrl", Str.isEmpty(rightUrl) ? "#" : rightUrl);
 
-		TenantPreferenceManager config = TenantPreferenceManager.me();
-		context.put("topHeight", config.get(TenantPreferenceManager.ADMIN_UI_TOP_HEIGHT, "95"));
+		TenantPreferenceService config = TenantPreferenceService.me();
+		context.put("topHeight", config.get(TenantPreferenceService.ADMIN_UI_TOP_HEIGHT, "95"));
 
 		context.put("user", me().loginUser());
 		String sessionID = me().request().getRequestedSessionId();
@@ -134,7 +134,7 @@ public class IndexActions extends ModuleActions implements MvcConst {
 			UIWidgetModel modelUI = uIEngine.makeFunctionMenuView(me().getTenant());
 			modelUI.setDacorator(null);
 
-			modelUI.setData(moduleManager.makeNodesByModule(me().getTenant()));
+			modelUI.setData(funMenuManager.makeNodesByModule(me().getTenant()));
 			modelUI.set("target", "body");
 
 			log.debugf("%s成功.", title);

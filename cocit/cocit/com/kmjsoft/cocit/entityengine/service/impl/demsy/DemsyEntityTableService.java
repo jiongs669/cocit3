@@ -14,13 +14,13 @@ import java.util.Properties;
 import com.jiongsoft.cocit.lang.Obj;
 import com.jiongsoft.cocit.lang.SystemExcel;
 import com.kmjsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityColumn;
-import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
-import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
-import com.kmjsoft.cocit.entity.impl.definition.EntityColumn;
-import com.kmjsoft.cocit.entity.impl.definition.EntityColumnGroup;
-import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
+import com.kmjsoft.cocit.entity.impl.module.EntityAction;
+import com.kmjsoft.cocit.entity.impl.module.EntityColumn;
+import com.kmjsoft.cocit.entity.impl.module.EntityColumnGroup;
+import com.kmjsoft.cocit.entity.impl.module.EntityModule;
+import com.kmjsoft.cocit.entity.module.IEntityColumn;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entityengine.module.impl.BizEngine;
 import com.kmjsoft.cocit.entityengine.service.FieldGroupService;
 import com.kmjsoft.cocit.entityengine.service.FieldService;
 import com.kmjsoft.cocit.entityengine.service.OperationService;
@@ -39,7 +39,7 @@ import com.kmjsoft.cocit.util.Tree.Node;
 public class DemsyEntityTableService implements TableService {
 	private BizEngine bizEngine;
 
-	private EntityDefinition entity;
+	private EntityModule entity;
 
 	private List<FieldGroupService> bizGroups;
 
@@ -49,8 +49,8 @@ public class DemsyEntityTableService implements TableService {
 
 	private Properties extProps;
 
-	DemsyEntityTableService(EntityDefinition e) {
-		bizEngine = (BizEngine) Demsy.entityDefManager;
+	DemsyEntityTableService(EntityModule e) {
+		bizEngine = (BizEngine) Demsy.entityModuleManager;
 
 		entity = e;
 		bizGroups = new ArrayList();
@@ -285,7 +285,7 @@ public class DemsyEntityTableService implements TableService {
 		return tree;
 	}
 
-	private CndExpr makeSortExpr(IEntityDefinition table, String type) {
+	private CndExpr makeSortExpr(IEntityModule table, String type) {
 		CndExpr ret = null;
 
 		String sortExpr = table.getDataSortExpr();
@@ -316,7 +316,7 @@ public class DemsyEntityTableService implements TableService {
 	}
 
 	private boolean makeDataNodes(Tree tree, Node node, EntityColumn field) {
-		BizEngine bizEngine = (BizEngine) Demsy.entityDefManager;
+		BizEngine bizEngine = (BizEngine) Demsy.entityModuleManager;
 
 		DemsyEntityFieldService cocField = new DemsyEntityFieldService(field);
 
@@ -325,7 +325,7 @@ public class DemsyEntityTableService implements TableService {
 		if (bizEngine.isSystemFK(field)) {
 
 			// 获取该字段引用的外键系统
-			IEntityDefinition fkSystem = field.getRefrenceSystem();
+			IEntityModule fkSystem = field.getRefrenceSystem();
 
 			// 查询外键数据
 			ExtOrm orm = Demsy.orm();
@@ -333,7 +333,7 @@ public class DemsyEntityTableService implements TableService {
 			// if (orm.count(fkSystemType) > 50) {
 			// return false;
 			// }
-			List fkSystemRecords = orm.query(fkSystemType, makeSortExpr((IEntityDefinition) fkSystem, "tree"));
+			List fkSystemRecords = orm.query(fkSystemType, makeSortExpr((IEntityModule) fkSystem, "tree"));
 
 			// 数据自身树
 			String selfTreeProp = null;
@@ -389,7 +389,7 @@ public class DemsyEntityTableService implements TableService {
 	}
 
 	private boolean makeNodes(Tree tree, Node node, EntityColumn field) {
-		BizEngine bizEngine = (BizEngine) Demsy.entityDefManager;
+		BizEngine bizEngine = (BizEngine) Demsy.entityModuleManager;
 
 		DemsyEntityFieldService cocField = new DemsyEntityFieldService(field);
 
@@ -399,7 +399,7 @@ public class DemsyEntityTableService implements TableService {
 		if (bizEngine.isSystemFK(field)) {
 
 			// 获取该字段引用的外键系统
-			IEntityDefinition fkSystem = field.getRefrenceSystem();
+			IEntityModule fkSystem = field.getRefrenceSystem();
 
 			// 查询外键数据
 			ExtOrm orm = Demsy.orm();
@@ -462,7 +462,7 @@ public class DemsyEntityTableService implements TableService {
 		return true;
 	}
 
-	public EntityDefinition getEntity() {
+	public EntityModule getEntity() {
 		return entity;
 	}
 

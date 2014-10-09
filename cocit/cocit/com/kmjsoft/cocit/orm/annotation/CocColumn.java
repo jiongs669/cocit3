@@ -82,7 +82,7 @@ public @interface CocColumn {
 
 	int precision() default 0;
 
-	// boolean combobox() default false;
+	boolean combobox() default false;
 
 	// boolean privacy() default false;
 

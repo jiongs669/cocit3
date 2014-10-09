@@ -337,11 +337,11 @@ public class JSON {
 		try {
 			StringBuilder sb = new StringBuilder();
 			Writer writer = Lang.opw(sb);
-	
+
 			new JSON(writer, JsonFormat.nice()).render(obj);
-	
+
 			writer.flush();
-	
+
 			return sb.toString();
 		} catch (IOException e) {
 			throw Ex.throwEx(e, JsonException.class);
@@ -371,8 +371,7 @@ public class JSON {
 					path = Demsy.appconfig.getClassDir() + "/" + json;
 					is = Files.findFileAsStream(path);
 					if (is == null) {// 从classes下的配置路径下读取文件
-						path = Demsy.appconfig.getClassDir() + "/" + Demsy.appconfig.getConfigPkg().replace(".", "/")
-								+ json;
+						path = Demsy.appconfig.getClassDir() + "/" + Demsy.appconfig.getConfigPkg().replace(".", "/") + json;
 						is = Files.findFileAsStream(path);
 					}
 
@@ -386,8 +385,7 @@ public class JSON {
 					}
 					// 安装软件特有的数据
 					if (Demsy.me().getTenant() != null) {
-						String path2 = Demsy.appconfig.getConfigDir() + "/" + Demsy.me().getTenant().getCode() + "/"
-								+ json;
+						String path2 = Demsy.appconfig.getConfigDir() + "/" + Demsy.me().getTenant().getDataGuid() + "/" + json;
 						is2 = Files.findFileAsStream(path2);
 					}
 				}

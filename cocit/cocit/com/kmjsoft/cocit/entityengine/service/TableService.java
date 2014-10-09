@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
 import com.kmjsoft.cocit.util.CocException;
 import com.kmjsoft.cocit.util.Tree;
 
@@ -23,7 +23,7 @@ import com.kmjsoft.cocit.util.Tree;
  * @author jiongs753
  * 
  */
-public interface TableService extends EntityService<IEntityDefinition> {
+public interface TableService extends EntityService<IEntityModule> {
 
 	// /**
 	// * 获取该数据表的“子数据表”。

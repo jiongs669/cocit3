@@ -3,8 +3,8 @@ package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 import java.util.List;
 
 import com.kmjsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
-import com.kmjsoft.cocit.entity.impl.security.Module;
+import com.kmjsoft.cocit.entity.impl.module.EntityModule;
+import com.kmjsoft.cocit.entity.impl.security.FunMenu;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
 import com.kmjsoft.cocit.entityengine.service.EntityManager;
 import com.kmjsoft.cocit.entityengine.service.ModuleService;
@@ -22,21 +22,21 @@ public class DemsyEntityManager implements EntityManager {
 		moduleService = (DemsyModuleService) m;
 		tableService = (DemsyEntityTableService) t;
 
-		Module module = null;
+		FunMenu funMenu = null;
 		if (moduleService != null) {
-			module = moduleService.getEntity();
+			funMenu = moduleService.getEntity();
 			if (tableService == null)
 				tableService = (DemsyEntityTableService) moduleService.getTable();
 		}
 
-		EntityDefinition system = null;
+		EntityModule system = null;
 		if (tableService != null)
 			system = tableService.getEntity();
 
-		if (system == null && module != null)
-			system = (EntityDefinition) Demsy.moduleManager.getSystem(module);
+		if (system == null && funMenu != null)
+			system = (EntityModule) Demsy.funMenuManager.getSystem(funMenu);
 
-		bizManager = Demsy.bizManagerFactory.getManager(module, system);
+		bizManager = Demsy.bizManagerFactory.getManager(funMenu, system);
 	}
 
 	@Override

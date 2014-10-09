@@ -1,9 +1,9 @@
 package com.jiongsoft.cocit.security.impl;
 
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_SOFT;
 import static com.kmjsoft.cocit.entity.EntityConst.F_CODE;
-import static com.kmjsoft.cocit.entity.EntityConst.F_SOFT_ID;
+import static com.kmjsoft.cocit.entity.EntityConst.F_TENANT_OWNER_GUID;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -28,12 +28,12 @@ import com.jiongsoft.cocit.security.SecurityException;
 import com.jiongsoft.cocit.security.UnloginException;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entity.security.IPermission;
 import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
-import com.kmjsoft.cocit.entityengine.definition.impl.RootUserFactory;
+import com.kmjsoft.cocit.entityengine.module.impl.RootUserFactory;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
 import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
@@ -118,7 +118,7 @@ public class Security implements ISecurity {
 		if (Str.isEmpty(realmCode)) {
 			user = getRootUser(username);
 			if (user == null) {
-				user = (IUser) orm().load(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT), Expr.eq(F_CODE, username));
+				user = (IUser) orm().load(entityModuleManager.getStaticType(BIZSYS_DEMSY_SOFT), Expr.eq(F_CODE, username));
 			}
 		} else {
 			// IRealm realm = moduleEngine.getRealm(soft, realmCode);
@@ -197,7 +197,7 @@ public class Security implements ISecurity {
 	/**
 	 * 检查当前登录用户是否有权访问指定的模块。
 	 */
-	public boolean allowVisitModule(IModule module, boolean igloreDynamic) {
+	public boolean allowVisitModule(IFunMenu funMenu, boolean igloreDynamic) {
 		Demsy me = Demsy.me();
 
 		ILogin login = me.login();
@@ -216,7 +216,7 @@ public class Security implements ISecurity {
 				Iterator<PermissionItem> it = dynitems.values().iterator();
 				while (it.hasNext()) {
 					PermissionItem p = it.next();
-					if (module.getId().equals(p.moduleID) && match(login, p)) {
+					if (funMenu.getId().equals(p.moduleID) && match(login, p)) {
 						return true;
 					}
 				}
@@ -224,7 +224,7 @@ public class Security implements ISecurity {
 		}
 
 		// 数据库授权
-		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), module.getId());
+		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), funMenu.getId());
 		if (items != null) {
 			for (PermissionItem p : items) {
 				long now = new Date().getTime();
@@ -268,7 +268,7 @@ public class Security implements ISecurity {
 		map.put(key1, item);
 	}
 
-	public CndExpr getDataFilter(IModule module) {
+	public CndExpr getDataFilter(IFunMenu funMenu) {
 		Demsy me = Demsy.me();
 		ILogin login = me.login();
 		if (login == null)
@@ -279,7 +279,7 @@ public class Security implements ISecurity {
 		}
 
 		List<CndExpr> exprs = new LinkedList();
-		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), module.getId());
+		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), funMenu.getId());
 		if (items != null) {
 			for (PermissionItem p : items) {
 				long now = new Date().getTime();
@@ -313,7 +313,7 @@ public class Security implements ISecurity {
 		return expr;
 	}
 
-	public CndExpr getFkDataFilter(IModule module, String fkField) {
+	public CndExpr getFkDataFilter(IFunMenu funMenu, String fkField) {
 		Demsy me = Demsy.me();
 		ILogin login = me.login();
 		if (login == null)
@@ -324,7 +324,7 @@ public class Security implements ISecurity {
 		}
 
 		List<CndExpr> exprs = new LinkedList();
-		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), module.getId());
+		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), funMenu.getId());
 		if (items != null) {
 			for (PermissionItem p : items) {
 				long now = new Date().getTime();
@@ -466,12 +466,12 @@ public class Security implements ISecurity {
 		ExtOrm orm = orm();
 		Demsy me = Demsy.me();
 
-		IEntityDefinition sys = entityDefManager.getSystem(EntityConst.BIZSYS_ADMIN_PERMISSION);
-		Class type = entityDefManager.getType(sys);
+		IEntityModule sys = entityModuleManager.getSystem(EntityConst.BIZSYS_ADMIN_PERMISSION);
+		Class type = entityModuleManager.getType(sys);
 
 		Map<Long, List<PermissionItem>> softPermissions = new HashMap();
 
-		List<IPermission> permissions = orm.query(type, Expr.eq(F_SOFT_ID, me.getTenant()));
+		List<IPermission> permissions = orm.query(type, Expr.eq(F_TENANT_OWNER_GUID, me.getTenant()));
 		for (IPermission p : permissions) {
 			if (p.isDisabled())
 				continue;

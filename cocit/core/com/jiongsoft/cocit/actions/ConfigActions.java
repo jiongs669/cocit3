@@ -4,8 +4,8 @@ import static com.jiongsoft.cocit.mvc.MvcConst.MvcUtil.globalVariables;
 import static com.kmjsoft.cocit.Demsy.appconfig;
 import static com.kmjsoft.cocit.Demsy.contextDir;
 import static com.kmjsoft.cocit.Demsy.dataSourceConfig;
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
-import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
+import static com.kmjsoft.cocit.Demsy.funMenuManager;
 import static com.kmjsoft.cocit.Demsy.orm;
 import static com.kmjsoft.cocit.Demsy.security;
 import static com.kmjsoft.cocit.Demsy.uIEngine;
@@ -27,7 +27,6 @@ import org.nutz.mvc.annotation.Param;
 import com.jiongsoft.cocit.config.IAppConfig;
 import com.jiongsoft.cocit.config.IConfig;
 import com.jiongsoft.cocit.config.IDataSourceConfig;
-import com.jiongsoft.cocit.config.TenantPreferenceManager;
 import com.jiongsoft.cocit.config.impl.BaseConfig;
 import com.jiongsoft.cocit.lang.Dates;
 import com.jiongsoft.cocit.lang.DemsyException;
@@ -43,9 +42,10 @@ import com.jiongsoft.cocit.mvc.ObjcetNaviNode;
 import com.jiongsoft.cocit.util.BackupUtils;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
+import com.kmjsoft.cocit.entityengine.service.impl.TenantPreferenceService;
 import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.NoTransConnCallback;
 import com.kmjsoft.cocit.orm.expr.Expr;
@@ -66,22 +66,22 @@ public class ConfigActions implements MvcConst {
 		ret.putAll(globalVariables);
 
 		ITenant soft = null;
-		IModule module = null;
+		IFunMenu funMenu = null;
 		if (!Str.isEmpty(moduleID)) {
 			try {
-				module = moduleManager.getModule(Long.parseLong(moduleID));
-				soft = moduleManager.getSoft(module.getTenantOwnerGuid());
+				funMenu = funMenuManager.getModule(Long.parseLong(moduleID));
+				soft = funMenuManager.getSoft(funMenu.getTenantOwnerGuid());
 			} catch (Throwable e) {
 				log.trace("模块配置: 获取配置模块出错! " + e);
 			}
 		}
 
-		ret.put("title", (soft == null ? appconfig.getDefaultSoftName() : soft.getName()) + "——" + (module == null ? "平台初始化设置" : module.getName()));// 页面标题
+		ret.put("title", (soft == null ? appconfig.getDefaultSoftName() : soft.getName()) + "——" + (funMenu == null ? "平台初始化设置" : funMenu.getName()));// 页面标题
 
 		ret.put("db", dataSourceConfig);
 		ret.put("app", appconfig);
 		ret.put("uploadUrl", MvcUtil.contextPath(URL_UPLOAD, ""));
-		ret.put("softNodes", moduleManager.makeNodesByCurrentSoft());
+		ret.put("softNodes", funMenuManager.makeNodesByCurrentSoft());
 
 		// PropConfig devcfg = new PropConfig("dev-config");
 		// ret.put("projects", Str.toList((String) devcfg.get("projects"), ","));
@@ -192,9 +192,9 @@ public class ConfigActions implements MvcConst {
 			security.checkLogin(SecurityManager.ROLE_DP_SUPPORT);
 
 			uIEngine.clearCache();
-			moduleManager.clearCache();
-			entityDefManager.clearCache();
-			TenantPreferenceManager.clearCache();
+			funMenuManager.clearCache();
+			entityModuleManager.clearCache();
+			TenantPreferenceService.clearCache();
 			orm().clearMapping();
 
 			System.gc();
@@ -232,7 +232,7 @@ public class ConfigActions implements MvcConst {
 	private ITenant getSoft(String softID) throws DemsyException {
 		ITenant soft = null;
 		if (!Str.isEmpty(softID)) {
-			soft = moduleManager.getSoft(Long.parseLong(softID));
+			soft = funMenuManager.getSoft(Long.parseLong(softID));
 			if (soft == null) {
 				throw new DemsyException("应用系统不存在!");
 			}
@@ -251,7 +251,7 @@ public class ConfigActions implements MvcConst {
 		try {
 			security.checkLogin(SecurityManager.ROLE_DP_SUPPORT);
 
-			moduleManager.upgradeModules(getSoft(softID));
+			funMenuManager.upgradeModules(getSoft(softID));
 
 			log.debugf("升级功能菜单成功.");
 			return new Status(true, "升级功能菜单成功.");
@@ -271,7 +271,7 @@ public class ConfigActions implements MvcConst {
 		try {
 			security.checkLogin(SecurityManager.ROLE_DP_SUPPORT);
 
-			moduleManager.upgradeWebContent(getSoft(softID));
+			funMenuManager.upgradeWebContent(getSoft(softID));
 
 			log.debugf("升级网站栏目信息成功.");
 			return new Status(true, "升级网站栏目信息成功.");
@@ -293,10 +293,10 @@ public class ConfigActions implements MvcConst {
 
 			if (Demsy.appconfig.isProductMode()) {
 				clearCache();
-				moduleManager.setupDemsy();
+				funMenuManager.setupDemsy();
 				clearCache();
 			} else {
-				moduleManager.setupDemsy();
+				funMenuManager.setupDemsy();
 			}
 
 			log.debugf("安装平台功能模块成功.");
@@ -316,7 +316,7 @@ public class ConfigActions implements MvcConst {
 		try {
 			security.checkLogin(SecurityManager.ROLE_DP_SUPPORT);
 
-			entityDefManager.validateSystems(getSoft(softID));
+			entityModuleManager.validateSystems(getSoft(softID));
 
 			log.debugf("验证业务系统成功.");
 			return new Status(true, "验证业务系统成功.");
@@ -353,7 +353,7 @@ public class ConfigActions implements MvcConst {
 			Files.deleteFile(zipfile);
 			log.tracef("准备临时文件夹和ZIP文件 [folder: %s, zip: %s]", folder, zip);
 
-			entityDefManager.exportToJson(getSoft(softID), folder, Expr.ge(EntityConst.F_UPDATED, date));
+			entityModuleManager.exportToJson(getSoft(softID), folder, Expr.ge(EntityConst.F_UPDATED, date));
 
 			if (includeUpload) {
 				String destUploadFolder = folder + File.separator + "upload";
@@ -398,7 +398,7 @@ public class ConfigActions implements MvcConst {
 			Zips.unzip(zipFilename, folder + File.separator, true);
 
 			// 导入数据到数据库
-			entityDefManager.importFromJson(getSoft(softID), folder);
+			entityModuleManager.importFromJson(getSoft(softID), folder);
 			copyUploadDir(new File(folder));
 
 			// 清除文件夹

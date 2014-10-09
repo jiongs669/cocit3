@@ -78,11 +78,11 @@ import com.kmjsoft.cocit.action.UtilAction;
 import com.kmjsoft.cocit.action.WebAction;
 import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
-import com.kmjsoft.cocit.entityengine.definition.IEntityDefManager;
 import com.kmjsoft.cocit.entityengine.manager.IBizManagerFactory;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
+import com.kmjsoft.cocit.entityengine.module.IEntityModuleManager;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
-import com.kmjsoft.cocit.module.IModuleManager;
+import com.kmjsoft.cocit.funmenu.IFunMenuManager;
 import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.generator.INamingStrategy;
 import com.kmjsoft.cocit.orm.generator.impl.EncodeNamingStrategy;
@@ -202,13 +202,13 @@ public abstract class Demsy implements Const, MvcConst {
 
 	public static ISecurity security;
 
-	public static IEntityDefManager entityDefManager;
+	public static IEntityModuleManager entityModuleManager;
 
 	public static IBizManagerFactory bizManagerFactory;
 
 	public static IUIEngine uIEngine;
 
-	public static IModuleManager moduleManager;
+	public static IFunMenuManager funMenuManager;
 
 	public static IDataSourceConfig dataSourceConfig = null;
 
@@ -346,10 +346,10 @@ public abstract class Demsy implements Const, MvcConst {
 		Assert.notNull(ioc = IocLoader.load());
 		Assert.notNull(bizSession = bean("bizSession"));
 		Assert.notNull(security = bean("security"));
-		Assert.notNull(entityDefManager = bean("bizEngine"));
+		Assert.notNull(entityModuleManager = bean("bizEngine"));
 		Assert.notNull(bizManagerFactory = bean("bizManagerFactory"));
 		Assert.notNull(uIEngine = bean("uiEngine"));
-		Assert.notNull(moduleManager = bean("moduleEngine"));
+		Assert.notNull(funMenuManager = bean("moduleEngine"));
 
 		Assert.notNull(dataSourceConfig = bean("_dbConfig"));
 		Assert.notNull(bean("_entityListeners"));
@@ -812,7 +812,7 @@ public abstract class Demsy implements Const, MvcConst {
 
 			// 路径的第一个节点不是应用编号
 			try {
-				tenant = moduleManager.getSoft(domain);
+				tenant = funMenuManager.getSoft(domain);
 
 				if (tenant == null) {
 					throw new ConfigException("未知应用系统!");

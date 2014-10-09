@@ -11,7 +11,7 @@ import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.MvcConst.MvcUtil;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
 /**
@@ -126,18 +126,18 @@ public class Dataset extends JsonField<Dataset> {
 		if (Str.isEmpty(moduleGuid))
 			return "";
 
-		return MvcUtil.contextPath(MvcConst.URL_BZSYS_COMB_CATALOG_EXPR, moduleGuid + ":") + "?gridColumns=3&idField=" + EntityConst.F_GUID;
+		return MvcUtil.contextPath(MvcConst.URL_BZSYS_COMB_CATALOG_EXPR, moduleGuid + ":") + "?gridColumns=3&idField=" + EntityConst.F_DATA_GUID;
 	}
 
-	public IModule getModule() {
-		IModule module;
+	public IFunMenu getModule() {
+		IFunMenu funMenu;
 		try {
-			module = Demsy.moduleManager.getModule(Long.parseLong(moduleGuid));
+			funMenu = Demsy.funMenuManager.getModule(Long.parseLong(moduleGuid));
 		} catch (Throwable e) {
-			module = Demsy.moduleManager.getModule(moduleGuid);
+			funMenu = Demsy.funMenuManager.getModule(moduleGuid);
 		}
 
-		return module;
+		return funMenu;
 	}
 
 	public List<String> getExprs() {

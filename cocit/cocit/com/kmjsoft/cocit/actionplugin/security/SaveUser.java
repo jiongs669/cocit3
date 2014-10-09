@@ -50,7 +50,7 @@ public class SaveUser extends ActionPlugin {
 			 * 检查登录帐号是否被占用：。
 			 */
 			String code = user.getUsername();
-			User oldUser = (User) orm.load(user.getClass(), Expr.eq(EntityConst.F_SOFT_ID, Demsy.me().getTenant()).and(Expr.eq(EntityConst.F_CODE, code)));
+			User oldUser = (User) orm.load(user.getClass(), Expr.eq(EntityConst.F_TENANT_OWNER_GUID, Demsy.me().getTenant()).and(Expr.eq(EntityConst.F_CODE, code)));
 			if (oldUser != null && !oldUser.getId().equals(user.getId())) {
 				throw new DemsyException("登录帐号已被使用，请重新填写登录帐号!");
 			}

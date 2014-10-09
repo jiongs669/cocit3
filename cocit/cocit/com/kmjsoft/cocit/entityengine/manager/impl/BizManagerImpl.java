@@ -1,6 +1,6 @@
 package com.kmjsoft.cocit.entityengine.manager.impl;
 
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
 import static com.kmjsoft.cocit.Demsy.security;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.actionplugin.IActionPlugin;
-import com.kmjsoft.cocit.entity.definition.IEntityAction;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityAction;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
 import com.kmjsoft.cocit.orm.ExtOrm;
@@ -33,9 +33,9 @@ public class BizManagerImpl implements IBizManager {
 	// 业务会话：可以切换ORM
 	protected IBizSession bizSession;
 
-	protected IModule bizModule;
+	protected IFunMenu bizModule;
 
-	protected IEntityDefinition entityDefinition;
+	protected IEntityModule entityModule;
 
 	protected Class classOfEntity;
 
@@ -47,23 +47,23 @@ public class BizManagerImpl implements IBizManager {
 		return bizSession.orm();
 	}
 
-	BizManagerImpl(IBizSession bizSession, IModule module, IEntityDefinition system) throws DemsyException {
+	BizManagerImpl(IBizSession bizSession, IFunMenu funMenu, IEntityModule system) throws DemsyException {
 		this.bizSession = bizSession;
-		this.bizModule = module;
-		this.entityDefinition = system;
-		this.classOfEntity = entityDefManager.getType(entityDefinition);
+		this.bizModule = funMenu;
+		this.entityModule = system;
+		this.classOfEntity = entityModuleManager.getType(entityModule);
 	}
 
-	BizManagerImpl(IBizSession bizSession, IEntityDefinition entityDefinition) throws DemsyException {
+	BizManagerImpl(IBizSession bizSession, IEntityModule entityModule) throws DemsyException {
 		this.bizSession = bizSession;
-		this.entityDefinition = entityDefinition;
-		this.classOfEntity = entityDefManager.getType(entityDefinition);
+		this.entityModule = entityModule;
+		this.classOfEntity = entityModuleManager.getType(entityModule);
 	}
 
 	BizManagerImpl(BizManagerImpl parent, ExtOrm orm) {
 		this.bizSession = parent.bizSession.me(orm);
 		this.bizModule = parent.bizModule;
-		this.entityDefinition = parent.entityDefinition;
+		this.entityModule = parent.entityModule;
 		this.classOfEntity = parent.classOfEntity;
 	}
 
@@ -186,12 +186,12 @@ public class BizManagerImpl implements IBizManager {
 		return bizSession.asynRun(obj, buildCndExpr(null, actionID), loadPlugins(actionID));
 	}
 
-	public IModule getModule() {
+	public IFunMenu getModule() {
 		return bizModule;
 	}
 
-	public IEntityDefinition getSystem() {
-		return entityDefinition;
+	public IEntityModule getSystem() {
+		return entityModule;
 	}
 
 	// ====================================================================
@@ -253,12 +253,12 @@ public class BizManagerImpl implements IBizManager {
 	 * @return
 	 */
 	protected IActionPlugin[] loadPlugins(String actionID) {
-		IEntityAction entityAction = Demsy.entityDefManager.getAction(this.entityDefinition.getId(), actionID);
+		IEntityAction entityAction = Demsy.entityModuleManager.getAction(this.entityModule.getId(), actionID);
 
 		if (entityAction == null)
 			return null;
 
-		return Demsy.moduleManager.getPlugins(entityAction);
+		return Demsy.funMenuManager.getPlugins(entityAction);
 	}
 
 	public Class getType() {

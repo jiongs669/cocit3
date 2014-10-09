@@ -1,7 +1,7 @@
 package com.kmjsoft.cocit.entityengine.service.impl;
 
 import com.kmjsoft.cocit.Cocit;
-import com.kmjsoft.cocit.entityengine.service.ConfigManager;
+import com.kmjsoft.cocit.entityengine.service.ITenantPreferenceService;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
 import com.kmjsoft.cocit.entityengine.service.SoftService;
 import com.kmjsoft.cocit.entityengine.service.impl.security.SecurityManagerImpl;
@@ -12,7 +12,7 @@ public abstract class BaseSoftService implements SoftService {
 	/*
 	 * lazy load the following properties
 	 */
-	protected ConfigManager config;
+	protected ITenantPreferenceService config;
 
 	protected SmsClient smsClient;
 
@@ -21,7 +21,7 @@ public abstract class BaseSoftService implements SoftService {
 	@Override
 	public SmsClient getSmsClient() {
 		if (smsClient == null) {
-			String type = getConfig(ConfigManager.SMS_TYPE, "");
+			String type = getConfig(ITenantPreferenceService.SMS_TYPE, "");
 			smsClient = Cocit.makeSmsClient(type);
 		}
 
@@ -37,7 +37,7 @@ public abstract class BaseSoftService implements SoftService {
 		return config.get(configKey, defaultReturn);
 	}
 
-	protected abstract ConfigManager getSoftConfig();
+	protected abstract ITenantPreferenceService getSoftConfig();
 
 	@Override
 	public SecurityManager getSecurityManager() {

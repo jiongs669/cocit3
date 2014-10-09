@@ -2,7 +2,7 @@ package com.kmjsoft.cocit.entityengine.service;
 
 import java.util.List;
 
-import com.kmjsoft.cocit.entity.definition.IEntityColumnGroup;
+import com.kmjsoft.cocit.entity.module.IEntityColumnGroup;
 
 /**
  * 分组服务类：为字段分组提供一对一的服务。

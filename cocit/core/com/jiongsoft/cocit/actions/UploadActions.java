@@ -205,7 +205,7 @@ public class UploadActions implements MvcConst {
 		/*
 		 * 保存文件信息到数据库
 		 */
-		IUploadInfo info = (IUploadInfo) Mirror.me(Demsy.entityDefManager.getStaticType(EntityConst.BIZSYS_ADMIN_UPLOAD)).born();
+		IUploadInfo info = (IUploadInfo) Mirror.me(Demsy.entityModuleManager.getStaticType(EntityConst.BIZSYS_ADMIN_UPLOAD)).born();
 		try {
 			Demsy me = Demsy.me();
 			if (me.getTenant() != null)
@@ -218,13 +218,13 @@ public class UploadActions implements MvcConst {
 
 			if (!Str.isEmpty(moduleId))
 				try {
-					info.setModule(Demsy.moduleManager.getModule(Long.parseLong(moduleId)));
+					info.setModule(Demsy.funMenuManager.getModule(Long.parseLong(moduleId)));
 				} catch (Throwable e) {
 				}
 
 			if (!Str.isEmpty(fieldId)) {
 				try {
-					info.setBzfield(Demsy.entityDefManager.getField(Long.parseLong(fieldId)));
+					info.setBzfield(Demsy.entityModuleManager.getField(Long.parseLong(fieldId)));
 				} catch (Throwable e) {
 				}
 			}

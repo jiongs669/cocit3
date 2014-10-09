@@ -1,6 +1,6 @@
 package com.kmjsoft.cocit.orm.listener.impl;
 
-import static com.kmjsoft.cocit.entity.EntityConst.F_GUID;
+import static com.kmjsoft.cocit.entity.EntityConst.F_DATA_GUID;
 
 import java.io.Serializable;
 
@@ -56,8 +56,8 @@ public class DemsyEntityListener implements EntityListener {
 				// }
 			}
 
-			if (Cls.hasField(obj.getClass(), F_GUID) && Str.isEmpty((String) Obj.getValue(obj, F_GUID)))
-				Obj.setValue(obj, F_GUID, (String) guid.generate(dao, obj));
+			if (Cls.hasField(obj.getClass(), F_DATA_GUID) && Str.isEmpty((String) Obj.getValue(obj, F_DATA_GUID)))
+				Obj.setValue(obj, F_DATA_GUID, (String) guid.generate(dao, obj));
 
 		}
 	}

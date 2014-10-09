@@ -1,8 +1,8 @@
 package com.kmjsoft.cocit.entityengine.manager;
 
 import com.jiongsoft.cocit.lang.DemsyException;
-import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.entity.module.IEntityModule;
+import com.kmjsoft.cocit.entity.security.IFunMenu;
 
 /**
  * 用于获取授权业务模块管理器。
@@ -42,8 +42,8 @@ public interface IBizManagerFactory {
 	 * @return 业务管理器
 	 * @throws DemsyException
 	 */
-	public <X> IBizManager<X> getManager(IModule module) throws DemsyException;
+	public <X> IBizManager<X> getManager(IFunMenu funMenu) throws DemsyException;
 
-	public <X> IBizManager<X> getManager(IModule module, IEntityDefinition system) throws DemsyException;
+	public <X> IBizManager<X> getManager(IFunMenu funMenu, IEntityModule system) throws DemsyException;
 
 }

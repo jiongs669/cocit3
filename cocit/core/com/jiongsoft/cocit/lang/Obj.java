@@ -16,7 +16,7 @@
 
 package com.jiongsoft.cocit.lang;
 
-import static com.kmjsoft.cocit.entity.EntityConst.F_GUID;
+import static com.kmjsoft.cocit.entity.EntityConst.F_DATA_GUID;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ID;
 
 import java.io.Serializable;
@@ -599,7 +599,7 @@ public abstract class Obj {
 				if (Number.class.isAssignableFrom(type)) {
 					value = Obj.getId(value);
 				} else if (String.class.equals(type)) {
-					value = getValue(value, EntityConst.F_GUID);
+					value = getValue(value, EntityConst.F_DATA_GUID);
 				}
 			}
 
@@ -710,7 +710,7 @@ public abstract class Obj {
 			// throw new DemsyException("GUID不能为空! %s", ObjectUtil.toJson(obj));
 			return false;
 		}
-		Object old = Demsy.orm().load(obj.getClass(), Expr.eq(F_GUID, guid));
+		Object old = Demsy.orm().load(obj.getClass(), Expr.eq(F_DATA_GUID, guid));
 		if (old != null && !old.equals(obj)) {
 			// throw new DemsyException("GUID已经存在! %s", ObjectUtil.toJson(obj));
 			return false;
@@ -730,7 +730,7 @@ public abstract class Obj {
 		guid = guid.toUpperCase();
 
 		if (checkGuid(obj, guid))
-			setValue(obj, F_GUID, guid);
+			setValue(obj, F_DATA_GUID, guid);
 
 	}
 

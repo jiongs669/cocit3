@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import com.kmjsoft.cocit.ActionContext;
 import com.kmjsoft.cocit.Cocit;
-import com.kmjsoft.cocit.entityengine.service.ConfigManager;
+import com.kmjsoft.cocit.entityengine.service.ITenantPreferenceService;
 import com.kmjsoft.cocit.entityengine.service.SoftService;
 import com.kmjsoft.cocit.sms.SmsClient;
 import com.kmjsoft.cocit.util.Log;
@@ -81,12 +81,12 @@ public class ZucpSmsClient implements SmsClient {
 		ActionContext ctx = Cocit.getActionContext();
 		SoftService soft = ctx.getSoftService();
 
-		this.proxyHost = soft.getConfig(ConfigManager.SMS_PROXY_HOST, "");
-		this.proxyPort = soft.getConfig(ConfigManager.SMS_PROXY_PORT, 80);
+		this.proxyHost = soft.getConfig(ITenantPreferenceService.SMS_PROXY_HOST, "");
+		this.proxyPort = soft.getConfig(ITenantPreferenceService.SMS_PROXY_PORT, 80);
 
-		this.serviceURL = soft.getConfig(ConfigManager.SMS_URL, "http://sdk2.zucp.net:8060/webservice.asmx");
-		this.sn = soft.getConfig(ConfigManager.SMS_UID, "");
-		this.password = soft.getConfig(ConfigManager.SMS_PWD, "");
+		this.serviceURL = soft.getConfig(ITenantPreferenceService.SMS_URL, "http://sdk2.zucp.net:8060/webservice.asmx");
+		this.sn = soft.getConfig(ITenantPreferenceService.SMS_UID, "");
+		this.password = soft.getConfig(ITenantPreferenceService.SMS_PWD, "");
 		this.pwdMD5 = this.getMD5(sn + password);
 
 		Log.info("ZucpSmsClient.init: {serviceURL:%s, sn:%s, password:%s, pwdMD5:%s, proxyHost=%s, proxyPort}", serviceURL, sn, password, pwdMD5, proxyHost, proxyPort);

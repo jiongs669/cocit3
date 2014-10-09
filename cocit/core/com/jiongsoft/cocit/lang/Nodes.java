@@ -214,16 +214,16 @@ public final class Nodes implements IDynaEntity {
 		}
 	}
 
-	@Override
-	public boolean is(byte index) {
-		int MASK = new Double(Math.pow(2, new Double(index - 1))).intValue();
-		if (maskValue == null) {
-			return false;
-		}
-		synchronized (maskValue) {
-			return (maskValue & MASK) > 0;
-		}
-	}
+	// @Override
+	// public boolean is(byte index) {
+	// int MASK = new Double(Math.pow(2, new Double(index - 1))).intValue();
+	// if (maskValue == null) {
+	// return false;
+	// }
+	// synchronized (maskValue) {
+	// return (maskValue & MASK) > 0;
+	// }
+	// }
 
 	public static final class Node implements IDynaEntity {
 		private List<Node> children = new ArrayList();

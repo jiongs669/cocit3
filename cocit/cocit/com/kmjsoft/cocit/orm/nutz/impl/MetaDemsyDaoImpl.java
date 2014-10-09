@@ -1,6 +1,6 @@
 package com.kmjsoft.cocit.orm.nutz.impl;
 
-import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityModuleManager;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -326,7 +326,7 @@ public class MetaDemsyDaoImpl extends DemsyNutzDao implements IExtDao {
 			}
 
 			// 加载子类实体
-			List<Class<?>> list = entityDefManager.listTypes();
+			List<Class<?>> list = entityModuleManager.listTypes();
 			if (list != null) {
 				for (Class cls : list) {
 					if (!classOfT.equals(cls) && classOfT.isAssignableFrom(cls)) {

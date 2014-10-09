@@ -5,18 +5,18 @@ import java.util.Date;
 import java.util.List;
 
 import com.jiongsoft.cocit.entitydef.field.Upload;
-import com.kmjsoft.cocit.entity.impl.security.Module;
+import com.kmjsoft.cocit.entity.impl.security.FunMenu;
 import com.kmjsoft.cocit.entityengine.service.ModuleService;
 import com.kmjsoft.cocit.entityengine.service.TableService;
 
 public class DemsyModuleService implements ModuleService {
-	private Module entity;
+	private FunMenu entity;
 
 	private TableService mainDataTable;
 
 	private List<TableService> childrenDataTables;
 
-	DemsyModuleService(Module e, TableService refrencedDataTable) {
+	DemsyModuleService(FunMenu e, TableService refrencedDataTable) {
 		this.entity = e;
 		this.mainDataTable = refrencedDataTable;
 	}
@@ -90,7 +90,7 @@ public class DemsyModuleService implements ModuleService {
 		this.childrenDataTables = childrenDataTables;
 	}
 
-	public Module getEntity() {
+	public FunMenu getEntity() {
 		return entity;
 	}
 
