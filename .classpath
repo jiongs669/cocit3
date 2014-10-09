@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/kmjsoft/cocit/entityengine/module/impl/UiEngine.java|com/kmjsoft/cocit/sms/impl/" kind="src" path="cocit/cocit"/>
+	<classpathentry excluding="com/kmjsoft/cocit/entityengine/module/impl/UiEngine.java|com/kmjsoft/cocit/sms/impl/|com/kmjsoft/cocit/entityengine/service/impl/|com/kmjsoft/cocit/entityengine/module/impl/" kind="src" path="cocit/cocit"/>
 	<classpathentry excluding="com/jiongsoft/cocit/mvc/ui/UIBlockContext.java|com/jiongsoft/cocit/modules/alipay/|com/jiongsoft/cocit/modules/|com/jiongsoft/cocit/mvc/ui/IUIViewController.java|com/jiongsoft/cocit/mvc/ui/UIBlockDataModel.java|com/jiongsoft/cocit/mvc/controller/" kind="src" path="cocit/core"/>
 	<classpathentry kind="src" path="cocit/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_30(64)"/>
