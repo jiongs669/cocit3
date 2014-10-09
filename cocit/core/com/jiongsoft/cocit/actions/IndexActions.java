@@ -1,10 +1,10 @@
 package com.jiongsoft.cocit.actions;
 
-import static com.jiongsoft.cocit.Demsy.me;
-import static com.jiongsoft.cocit.Demsy.moduleManager;
-import static com.jiongsoft.cocit.Demsy.security;
-import static com.jiongsoft.cocit.Demsy.uIEngine;
 import static com.jiongsoft.cocit.mvc.MvcConst.VW_BIZ;
+import static com.kmjsoft.cocit.Demsy.me;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.security;
+import static com.kmjsoft.cocit.Demsy.uIEngine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +13,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 
-import com.jiongsoft.cocit.Demsy;
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
 import com.jiongsoft.cocit.entitydef.field.Upload;
 import com.jiongsoft.cocit.lang.ConfigException;
 import com.jiongsoft.cocit.lang.DemsyException;
@@ -24,8 +23,9 @@ import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.ui.IUIView;
 import com.jiongsoft.cocit.mvc.ui.model.UIWidgetModel;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.security.IAdminUser;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 import com.kmjsoft.cocit.entity.webdef.IPage;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
@@ -66,7 +66,7 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		Map context = new HashMap();
 		context.putAll(MvcUtil.globalVariables);
 
-		ISystemTenant soft = me().getSoft();
+		ITenant soft = me().getTenant();
 
 		context.put("title", soft.getName() + "——后台管理系统");
 		context.put("topUrl", MvcUtil.contextPath(URL_ADMIN_TOP, ""));
@@ -81,9 +81,9 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		}
 		context.put("rightUrl", Str.isEmpty(rightUrl) ? "#" : rightUrl);
 
-		SoftConfigManager config = SoftConfigManager.me();
-		context.put("topHeight", config.getInt(SoftConfigManager.ADMIN_UI_TOP_HEIGHT, 95) + 33);
-		context.put("leftWidth", config.get(SoftConfigManager.ADMIN_UI_LEFT_WIDTH, "20%"));
+		TenantPreferenceManager config = TenantPreferenceManager.me();
+		context.put("topHeight", config.getInt(TenantPreferenceManager.ADMIN_UI_TOP_HEIGHT, 95) + 33);
+		context.put("leftWidth", config.get(TenantPreferenceManager.ADMIN_UI_LEFT_WIDTH, "20%"));
 
 		log.debug("访问后台主页成功.");
 
@@ -101,7 +101,7 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		Map context = new HashMap();
 		context.putAll(MvcUtil.globalVariables);
 
-		ISystemTenant soft = me().getSoft();
+		ITenant soft = me().getTenant();
 		Upload logo = soft.getLogo();
 		context.put("logo", MvcUtil.contextPath((logo == null || Str.isEmpty(logo.toString())) ? "/themes2/images/index_top_logo.jpg" : logo.toString()));
 
@@ -112,8 +112,8 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		}
 		context.put("rightUrl", Str.isEmpty(rightUrl) ? "#" : rightUrl);
 
-		SoftConfigManager config = SoftConfigManager.me();
-		context.put("topHeight", config.get(SoftConfigManager.ADMIN_UI_TOP_HEIGHT, "95"));
+		TenantPreferenceManager config = TenantPreferenceManager.me();
+		context.put("topHeight", config.get(TenantPreferenceManager.ADMIN_UI_TOP_HEIGHT, "95"));
 
 		context.put("user", me().loginUser());
 		String sessionID = me().request().getRequestedSessionId();
@@ -131,10 +131,10 @@ public class IndexActions extends ModuleActions implements MvcConst {
 		try {
 			security.checkLogin(SecurityManager.ROLE_ADMIN_USER);
 
-			UIWidgetModel modelUI = uIEngine.makeFunctionMenuView(me().getSoft());
+			UIWidgetModel modelUI = uIEngine.makeFunctionMenuView(me().getTenant());
 			modelUI.setDacorator(null);
 
-			modelUI.setData(moduleManager.makeNodesByModule(me().getSoft()));
+			modelUI.setData(moduleManager.makeNodesByModule(me().getTenant()));
 			modelUI.set("target", "body");
 
 			log.debugf("%s成功.", title);

@@ -9,7 +9,7 @@ import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.UrlMapping;
 import org.nutz.mvc.impl.ActionInvoker;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 
 /**
  * 该类在 {@link org.nutz.mvc.ActionHandler} 的基础上修改，详细参见 @DEMSY 标识部分

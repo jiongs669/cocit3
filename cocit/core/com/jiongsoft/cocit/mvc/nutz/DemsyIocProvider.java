@@ -4,7 +4,7 @@ import org.nutz.ioc.Ioc;
 import org.nutz.mvc.IocProvider;
 import org.nutz.mvc.NutConfig;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 
 public class DemsyIocProvider implements IocProvider {
 

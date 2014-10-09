@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.entitydef.field;
 
-import com.kmjsoft.cocit.entity.definition.IEntityField;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 
 /**
  * 运行时可配置接口： 即可以在运行时自定义新字段或重新设置原有的物理字段
@@ -29,6 +29,6 @@ public interface IRuntimeField {
 	 * 
 	 * @return
 	 */
-	FakeSubSystem<? extends IEntityField> getCustomFields();
+	FakeSubSystem<? extends IEntityColumn> getCustomFields();
 
 }

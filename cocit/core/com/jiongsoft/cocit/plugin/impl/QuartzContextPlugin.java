@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.plugin.impl;
 
-import static com.jiongsoft.cocit.Demsy.servletContext;
+import static com.kmjsoft.cocit.Demsy.servletContext;
 
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;

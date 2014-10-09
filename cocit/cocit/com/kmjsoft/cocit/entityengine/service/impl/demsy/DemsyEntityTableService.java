@@ -11,21 +11,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Obj;
 import com.jiongsoft.cocit.lang.SystemExcel;
-import com.jiongsoft.cocit.orm.IOrm;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.impl.entitydef.AbstractSystemData;
-import com.kmjsoft.cocit.entity.impl.entitydef.BizAction;
-import com.kmjsoft.cocit.entity.impl.entitydef.SFTSystem;
-import com.kmjsoft.cocit.entity.impl.entitydef.SystemDataGroup;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
+import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
+import com.kmjsoft.cocit.entity.impl.definition.EntityColumn;
+import com.kmjsoft.cocit.entity.impl.definition.EntityColumnGroup;
 import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
 import com.kmjsoft.cocit.entityengine.service.FieldGroupService;
 import com.kmjsoft.cocit.entityengine.service.FieldService;
 import com.kmjsoft.cocit.entityengine.service.OperationService;
 import com.kmjsoft.cocit.entityengine.service.TableService;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.util.ClassUtil;
 import com.kmjsoft.cocit.util.CocException;
@@ -39,7 +39,7 @@ import com.kmjsoft.cocit.util.Tree.Node;
 public class DemsyEntityTableService implements TableService {
 	private BizEngine bizEngine;
 
-	private SFTSystem entity;
+	private EntityDefinition entity;
 
 	private List<FieldGroupService> bizGroups;
 
@@ -49,7 +49,7 @@ public class DemsyEntityTableService implements TableService {
 
 	private Properties extProps;
 
-	DemsyEntityTableService(SFTSystem e) {
+	DemsyEntityTableService(EntityDefinition e) {
 		bizEngine = (BizEngine) Demsy.entityDefManager;
 
 		entity = e;
@@ -58,8 +58,8 @@ public class DemsyEntityTableService implements TableService {
 		bizOperations = new ArrayList();
 		extProps = new Properties();
 
-		List<AbstractSystemData> dataFields = (List<AbstractSystemData>) bizEngine.getFields(entity);
-		List<BizAction> dataOperations = (List<BizAction>) bizEngine.getActions(entity);
+		List<EntityColumn> dataFields = (List<EntityColumn>) bizEngine.getFields(entity);
+		List<EntityAction> dataOperations = (List<EntityAction>) bizEngine.getActions(entity);
 
 		initDataFields(dataFields);
 		initDataOperations(dataOperations);
@@ -87,12 +87,12 @@ public class DemsyEntityTableService implements TableService {
 
 	@Override
 	public Date getOperatedDate() {
-		return entity.getOperatedDate();
+		return entity.getUpdatedDate();
 	}
 
 	@Override
 	public String getOperatedUser() {
-		return entity.getOperatedUser();
+		return entity.getUpdatedUser();
 	}
 
 	// @Override
@@ -138,7 +138,7 @@ public class DemsyEntityTableService implements TableService {
 
 		for (FieldService f : this.bizFields) {
 			DemsyEntityFieldService field = (DemsyEntityFieldService) f;
-			AbstractSystemData data = field.getEntity();
+			EntityColumn data = field.getEntity();
 
 			if (data.isDisabledNavi() || data.isDisabled()) {
 				continue;
@@ -157,7 +157,7 @@ public class DemsyEntityTableService implements TableService {
 
 		for (FieldService f : this.bizFields) {
 			DemsyEntityFieldService field = (DemsyEntityFieldService) f;
-			AbstractSystemData data = field.getEntity();
+			EntityColumn data = field.getEntity();
 
 			if (data.isDisabledNavi() || data.isDisabled()) {
 				continue;
@@ -179,7 +179,7 @@ public class DemsyEntityTableService implements TableService {
 
 		for (FieldService f : this.bizFields) {
 			DemsyEntityFieldService field = (DemsyEntityFieldService) f;
-			AbstractSystemData data = field.getEntity();
+			EntityColumn data = field.getEntity();
 
 			if (data.isDisabledNavi() && data.isDisabled())
 				continue;
@@ -197,13 +197,13 @@ public class DemsyEntityTableService implements TableService {
 		return ret;
 	}
 
-	private void initDataFields(List<AbstractSystemData> dataFields) {
+	private void initDataFields(List<EntityColumn> dataFields) {
 		if (dataFields == null)
 			return;
 		Map<Long, DemsyEntityGroupService> bizGroupsMap = new HashMap();
 
-		for (AbstractSystemData systemData : dataFields) {
-			SystemDataGroup dataGroup = systemData.getDataGroup();
+		for (EntityColumn systemData : dataFields) {
+			EntityColumnGroup dataGroup = systemData.getDataGroup();
 			Long groupID = dataGroup.getId();
 
 			DemsyEntityGroupService bizGroup = (DemsyEntityGroupService) bizGroupsMap.get(groupID);
@@ -228,11 +228,11 @@ public class DemsyEntityTableService implements TableService {
 		return map;
 	}
 
-	private void initDataOperations(List<BizAction> dataOperations) {
+	private void initDataOperations(List<EntityAction> dataOperations) {
 		if (dataOperations == null)
 			return;
 
-		for (BizAction g : dataOperations) {
+		for (EntityAction g : dataOperations) {
 			this.bizOperations.add(new DemsyEntityOperationService(g));
 		}
 	}
@@ -315,7 +315,7 @@ public class DemsyEntityTableService implements TableService {
 		return ret;
 	}
 
-	private boolean makeDataNodes(Tree tree, Node node, AbstractSystemData field) {
+	private boolean makeDataNodes(Tree tree, Node node, EntityColumn field) {
 		BizEngine bizEngine = (BizEngine) Demsy.entityDefManager;
 
 		DemsyEntityFieldService cocField = new DemsyEntityFieldService(field);
@@ -328,7 +328,7 @@ public class DemsyEntityTableService implements TableService {
 			IEntityDefinition fkSystem = field.getRefrenceSystem();
 
 			// 查询外键数据
-			IOrm orm = Demsy.orm();
+			ExtOrm orm = Demsy.orm();
 			Class fkSystemType = bizEngine.getType(fkSystem);
 			// if (orm.count(fkSystemType) > 50) {
 			// return false;
@@ -337,7 +337,7 @@ public class DemsyEntityTableService implements TableService {
 
 			// 数据自身树
 			String selfTreeProp = null;
-			IEntityField selfTreeFld = bizEngine.getFieldOfSelfTree(fkSystem);
+			IEntityColumn selfTreeFld = bizEngine.getFieldOfSelfTree(fkSystem);
 			if (selfTreeFld != null) {
 				selfTreeProp = bizEngine.getPropName(selfTreeFld);
 			}
@@ -388,7 +388,7 @@ public class DemsyEntityTableService implements TableService {
 		return true;
 	}
 
-	private boolean makeNodes(Tree tree, Node node, AbstractSystemData field) {
+	private boolean makeNodes(Tree tree, Node node, EntityColumn field) {
 		BizEngine bizEngine = (BizEngine) Demsy.entityDefManager;
 
 		DemsyEntityFieldService cocField = new DemsyEntityFieldService(field);
@@ -402,7 +402,7 @@ public class DemsyEntityTableService implements TableService {
 			IEntityDefinition fkSystem = field.getRefrenceSystem();
 
 			// 查询外键数据
-			IOrm orm = Demsy.orm();
+			ExtOrm orm = Demsy.orm();
 			Class fkSystemType = bizEngine.getType(fkSystem);
 			// if (orm.count(fkSystemType) > 50) {
 			// return false;
@@ -411,7 +411,7 @@ public class DemsyEntityTableService implements TableService {
 
 			// 数据自身树
 			String selfTreeProp = null;
-			IEntityField selfTreeFld = bizEngine.getFieldOfSelfTree(fkSystem);
+			IEntityColumn selfTreeFld = bizEngine.getFieldOfSelfTree(fkSystem);
 			if (selfTreeFld != null) {
 				selfTreeProp = bizEngine.getPropName(selfTreeFld);
 			}
@@ -462,7 +462,7 @@ public class DemsyEntityTableService implements TableService {
 		return true;
 	}
 
-	public SFTSystem getEntity() {
+	public EntityDefinition getEntity() {
 		return entity;
 	}
 

@@ -2,8 +2,8 @@ package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 
 import java.util.List;
 
-import com.jiongsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.impl.entitydef.SFTSystem;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
 import com.kmjsoft.cocit.entity.impl.security.Module;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
 import com.kmjsoft.cocit.entityengine.service.EntityManager;
@@ -29,12 +29,12 @@ public class DemsyEntityManager implements EntityManager {
 				tableService = (DemsyEntityTableService) moduleService.getTable();
 		}
 
-		SFTSystem system = null;
+		EntityDefinition system = null;
 		if (tableService != null)
 			system = tableService.getEntity();
 
 		if (system == null && module != null)
-			system = (SFTSystem) Demsy.moduleManager.getSystem(module);
+			system = (EntityDefinition) Demsy.moduleManager.getSystem(module);
 
 		bizManager = Demsy.bizManagerFactory.getManager(module, system);
 	}

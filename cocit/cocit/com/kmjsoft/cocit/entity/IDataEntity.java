@@ -3,7 +3,7 @@ package com.kmjsoft.cocit.entity;
 import java.util.Date;
 
 /**
- * 数据实体接口：该接口的所有实现类即为实体类，实体类将被ORM框架映射到数据库表，其实体对象都将被映射到数据库表记录。
+ * “数据实体”接口：该接口的所有实现类即为实体类，实体类将被ORM框架映射到数据库表，其实体对象都将被映射到数据库表记录。
  * 
  * @author Ji Yongshan
  * 
@@ -99,7 +99,7 @@ public interface IDataEntity {
 	 * 
 	 * @param uid
 	 */
-	void setDataGuid(String uid);
+	void setDataGuid(String dataGuid);
 
 	/**
 	 * 数据版本：用来作为数据版本控制字段，就像CVS、SVN、GIT一样，不允许两个人同时修改一条数据。
@@ -113,53 +113,41 @@ public interface IDataEntity {
 	 * 
 	 * @param id
 	 */
-	void setDataVersion(Integer id);
+	void setDataVersion(Integer dataVersion);
 
-	/**
-	 * 冗余字段：租户名称
-	 * 
-	 * @return
-	 */
-	String getTenantName();
+	Date getCreatedDate();
 
-	/**
-	 * 冗余字段：租户名称
-	 * 
-	 * @param name
-	 */
-	void setTenantName(String name);
+	void setCreatedDate(Date date);
+
+	String getCreatedUser();
+
+	void setCreatedUser(String user);
+
+	String getCreatedIP();
+
+	void setCreatedIP(String ip);
 
 	/**
 	 * 获取“操作时间”：即最近对本条数据执行操作是什么时候？
 	 * 
 	 * @return
 	 */
-	Date getOperatedDate();
+	Date getUpdatedDate();
 
-	/**
-	 * 
-	 * 设置“操作时间”：即最近对本条数据执行操作是什么时候？
-	 * 
-	 * @param date
-	 *            最后一次操作时间
-	 */
-	void setOperatedDate(Date date);
+	void setUpdatedDate(Date date);
 
 	/**
 	 * 获取“操作用户”：即最近对本条数据执行操作的是谁？
 	 * 
 	 * @return 用户登录帐号
 	 */
-	String getOperatedUser();
+	String getUpdatedUser();
 
-	/**
-	 * 
-	 * 设置“操作用户”：即最近对本条数据执行操作的是谁？
-	 * 
-	 * @param user
-	 *            用户登录帐号
-	 */
-	void setOperatedUser(String user);
+	void setUpdatedUser(String user);
+
+	String getUpdatedIP();
+
+	void setUpdatedIP(String ip);
 
 	/**
 	 * 获取数据状态码。
@@ -202,7 +190,7 @@ public interface IDataEntity {
 	 * @param code
 	 *            数据状态码
 	 */
-	void setStatusCode(int code);
+	void setStatusCode(int statusCode);
 
 	/**
 	 * 检查“实体数据状态{@link #getStatusCode()}”是否等于“预置（{@link #STATUS_CODE_BUILDIN}）”状态？

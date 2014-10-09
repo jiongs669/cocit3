@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.actions;
 
-import static com.jiongsoft.cocit.Demsy.bizManagerFactory;
+import static com.kmjsoft.cocit.Demsy.bizManagerFactory;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ID;
 
 import java.util.List;
@@ -9,7 +9,6 @@ import java.util.StringTokenizer;
 import org.nutz.json.Json;
 import org.nutz.lang.Mirror;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Str;
@@ -17,17 +16,18 @@ import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.ObjcetNaviNode;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.nutz.EnColumnMappingImpl;
-import com.jiongsoft.cocit.orm.nutz.EnMappingImpl;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.impl.log.RunningLog;
 import com.kmjsoft.cocit.entityengine.manager.BizConst;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.orm.expr.ExprRule;
 import com.kmjsoft.cocit.orm.expr.ExprRuleGroup;
 import com.kmjsoft.cocit.orm.expr.SimpleCndExpr;
+import com.kmjsoft.cocit.orm.nutz.EnColumnMappingImpl;
+import com.kmjsoft.cocit.orm.nutz.EnMappingImpl;
 
 public abstract class ModuleActions implements BizConst, MvcConst {
 	protected static Log log = Logs.get();
@@ -48,7 +48,7 @@ public abstract class ModuleActions implements BizConst, MvcConst {
 		}
 	}
 
-	protected CndExpr getBizCndExpr(IOrm orm, Class classOfEntity) {
+	protected CndExpr getBizCndExpr(ExtOrm orm, Class classOfEntity) {
 		log.trace("计算条件表达式...");
 
 		Demsy ctx = Demsy.me();
@@ -113,7 +113,7 @@ public abstract class ModuleActions implements BizConst, MvcConst {
 	 * @param classOfEntity
 	 * @return 查询条件表达式
 	 */
-	protected CndExpr getBizCndOrderExpr(IOrm orm, Class classOfEntity) {
+	protected CndExpr getBizCndOrderExpr(ExtOrm orm, Class classOfEntity) {
 		log.trace("计算条件排序表达式...");
 
 		CndExpr expr = this.getBizCndExpr(orm, classOfEntity);
@@ -125,7 +125,7 @@ public abstract class ModuleActions implements BizConst, MvcConst {
 		return expr;
 	}
 
-	protected CndExpr makeOrderExpr(IOrm orm, Class classOfEntity, CndExpr expr) {
+	protected CndExpr makeOrderExpr(ExtOrm orm, Class classOfEntity, CndExpr expr) {
 		log.trace("计算排序表达式...");
 
 		Demsy ctx = Demsy.me();
@@ -168,7 +168,7 @@ public abstract class ModuleActions implements BizConst, MvcConst {
 		return expr;
 	}
 
-	protected CndExpr getBizCndPageExpr(IOrm orm, Class classOfEntity) {
+	protected CndExpr getBizCndPageExpr(ExtOrm orm, Class classOfEntity) {
 
 		Demsy ctx = Demsy.me();
 		CndExpr expr = this.getBizCndOrderExpr(orm, classOfEntity);
@@ -185,7 +185,7 @@ public abstract class ModuleActions implements BizConst, MvcConst {
 		return expr;
 	}
 
-	protected void evalBizRuleGroup(IOrm orm, Class classOfEntity, ExprRuleGroup group) {
+	protected void evalBizRuleGroup(ExtOrm orm, Class classOfEntity, ExprRuleGroup group) {
 		ExprRule[] rules = group.getRules();
 		if (rules != null) {
 			for (int i = 0; i < rules.length; i++) {
@@ -215,7 +215,7 @@ public abstract class ModuleActions implements BizConst, MvcConst {
 	 *            原始表达式规则
 	 * @return 计算后的表达式规则
 	 */
-	protected ExprRule evalBizRefRule(IOrm orm, Class classOfEntity, ExprRule rule) {
+	protected ExprRule evalBizRefRule(ExtOrm orm, Class classOfEntity, ExprRule rule) {
 		// 检查是否是一个实体类
 		if (!Cls.isEntityType(classOfEntity)) {
 			if (log.isTraceEnabled())

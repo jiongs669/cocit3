@@ -4,17 +4,17 @@ package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 import java.util.Date;
 
 import com.kmjsoft.cocit.entity.definition.IEntityAction;
-import com.kmjsoft.cocit.entity.impl.entitydef.BizAction;
+import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
 import com.kmjsoft.cocit.entityengine.service.OperationService;
 
 public class DemsyEntityOperationService implements OperationService {
 
-	private BizAction entity;
+	private EntityAction entity;
 
 	// lazy load
 	// private List<BizAction> childrenBizActions;
 
-	DemsyEntityOperationService(BizAction e) {
+	DemsyEntityOperationService(EntityAction e) {
 		this.entity = e;
 	}
 
@@ -45,12 +45,12 @@ public class DemsyEntityOperationService implements OperationService {
 
 	@Override
 	public Date getOperatedDate() {
-		return entity.getOperatedDate();
+		return entity.getUpdatedDate();
 	}
 
 	@Override
 	public String getOperatedUser() {
-		return entity.getOperatedUser();
+		return entity.getUpdatedUser();
 	}
 
 	// @Override
@@ -105,7 +105,7 @@ public class DemsyEntityOperationService implements OperationService {
 
 	@Override
 	public Long getParentID() {
-		BizAction parent = entity.getParentAction();
+		EntityAction parent = entity.getParentAction();
 		return parent == null ? null : parent.getId();
 	}
 
@@ -121,7 +121,7 @@ public class DemsyEntityOperationService implements OperationService {
 
 	@Override
 	public String getActionPage() {
-		return entity.getTemplate();
+		return entity.getPageTemplate();
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.log.db;
 
-import static com.jiongsoft.cocit.Demsy.bizSession;
+import static com.kmjsoft.cocit.Demsy.bizSession;
 
 import java.util.Date;
 import java.util.Enumeration;
@@ -13,7 +13,7 @@ import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.impl.log.RunningLog;
 
 public class Log4jAppender extends AppenderSkeleton implements AppenderAttachable {

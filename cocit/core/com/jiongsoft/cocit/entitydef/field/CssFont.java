@@ -1,24 +1,24 @@
 package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(name = "字体", uiTemplate = "ui.widget.field.Composite")
+@CocColumn(name = "字体", uiTemplate = "ui.widget.field.Composite")
 public class CssFont extends JsonField<CssFont> {
 
-	@CocField(name = "字体大小", order = 1, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "字体大小", SN = 1, uiTemplate = "ui.widget.field.Spinner")
 	protected Integer size;
 
-	@CocField(name = "字体粗细", order = 2, options = ":粗细,normal:正常,bold:粗体,bolder:更粗,lighter:更细,inherit:继承,100:100,200:200,300:300,400:400,500:500,600:600,700:700,800:800,900:900")
+	@CocColumn(name = "字体粗细", SN = 2, options = ":粗细,normal:正常,bold:粗体,bolder:更粗,lighter:更细,inherit:继承,100:100,200:200,300:300,400:400,500:500,600:600,700:700,800:800,900:900")
 	protected String weight;
 
-	@CocField(name = "字体颜色", order = 3, uiTemplate = "ui.widget.field.CssColor")
+	@CocColumn(name = "字体颜色", SN = 3, uiTemplate = "ui.widget.field.CssColor")
 	protected String color;
 
-	@CocField(name = "字体风格", order = 4, options = ":风格,normal:正常,italic:斜体,oblique:倾斜,inherit:继承")
+	@CocColumn(name = "字体风格", SN = 4, options = ":风格,normal:正常,italic:斜体,oblique:倾斜,inherit:继承")
 	protected String style;
 
-	@CocField(name = "文本修饰", order = 5, options = ":修饰,none:默认,underline:下划线,overline:上划线,line-through:穿越线,blink:闪烁,inherit:继承")
+	@CocColumn(name = "文本修饰", SN = 5, options = ":修饰,none:默认,underline:下划线,overline:上划线,line-through:穿越线,blink:闪烁,inherit:继承")
 	protected String decoration;
 
 	// @CocField(name = "名称")

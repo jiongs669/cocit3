@@ -11,12 +11,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jiongsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.BaseEntity;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.DataEntity;
 import com.kmjsoft.cocit.entity.IDataEntity;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 import com.kmjsoft.cocit.entityengine.definition.IEntityDefManager;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
 import com.kmjsoft.cocit.orm.expr.Expr;
@@ -35,22 +35,22 @@ public class SystemExcel {
 
 	private Class systemClass;
 
-	private Map<String, IEntityField> fields = new HashMap();// <字段名称, 字段>
+	private Map<String, IEntityColumn> fields = new HashMap();// <字段名称, 字段>
 
 	private String[] excelHeads;
 
 	private List<String[]> excelRows;
 
-	public SystemExcel(IEntityDefinition system, IAction action, File excel) throws FileNotFoundException, IOException, DemsyException {
+	public SystemExcel(IEntityDefinition system, IEntityAction entityAction, File excel) throws FileNotFoundException, IOException, DemsyException {
 		this.entityDefManager = Demsy.entityDefManager;
 		systemClass = entityDefManager.getType(system);
 
 		// 处理自定义系统相关信息
-		List<IEntityField> datas = (List<IEntityField>) entityDefManager.getFieldsOfEnabled(system);
-		for (IEntityField data : datas) {
+		List<IEntityColumn> datas = (List<IEntityColumn>) entityDefManager.getFieldsOfEnabled(system);
+		for (IEntityColumn data : datas) {
 			String name = data.getName();
 			boolean valid = !data.isDisabled();
-			String mode = entityDefManager.getMode(data, action, false, "E");
+			String mode = entityDefManager.getMode(data, entityAction, false, "E");
 			valid = valid && (mode.equals("E") || mode.equals("M"));
 
 			if (valid)
@@ -59,7 +59,7 @@ public class SystemExcel {
 		if (log.isInfoEnabled()) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("系统(" + system.getName() + ")字段：\n");
-			for (IEntityField fld : datas) {
+			for (IEntityColumn fld : datas) {
 				if (fields.get(fld.getName()) == null) {
 					continue;
 				}
@@ -123,8 +123,8 @@ public class SystemExcel {
 		systemClass = entityDefManager.getType(system);
 
 		// 处理自定义系统相关信息
-		List<IEntityField> datas = (List<IEntityField>) entityDefManager.getFieldsOfEnabled(system);
-		for (IEntityField data : datas) {
+		List<IEntityColumn> datas = (List<IEntityColumn>) entityDefManager.getFieldsOfEnabled(system);
+		for (IEntityColumn data : datas) {
 			String name = data.getName();
 
 			fields.put(name, data);
@@ -132,7 +132,7 @@ public class SystemExcel {
 		if (log.isInfoEnabled()) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("系统(" + system.getName() + ")字段：\n");
-			for (IEntityField fld : datas) {
+			for (IEntityColumn fld : datas) {
 				if (fields.get(fld.getName()) == null) {
 					continue;
 				}
@@ -165,21 +165,21 @@ public class SystemExcel {
 
 	public List getRows() throws InstantiationException, IllegalAccessException {
 		IBizSession session = Demsy.bizSession;
-		String softID = Demsy.me().getSoft().getDataGuid();
+		String softID = Demsy.me().getTenant().getDataGuid();
 
 		final List<IDataEntity> retList = new ArrayList();
 		int excelRowIndex = 1;
 		int excelColIndex = 0;
 		for (String[] row : excelRows) {
 			excelRowIndex++;
-			BaseEntity data = (BaseEntity) systemClass.newInstance();
+			DataEntity data = (DataEntity) systemClass.newInstance();
 			for (int i = 0; i < row.length; i++) {
 				excelColIndex = i + 1;
 				if (i >= excelHeads.length) {
 					break;
 				}
 				try {
-					IEntityField fld = fields.get(excelHeads[i]);
+					IEntityColumn fld = fields.get(excelHeads[i]);
 					String propName = entityDefManager.getPropName(fld);
 					String propValue = row[i];
 
@@ -242,7 +242,7 @@ public class SystemExcel {
 			}
 
 			//
-			data.setTenantGuid(softID);
+			data.setTenantOwnerGuid(softID);
 
 			retList.add(data);
 		}
@@ -252,22 +252,22 @@ public class SystemExcel {
 
 	private List getDataRows() throws InstantiationException, IllegalAccessException {
 		IBizSession session = Demsy.bizSession;
-		String softID = Demsy.me().getSoft().getDataGuid();
+		String softID = Demsy.me().getTenant().getDataGuid();
 
-		IEntityField pkfld = fields.get(excelHeads[0]);
+		IEntityColumn pkfld = fields.get(excelHeads[0]);
 		final List<IDataEntity> list = new ArrayList();
 		int rowIndex = 1;
 		int colIndex = 0;
 		for (String[] row : excelRows) {
 			rowIndex++;
-			BaseEntity data = (BaseEntity) session.load(systemClass, Expr.eq(entityDefManager.getPropName(pkfld), row[0]));
+			DataEntity data = (DataEntity) session.load(systemClass, Expr.eq(entityDefManager.getPropName(pkfld), row[0]));
 			if (data == null) {
-				data = (BaseEntity) systemClass.newInstance();
+				data = (DataEntity) systemClass.newInstance();
 			}
 			for (int i = 0; i < row.length; i++) {
 				colIndex = i + 1;
 				try {
-					IEntityField fld = fields.get(excelHeads[i]);
+					IEntityColumn fld = fields.get(excelHeads[i]);
 					String propname = entityDefManager.getPropName(fld);
 					String propvalue = row[i];
 
@@ -310,7 +310,7 @@ public class SystemExcel {
 			}
 
 			//
-			data.setTenantGuid(softID);
+			data.setTenantOwnerGuid(softID);
 
 			list.add(data);
 		}

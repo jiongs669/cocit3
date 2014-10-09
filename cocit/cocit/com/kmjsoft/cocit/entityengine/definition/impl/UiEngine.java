@@ -1,11 +1,11 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.moduleManager;
 import static com.jiongsoft.cocit.mvc.MvcConst.MvcUtil.contextPath;
 import static com.jiongsoft.cocit.mvc.MvcConst.MvcUtil.globalVariables;
 import static com.jiongsoft.cocit.mvc.MvcConst.MvcUtil.initGlobalVariables;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_LIB_UIMODEL;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_UIUDF_PAGE;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_UIUDF_PAGE_BLOCK;
@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.nutz.lang.Mirror;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.entitydef.field.CssPosition;
 import com.jiongsoft.cocit.entitydef.field.Dataset;
 import com.jiongsoft.cocit.entitydef.field.FakeSubSystem;
@@ -79,16 +78,16 @@ import com.jiongsoft.cocit.mvc.ui.widget.field.UISysManyFld;
 import com.jiongsoft.cocit.mvc.ui.widget.field.UITextFld;
 import com.jiongsoft.cocit.mvc.ui.widget.field.UIUploadFld;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIToolbarMenu;
-import com.jiongsoft.cocit.orm.IOrm;
 import com.jiongsoft.cocit.util.sort.SortUtils;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.definition.IFieldDataType;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.definition.IFieldGroup;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.definition.IEntityColumnGroup;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.web.IStatistic;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
 import com.kmjsoft.cocit.entity.webdef.IPage;
@@ -98,8 +97,9 @@ import com.kmjsoft.cocit.entity.webdef.IStyleItem;
 import com.kmjsoft.cocit.entity.webdef.IUIViewComponent;
 import com.kmjsoft.cocit.entity.webdef.IStyle.SimpleStyle;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
-import com.kmjsoft.cocit.orm.annotation.CocField;
-import com.kmjsoft.cocit.orm.annotation.CocField2;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.ui.IUIEngine;
 
@@ -300,7 +300,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 			grid.setDataType(DATA_XML);
 
 			IEntityDefinition sys = moduleManager.getSystem(mdl);
-			List<? extends IEntityField> flds = entityDefManager.getFieldsOfGrid(sys, colNames);
+			List<? extends IEntityColumn> flds = entityDefManager.getFieldsOfGrid(sys, colNames);
 			int count = 1;
 			int width = 0;
 
@@ -312,7 +312,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 			// int gridColSize = new Double(contentWidth / 120).intValue();
 			int gridColSize = 10;
 
-			for (IEntityField fld : flds) {
+			for (IEntityColumn fld : flds) {
 				if (!fld.isGridField()) {
 					continue;
 				}
@@ -341,7 +341,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 					col.setOptions(map);
 				}
 
-				IEntityField field = fld.getRefrenceField();
+				IEntityColumn field = fld.getRefrenceField();
 				if (field == null) {
 					field = fld;
 				}
@@ -437,7 +437,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 	}
 
 	@Override
-	public UIBizFormModel makeSystemFormView(IModule module, IAction action, Object data) throws DemsyException {
+	public UIBizFormModel makeSystemFormView(IModule module, IEntityAction entityAction, Object data) throws DemsyException {
 		// String key = "BizForm" + (action == null ? "" : action.getId());
 		// BizForm form = cached(key, moduleID.getId());
 		// if (form == null) {
@@ -451,17 +451,17 @@ public class UiEngine implements IUIEngine, MvcConst {
 		IEntityDefinition sys = moduleManager.getSystem(module);
 
 		// 获取运行时自定义字段
-		List<IEntityField> customFields = new LinkedList();
-		Map<String, IEntityField> customFieldsMap = new HashMap();
-		List<IEntityField> fkFieldsOfRuntimeCustom = (List<IEntityField>) entityDefManager.getFieldsOfSystemFK(sys, IRuntimeField.class);
+		List<IEntityColumn> customFields = new LinkedList();
+		Map<String, IEntityColumn> customFieldsMap = new HashMap();
+		List<IEntityColumn> fkFieldsOfRuntimeCustom = (List<IEntityColumn>) entityDefManager.getFieldsOfSystemFK(sys, IRuntimeField.class);
 		List<String> fkPropsOfRuntimeCustom = new ArrayList();
-		for (IEntityField fld : fkFieldsOfRuntimeCustom) {
+		for (IEntityColumn fld : fkFieldsOfRuntimeCustom) {
 			String propname = entityDefManager.getPropName(fld);
 			fkPropsOfRuntimeCustom.add(propname);
 			IRuntimeField custom = Obj.getValue(data, propname);
-			List<? extends IEntityField> flds = entityDefManager.makeFields(custom);
+			List<? extends IEntityColumn> flds = entityDefManager.makeFields(custom);
 			if (flds != null) {
-				for (IEntityField f : flds) {
+				for (IEntityColumn f : flds) {
 					customFields.add(f);
 					customFieldsMap.put(f.getPropName(), f);
 				}
@@ -475,23 +475,23 @@ public class UiEngine implements IUIEngine, MvcConst {
 		// double contentWidth = Demsy.me().login().getBodyWidth() - 50;
 		int rowSize = 1;// new Double(contentWidth / 285).intValue();//每行显示多少个字段
 		form.setLayout(sys.getUiType());
-		List<? extends IFieldGroup> bizGroups = entityDefManager.getFieldGroups(sys);
+		List<? extends IEntityColumnGroup> bizGroups = entityDefManager.getFieldGroups(sys);
 		Map<String, UIBizFld> uiFieldMap = new HashMap();
-		for (IFieldGroup bizGroup : bizGroups) {
+		for (IEntityColumnGroup bizGroup : bizGroups) {
 			UIGroupFld uiGroup = new UIGroupFld(null, bizGroup.getId());
 			if (sys.getUiType() == 0) {// 0: table, 1: tab
 				uiGroup.setRowSize(rowSize);
 			}
 			uiGroup.setName(bizGroup.getName());
-			uiGroup.setMode(entityDefManager.getMode(bizGroup, action));
+			uiGroup.setMode(entityDefManager.getMode(bizGroup, entityAction));
 
-			List<? extends IEntityField> groupFields = entityDefManager.getFieldsOfEnabled(bizGroup);
-			for (IEntityField bzField : groupFields) {
+			List<? extends IEntityColumn> groupFields = entityDefManager.getFieldsOfEnabled(bizGroup);
+			for (IEntityColumn bzField : groupFields) {
 				try {
 
 					// 用运行时自定义字段覆盖物理字段
 					String bzFieldPropName = entityDefManager.getPropName(bzField);
-					IEntityField customField = customFieldsMap.get(bzFieldPropName);
+					IEntityColumn customField = customFieldsMap.get(bzFieldPropName);
 					if (customField != null) {
 						if (!Str.isEmpty(customField.getName()))
 							bzField.setName(customField.getName());
@@ -504,7 +504,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 					}
 					// END: 用运行时自定义字段覆盖物理字段
 
-					UIBizFld uiField = this.convertFld(module, form, bzField, action, null, data, String.class.equals(entityDefManager.getType(bzField)) ? F_GUID : F_ID);
+					UIBizFld uiField = this.convertFld(module, form, bzField, entityAction, null, data, String.class.equals(entityDefManager.getType(bzField)) ? F_GUID : F_ID);
 					if (uiField != null) {
 						uiGroup.addChild(uiField, data);
 						uiFieldMap.put(uiField.getPropName(), uiField);
@@ -525,7 +525,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 		uiGroup.setMode("S");
 		Map<Long, IFieldDataType> types = entityDefManager.getFieldTypesById();
 		long dynId = System.currentTimeMillis();
-		for (IEntityField bzField : customFields) {
+		for (IEntityColumn bzField : customFields) {
 			try {
 				if (customFieldsMap.get(bzField.getPropName()) == null)
 					continue;
@@ -537,7 +537,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 				}
 				bzField.setId(dynId++);
 
-				UIBizFld uiField = this.convertFld(module, form, bzField, action, null, data, F_ID);
+				UIBizFld uiField = this.convertFld(module, form, bzField, entityAction, null, data, F_ID);
 				if (uiField != null) {
 					uiGroup.addChild(uiField, data);
 					uiFieldMap.put(uiField.getPropName(), uiField);
@@ -574,16 +574,16 @@ public class UiEngine implements IUIEngine, MvcConst {
 		UIBizFormModel ret = new UIBizFormModel(form, null);
 		ret.setData(data);
 		ret.setId(module.getId());
-		ret.set("actionID", action == null ? 0 : action.getId());
+		ret.set("actionID", entityAction == null ? 0 : entityAction.getId());
 
 		return ret;
 	}
 
 	@SuppressWarnings("deprecation")
-	private UIBizFld convertFld(IModule module, UIBizForm form, IEntityField bzField, IAction action, String defaultMode, Object data, String idField) {
+	private UIBizFld convertFld(IModule module, UIBizForm form, IEntityColumn bzField, IEntityAction entityAction, String defaultMode, Object data, String idField) {
 
 		String[] cascade = entityDefManager.getCascadeMode(bzField, data);
-		String mode = entityDefManager.getMode(bzField, action, false, defaultMode);
+		String mode = entityDefManager.getMode(bzField, entityAction, false, defaultMode);
 		if (entityDefManager.getModeValue(mode) < entityDefManager.getModeValue(cascade[1])) {
 			mode = entityDefManager.getUiMode(cascade[1]);
 		}
@@ -662,8 +662,8 @@ public class UiEngine implements IUIEngine, MvcConst {
 			uiField.setOptionNode(options);
 			if (options.is((byte) 1)) {
 				isCombobox = true;
-				IModule refModule = moduleManager.getModule(module.getTenantGuid(), bzField.getRefrenceSystem());
-				List<String> rules = entityDefManager.makeCascadeExpr(data, bzField, action.getMode());
+				IModule refModule = moduleManager.getModule(module.getTenantOwnerGuid(), bzField.getRefrenceSystem());
+				List<String> rules = entityDefManager.makeCascadeExpr(data, bzField, entityAction.getMode());
 				StringBuffer naviRules = new StringBuffer();
 				if (rules != null && rules.size() > 0) {
 					naviRules.append("[");
@@ -703,16 +703,16 @@ public class UiEngine implements IUIEngine, MvcConst {
 				uiSubSysFld.setFake(true);
 			}
 			if (entityDefManager.isMultiUpload(bzField)) {
-				CocField ann = (CocField) bzFieldType.getAnnotation(CocField.class);
-				refSystem = entityDefManager.getSystem(ann.fkTable());
-				refProps = Str.toArray(ann.refrenceFields());
+				CocColumn ann = (CocColumn) bzFieldType.getAnnotation(CocColumn.class);
+				refSystem = entityDefManager.getSystem(ann.fkEntity());
+				refProps = Str.toArray(ann.fkField());
 			}
 
-			Map<String, IEntityField> refFields = entityDefManager.getFieldsMap(refSystem);
+			Map<String, IEntityColumn> refFields = entityDefManager.getFieldsMap(refSystem);
 			for (String refProp : refProps) {
-				IEntityField refFld = refFields.get(refProp);
+				IEntityColumn refFld = refFields.get(refProp);
 				if (refFld != null) {
-					UIBizFld uiRefFld = this.convertFld(module, form, refFld, action, defaultMode, null, null);
+					UIBizFld uiRefFld = this.convertFld(module, form, refFld, entityAction, defaultMode, null, null);
 
 					uiRefFld.setMode("E");
 					if (entityDefManager.isNumber(refFld) && !entityDefManager.isInteger(refFld)) {
@@ -730,7 +730,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 			uiField = new UIStrFld(null, bzField.getId());
 			uiField.setMode(mode);
 			if (!"N".equals(mode))
-				this.convertSubFields(module, form, action, data, bzField, uiField);
+				this.convertSubFields(module, form, entityAction, data, bzField, uiField);
 		}
 
 		if (!Str.isEmpty(tpl)) {
@@ -774,7 +774,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 		return uiField;
 	}
 
-	private void convertSubFields(IModule module, UIBizForm form, IAction action, Object data, IEntityField bzfld, UIBizFld uifld) {
+	private void convertSubFields(IModule module, UIBizForm form, IEntityAction entityAction, Object data, IEntityColumn bzfld, UIBizFld uifld) {
 		Class proptype = entityDefManager.getType(bzfld);
 		if (proptype == null || !IExtField.class.isAssignableFrom(proptype)) {
 			return;
@@ -785,10 +785,10 @@ public class UiEngine implements IUIEngine, MvcConst {
 		uifld.setId(bzfld.getId());
 		Mirror propme = Mirror.me(proptype);
 
-		List<IEntityField> bzsubflds = new LinkedList();
+		List<IEntityColumn> bzsubflds = new LinkedList();
 
 		// template
-		CocField fann = (CocField) proptype.getAnnotation(CocField.class);
+		CocColumn fann = (CocColumn) proptype.getAnnotation(CocColumn.class);
 		if (fann != null && !Str.isEmpty(fann.uiTemplate())) {
 			uifld.setTemplate(fann.uiTemplate());
 		}
@@ -799,13 +799,13 @@ public class UiEngine implements IUIEngine, MvcConst {
 		CocField2[] subanns = null;
 		try {
 			Field propfld = sysme.getField(prop);
-			CocField propann = propfld.getAnnotation(CocField.class);
+			CocColumn propann = propfld.getAnnotation(CocColumn.class);
 			subanns = propann.children();
 		} catch (NoSuchFieldException e) {
 		}
 		if (subanns != null && subanns.length > 0) {
 			for (CocField2 ann : subanns) {
-				IEntityField fld = ((BizEngine) entityDefManager).parseBizField(module.getTenantGuid(), propme, ann.property(), bzfld.getSystem(), null);
+				IEntityColumn fld = ((BizEngine) entityDefManager).parseBizField(module.getTenantOwnerGuid(), propme, ann.propName(), bzfld.getSystem(), null);
 				fld.setId(count++);
 				fld.setPropName(prop + "." + fld.getPropName());
 				if (!Str.isEmpty(ann.cascadeMode()))
@@ -818,9 +818,9 @@ public class UiEngine implements IUIEngine, MvcConst {
 				bzsubflds.add(fld);
 			}
 		} else {
-			Field[] fields = propme.getFields(CocField.class);
+			Field[] fields = propme.getFields(CocColumn.class);
 			for (Field f : fields) {
-				IEntityField fld = ((BizEngine) entityDefManager).parseBizField(module.getTenantGuid(), propme, f.getName(), bzfld.getSystem(), null);
+				IEntityColumn fld = ((BizEngine) entityDefManager).parseBizField(module.getTenantOwnerGuid(), propme, f.getName(), bzfld.getSystem(), null);
 				fld.setId(count++);
 				fld.setPropName(prop + "." + fld.getPropName());
 
@@ -830,8 +830,8 @@ public class UiEngine implements IUIEngine, MvcConst {
 
 		SortUtils.sort(bzsubflds, EntityConst.F_ORDER_BY, true);
 		Map<String, UIBizFld> subMap = new HashMap();
-		for (IEntityField bzChild : bzsubflds) {
-			UIBizFld subUiFld = this.convertFld(module, form, bzChild, action, uifld.getMode(), data, EntityConst.F_GUID);
+		for (IEntityColumn bzChild : bzsubflds) {
+			UIBizFld subUiFld = this.convertFld(module, form, bzChild, entityAction, uifld.getMode(), data, EntityConst.F_GUID);
 			subUiFld.setId(uifld.getId() + "_" + bzChild.getId());
 			uifld.addChild(subUiFld, data);
 			subMap.put(subUiFld.getPropName(), subUiFld);
@@ -875,7 +875,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 	}
 
 	@Override
-	public UIWidgetModel makeFunctionMenuView(ISystemTenant soft) throws DemsyException {
+	public UIWidgetModel makeFunctionMenuView(ITenant soft) throws DemsyException {
 
 		return new UIWidgetModel(new UIAccordion(globalVariables, soft == null ? "0" : soft.getId()), null);
 	}
@@ -895,7 +895,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 
 	@Override
 	public IPage loadIndexPage() {
-		return (IPage) Demsy.orm().load(entityDefManager.getStaticType(BIZSYS_UIUDF_PAGE), Expr.eq(F_USAGE, IPage.USAGE_IDX).and(Expr.eq(F_SOFT_ID, Demsy.me().getSoft())).setFieldRexpr("id", true));
+		return (IPage) Demsy.orm().load(entityDefManager.getStaticType(BIZSYS_UIUDF_PAGE), Expr.eq(F_USAGE, IPage.USAGE_IDX).and(Expr.eq(F_SOFT_ID, Demsy.me().getTenant())).setFieldRexpr("id", true));
 	}
 
 	protected CacheWeb webInfoCatalog(Long id) {
@@ -991,7 +991,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 		pageView.addStyle(page.getStyle());
 		pageView.setWidth(page.getPageWidth());
 		if (!Str.isEmpty(page.getUiTemplate())) {
-			pageView.setTemplate(page.getUiTemplate());
+			pageView.setPageTemplate(page.getUiTemplate());
 		}
 		pageView.set("title", page.getName());
 		pageView.set("keywords", page.getKeywords());
@@ -1083,7 +1083,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 				final StringBuffer sb = new StringBuffer();
 				for (IStyleItem s : items) {
 					String code = s.getCode();
-					String desc = s.getDesc();
+					String desc = s.getPrefDesc();
 					if (!Str.isEmpty(desc)) {
 						if (Str.isEmpty(code))
 							code = "";
@@ -1345,7 +1345,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 		return blockView;
 	}
 
-	private void addViewComponent(Node fnode, IUIViewComponent viewType, IEntityField field, String var) {
+	private void addViewComponent(Node fnode, IUIViewComponent viewType, IEntityColumn field, String var) {
 		fnode.setType(viewType.getCode());
 		fnode.set("dataID", viewType.getId());
 		fnode.set("defaultWidth", viewType.getDefaultWidth());
@@ -1388,7 +1388,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 			if (children != null && children.size() > 0) {
 				this.addViewComponent(root, folder, moduleNode, viewController);
 			}
-			if (module.getType() != IModule.TYPE_BIZ) {
+			if (module.getType() != IModule.TYPE_ENTITY) {
 				continue;
 			}
 
@@ -1439,8 +1439,8 @@ public class UiEngine implements IUIEngine, MvcConst {
 				if (catalogSystem != null) {
 					Node node = root.addNode(null, "catalogSystemFields").setName(catalogSystem.getName() + "(字段表达式)");
 					node.setType("catalogSystemFields");
-					List<? extends IEntityField> fields = entityDefManager.getFieldsOfEnabled(catalogSystem);
-					for (IEntityField f : fields) {
+					List<? extends IEntityColumn> fields = entityDefManager.getFieldsOfEnabled(catalogSystem);
+					for (IEntityColumn f : fields) {
 						Node fnode = root.addNode("catalogSystemFields", "field" + f.getId()).setName(f.getName());
 						addViewComponent(fnode, exprView, f, "ctx.catalog");
 					}
@@ -1448,8 +1448,8 @@ public class UiEngine implements IUIEngine, MvcConst {
 				if (system != null) {
 					Node node = root.addNode(null, "systemFields").setName(system.getName() + "(字段表达式)");
 					node.setType("systemFields");
-					List<? extends IEntityField> fields = entityDefManager.getFieldsOfEnabled(system);
-					for (IEntityField f : fields) {
+					List<? extends IEntityColumn> fields = entityDefManager.getFieldsOfEnabled(system);
+					for (IEntityColumn f : fields) {
 						Node fnode = root.addNode("systemFields", "field" + f.getId()).setName(f.getName());
 
 						// 如果上级板块为迭代视图，则子视图表达式变量不含ctx.前缀
@@ -1474,7 +1474,7 @@ public class UiEngine implements IUIEngine, MvcConst {
 				break;
 			}
 		}
-		Nodes moduleNodes = moduleManager.makeNodesByModule(Demsy.me().getSoft(), SecurityManager.ROLE_ADMIN_ROOT);
+		Nodes moduleNodes = moduleManager.makeNodesByModule(Demsy.me().getTenant(), SecurityManager.ROLE_ADMIN_ROOT);
 		for (Node folderNode : moduleNodes.getChildren()) {
 			IModule folder = (IModule) folderNode.get("moduleID");
 			Node bznode = root.addNode(null, "bzmodule" + folder.getId()).setName(folder.getName() + "(数据控制器)");
@@ -1524,11 +1524,11 @@ public class UiEngine implements IUIEngine, MvcConst {
 		return this.styleCache.get(styleID);
 	}
 
-	public void addClickNum(IOrm orm, IStatistic obj) {
+	public void addClickNum(ExtOrm orm, IStatistic obj) {
 		moduleManager.increase(orm, obj, "clickNum");
 	}
 
-	public void addCommentNum(IOrm orm, IStatistic obj) {
+	public void addCommentNum(ExtOrm orm, IStatistic obj) {
 		moduleManager.increase(orm, obj, "commentNum");
 	}
 

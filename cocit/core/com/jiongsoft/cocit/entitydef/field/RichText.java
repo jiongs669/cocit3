@@ -2,9 +2,9 @@ package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.JSON;
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(columnDefinition = "text")
+@CocColumn(columnDefinition = "text")
 public class RichText implements IExtField {
 	private String text;
 

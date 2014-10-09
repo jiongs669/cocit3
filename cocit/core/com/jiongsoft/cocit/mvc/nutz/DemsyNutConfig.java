@@ -8,7 +8,7 @@ import org.nutz.mvc.config.AbstractNutConfig;
 import org.nutz.mvc.config.AtMap;
 import org.nutz.resource.Scans;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 
 public class DemsyNutConfig extends AbstractNutConfig {
 

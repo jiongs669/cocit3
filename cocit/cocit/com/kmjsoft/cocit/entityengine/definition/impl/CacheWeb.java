@@ -1,10 +1,10 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
 import static com.kmjsoft.cocit.entity.EntityConst.F_GUID;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Str;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
 import com.kmjsoft.cocit.orm.expr.Expr;
 

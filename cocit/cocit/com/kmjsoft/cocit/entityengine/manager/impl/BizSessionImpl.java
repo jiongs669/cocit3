@@ -8,19 +8,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.log.db.RunningLogDao;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.NoTransConnCallback;
-import com.jiongsoft.cocit.orm.OrmCallback;
-import com.jiongsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.actionplugin.ActionEvent;
+import com.kmjsoft.cocit.entity.actionplugin.IActionPlugin;
 import com.kmjsoft.cocit.entity.impl.log.RunningLog;
-import com.kmjsoft.cocit.entityengine.bizplugin.ActionEvent;
-import com.kmjsoft.cocit.entityengine.bizplugin.ActionPlugin;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.NoTransConnCallback;
+import com.kmjsoft.cocit.orm.OrmCallback;
+import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.NullCndExpr;
 
@@ -42,7 +42,7 @@ public class BizSessionImpl implements IBizSession {
 		new ExecuteActionThread(actionQueue).start();
 	}
 
-	private BizSessionImpl(BizSessionImpl parent, IOrm o) {
+	private BizSessionImpl(BizSessionImpl parent, ExtOrm o) {
 		actionQueue = parent.actionQueue;
 	}
 
@@ -52,20 +52,20 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public IBizSession me(final IOrm orm) {
+	public IBizSession me(final ExtOrm orm) {
 		class OrmBizSession extends BizSessionImpl {
 			OrmBizSession() {
 				super(BizSessionImpl.this, orm);
 			}
 
-			public IOrm orm() {
+			public ExtOrm orm() {
 				return orm;
 			}
 		}
 		return new OrmBizSession();
 	}
 
-	public IOrm orm() {
+	public ExtOrm orm() {
 		return Demsy.orm();
 	}
 
@@ -76,33 +76,33 @@ public class BizSessionImpl implements IBizSession {
 		return e;
 	}
 
-	private void fireLoadEvent(ActionPlugin[] plugins, ActionEvent event) {
+	private void fireLoadEvent(IActionPlugin[] plugins, ActionEvent event) {
 		if (plugins != null) {
-			for (ActionPlugin l : plugins) {
+			for (IActionPlugin l : plugins) {
 				l.load(event);
 			}
 		}
 	}
 
-	private void fireLoadedEvent(ActionPlugin[] plugins, ActionEvent event) {
+	private void fireLoadedEvent(IActionPlugin[] plugins, ActionEvent event) {
 		if (plugins != null) {
-			for (ActionPlugin l : plugins) {
+			for (IActionPlugin l : plugins) {
 				l.loaded(event);
 			}
 		}
 	}
 
-	private void fireBeforeEvent(ActionPlugin[] plugins, ActionEvent event) {
+	private void fireBeforeEvent(IActionPlugin[] plugins, ActionEvent event) {
 		if (plugins != null) {
-			for (ActionPlugin l : plugins) {
+			for (IActionPlugin l : plugins) {
 				l.before(event);
 			}
 		}
 	}
 
-	private void fireAfterEvent(ActionPlugin[] plugins, ActionEvent event) {
+	private void fireAfterEvent(IActionPlugin[] plugins, ActionEvent event) {
 		if (plugins != null) {
-			for (ActionPlugin l : plugins) {
+			for (IActionPlugin l : plugins) {
 				l.after(event);
 			}
 		}
@@ -113,12 +113,12 @@ public class BizSessionImpl implements IBizSession {
 	// ========================================================================
 
 	@Override
-	public int save(Object obj, ActionPlugin... plugins) {
+	public int save(Object obj, IActionPlugin... plugins) {
 		return save(obj, null, plugins);
 	}
 
 	@Override
-	public int save(final Object obj, final CndExpr fieldRexpr, final ActionPlugin... plugins) {
+	public int save(final Object obj, final CndExpr fieldRexpr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -136,7 +136,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public int updateMore(final Object obj, final CndExpr expr, final ActionPlugin... plugins) {
+	public int updateMore(final Object obj, final CndExpr expr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -154,7 +154,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public int delete(final Object entity, final ActionPlugin... plugins) {
+	public int delete(final Object entity, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -171,7 +171,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public int delete(final Class klass, final Long id, final ActionPlugin... plugins) {
+	public int delete(final Class klass, final Long id, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -189,7 +189,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public int deleteMore(final Class klass, final CndExpr expr, final ActionPlugin... plugins) {
+	public int deleteMore(final Class klass, final CndExpr expr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -207,12 +207,12 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public Object load(Class klass, Long id, ActionPlugin... plugins) {
+	public Object load(Class klass, Long id, IActionPlugin... plugins) {
 		return this.load(klass, id, null, plugins);
 	}
 
 	@Override
-	public Object load(final Class klass, final Long id, final CndExpr fieldRexpr, final ActionPlugin... plugins) {
+	public Object load(final Class klass, final Long id, final CndExpr fieldRexpr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -231,7 +231,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public Object load(final Class klass, final CndExpr expr, final ActionPlugin... plugins) {
+	public Object load(final Class klass, final CndExpr expr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -249,7 +249,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public int count(final Class klass, final CndExpr expr, final ActionPlugin... plugins) {
+	public int count(final Class klass, final CndExpr expr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -267,7 +267,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public List query(final Class klass, final CndExpr expr, final ActionPlugin... plugins) {
+	public List query(final Class klass, final CndExpr expr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -285,7 +285,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public List query(final Pager pager, final ActionPlugin... plugins) {
+	public List query(final Pager pager, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -302,7 +302,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public Object run(final Object obj, final CndExpr expr, final ActionPlugin... plugins) {
+	public Object run(final Object obj, final CndExpr expr, final IActionPlugin... plugins) {
 		final ActionEvent event = createEvent();
 		Trans.exec(new Atom() {
 			public void run() {
@@ -339,7 +339,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public Object asynRun(Object obj, CndExpr fieldRexpr, ActionPlugin... plugins) {
+	public Object asynRun(Object obj, CndExpr fieldRexpr, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntity(obj);
 		event.setExpr(fieldRexpr);
@@ -353,14 +353,14 @@ public class BizSessionImpl implements IBizSession {
 	// ========================================================================
 
 	@Override
-	public void asynSave(Object obj, ActionPlugin... plugins) {
+	public void asynSave(Object obj, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntity(obj);
 		put(new DelayAction(ActionType.save, event, plugins));
 	}
 
 	@Override
-	public void asynSave(Object obj, CndExpr fieldRexpr, ActionPlugin... plugins) {
+	public void asynSave(Object obj, CndExpr fieldRexpr, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntity(obj);
 		event.setExpr(fieldRexpr);
@@ -368,7 +368,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public void asynUpdateMore(Object obj, CndExpr expr, ActionPlugin... plugins) {
+	public void asynUpdateMore(Object obj, CndExpr expr, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntity(obj);
 		event.setExpr(expr);
@@ -376,14 +376,14 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public void asynDelete(Object obj, ActionPlugin... plugins) {
+	public void asynDelete(Object obj, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntity(obj);
 		put(new DelayAction(ActionType.delete, event, plugins));
 	}
 
 	@Override
-	public void asynDeleteMore(Class klass, CndExpr expr, ActionPlugin... plugins) {
+	public void asynDeleteMore(Class klass, CndExpr expr, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntityType(klass);
 		event.setExpr(expr);
@@ -391,7 +391,7 @@ public class BizSessionImpl implements IBizSession {
 	}
 
 	@Override
-	public void asynQuery(Pager pager, ActionPlugin... plugins) {
+	public void asynQuery(Pager pager, IActionPlugin... plugins) {
 		ActionEvent event = createEvent();
 		event.setEntity(pager);
 		put(new DelayAction(ActionType.query, event, plugins));
@@ -419,9 +419,9 @@ public class BizSessionImpl implements IBizSession {
 
 		ActionEvent event;
 
-		ActionPlugin[] plugins;
+		IActionPlugin[] plugins;
 
-		private DelayAction(ActionType type, ActionEvent event, ActionPlugin... plugins) {
+		private DelayAction(ActionType type, ActionEvent event, IActionPlugin... plugins) {
 			this.type = type;
 			this.event = event;
 			this.plugins = plugins;

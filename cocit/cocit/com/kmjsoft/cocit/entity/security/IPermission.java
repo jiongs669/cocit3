@@ -2,7 +2,7 @@ package com.kmjsoft.cocit.entity.security;
 
 import java.util.Date;
 
-import com.jiongsoft.cocit.entitydef.field.Dataset;
+import com.kmjsoft.cocit.entity.ITenantOwnerEntity;
 
 /**
  * <b>权限许可：</b>即“允许”或“拒绝”主体对象在有效期内访问系统资源做什么事情？
@@ -10,56 +10,59 @@ import com.jiongsoft.cocit.entitydef.field.Dataset;
  * 
  * @author yongshan.ji
  */
-public interface IPermission {
-	boolean isDenied();
+public interface IPermission extends ITenantOwnerEntity {
 
-	boolean isDisabled();
+	/**
+	 * 权限主体类型：0——用户（{@link IUser}）；1——角色（{@link IRole}）；2——组（{@link IGroup}）
+	 * 
+	 * @return
+	 */
+	byte getPrincipalType();
+
+	/**
+	 * 权限主体：逻辑外键
+	 * <p>
+	 * <UL>
+	 * <LI>如果主体类型为用户（{@link IUser}），则该逻辑外键关联到{@link IUser#getDataGuid()}字段；
+	 * <LI>如果主体类型为角色（{@link IRole}），则该逻辑外键关联到{@link IRole#getDataGuid()}字段；
+	 * <LI>如果主体类型为组（{@link IGroup}），则该逻辑外键关联到{@link IGroup#getDataGuid()}字段；
+	 * </UL>
+	 * 
+	 * @return
+	 */
+	String getPrincipalGuid();
+
+	/**
+	 * 功能模块：逻辑外键，关联到“{@link IModule#getDataGuid()}”字段。
+	 * 
+	 * @return
+	 */
+	String getModuleGuid();
+
+	/**
+	 * 操作权限：操作权限由模块操作GUID组成，多个操作之间用 | 分隔。
+	 * 
+	 * @return
+	 */
+	String getModuleActionsRule();
+
+	/**
+	 * 数据行权限：数据查询过滤表达式。
+	 * 
+	 * @return
+	 */
+	String getDataRowsRule();
+
+	/**
+	 * 字段列权限：多字段之间用 | 分隔。
+	 * 
+	 * @return
+	 */
+	String getDataColumnsRule();
+
+	boolean isDenied();
 
 	Date getExpiredFrom();
 
 	Date getExpiredTo();
-
-	/**
-	 * 使用表达式指定待授权的用户，即：对满足条件的所有用户授权访问特定的模块{@link #getDatas()}
-	 * 
-	 * @deprecated
-	 * @return
-	 */
-	Dataset getUsers();
-
-	/**
-	 * 使用表达式指定被授权的模块，即：将满足条件的所有模块授权给特定的用户{@link #getUsers()}
-	 * 
-	 * @deprecated
-	 * @return
-	 */
-	Dataset getDatas();
-
-	/**
-	 * 获取用户类型
-	 * 
-	 * @return
-	 */
-	public String getUserType();
-
-	/**
-	 * 获取用户群体表达式
-	 * 
-	 * @return
-	 */
-	public String getUserRule();
-
-	/**
-	 * 获取功能权限表达式
-	 * 
-	 * @return
-	 */
-	public String getFuncRule();
-
-	/**
-	 * 获取数据权限表达式
-	 * 
-	 * @return
-	 */
-	public String getDataRule();
 }

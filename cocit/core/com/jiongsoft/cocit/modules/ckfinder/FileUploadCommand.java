@@ -43,11 +43,11 @@ import com.ckfinder.connector.utils.AccessControlUtil;
 import com.ckfinder.connector.utils.FileUtils;
 import com.ckfinder.connector.utils.ImageUtils;
 import com.ckfinder.connector.utils.PathUtils;
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.entitydef.field.Upload;
 import com.jiongsoft.cocit.lang.Dates;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.web.IUploadInfo;
 
@@ -229,8 +229,8 @@ public class FileUploadCommand extends Command {
 	private void saveToDB(FileItem item, String folder) {
 		IUploadInfo info = (IUploadInfo) Mirror.me(Demsy.entityDefManager.getStaticType(EntityConst.BIZSYS_ADMIN_UPLOAD)).born();
 		Demsy me = Demsy.me();
-		if (me.getSoft() != null)
-			info.setTenantId(me.getSoft().getId());
+		if (me.getTenant() != null)
+			info.setTenantId(me.getTenant().getId());
 		info.setContentType(item.getContentType());
 		info.setExtName("CKFINDER");
 		info.setLocalName(item.getName());

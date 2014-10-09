@@ -7,12 +7,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import com.jiongsoft.cocit.Demsy;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.NoTransConnCallback;
-import com.jiongsoft.cocit.orm.dialect.Dialect;
-import com.jiongsoft.cocit.orm.generator.INamingStrategy;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.impl.log.RunningLog;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.NoTransConnCallback;
+import com.kmjsoft.cocit.orm.dialect.Dialect;
+import com.kmjsoft.cocit.orm.generator.INamingStrategy;
 
 public class RunningLogDao {
 
@@ -20,7 +20,7 @@ public class RunningLogDao {
 
 	private static RunningLogDao me;
 
-	private IOrm orm;
+	private ExtOrm orm;
 
 	public static RunningLogDao me() {
 		synchronized (RunningLogDao.class) {

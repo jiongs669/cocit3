@@ -10,11 +10,11 @@ import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 
 import com.jiongsoft.cocit.Const;
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 public class DemsyListenerProxy implements ServletContextListener, HttpSessionActivationListener {
 	public static final Log log = Logs.getLog(DemsyListenerProxy.class);

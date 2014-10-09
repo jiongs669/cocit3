@@ -12,11 +12,11 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.lang.Files;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 public class VelocityTemplate extends AbstractTemplate {
 	private static Log log = Logs.getLog(VelocityTemplate.class);

@@ -14,15 +14,15 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface CocGroup {
 
-	public long id() default 0;
+	// public long id() default 0;
 
 	public String name() default "";
 
-	public String code() default "";
+	public String GUID() default "";
 
 	public String desc() default "";
 
-	public int order() default 0;
+	public int SN() default 0;
 
-	public CocField[] fields() default {};
+	public CocColumn[] fields() default {};
 }

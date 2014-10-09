@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.log.Log;
@@ -14,6 +13,7 @@ import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.template.ITemplateEngine;
 import com.jiongsoft.cocit.mvc.ui.IUIView;
 import com.jiongsoft.cocit.mvc.ui.model.UIWidgetModel;
+import com.kmjsoft.cocit.Demsy;
 
 public abstract class TemplateRender implements IRender, MvcConst {
 	protected static Log log = Logs.getLog(TemplateRender.class);

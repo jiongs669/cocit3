@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.security;
 
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 
 /**
@@ -14,17 +14,17 @@ public interface ILogin {
 	public static final String SESSION_KEY_LOGIN_INFO = "Login";
 
 	/**
-	 * 参数用户类型KEY：用于从HTTP请求中获取参数用户类型( {@link com.kmetop.demsy.security.Demsy#realm()})
+	 * 参数用户类型KEY：用于从HTTP请求中获取参数用户类型( {@link com.kmjsoft.cocit.kmetop.demsy.security.Demsy#realm()})
 	 */
 	public static final String PARAM_REALM = "_loginrealm_";
 
 	/**
-	 * 参数用户帐号KEY：用于从HTTP请求中获取参数用户帐号( {@link com.kmetop.demsy.security.Demsy#username()})
+	 * 参数用户帐号KEY：用于从HTTP请求中获取参数用户帐号( {@link com.kmjsoft.cocit.kmetop.demsy.security.Demsy#username()})
 	 */
 	public static final String PARAM_USER = "_loginuser_";
 
 	/**
-	 * 参数用户密码KEY：用于从HTTP请求中获取参数用户密码( {@link com.kmetop.demsy.security.Demsy#password()})
+	 * 参数用户密码KEY：用于从HTTP请求中获取参数用户密码( {@link com.kmjsoft.cocit.kmetop.demsy.security.Demsy#isPassword()})
 	 */
 	public static final String PARAM_PWD = "_loginpwd_";
 
@@ -53,7 +53,7 @@ public interface ILogin {
 	 * 
 	 * @return
 	 */
-	ISystemTenant getApp();
+	ITenant getApp();
 
 	/**
 	 * 获取登录信息中的用户类型

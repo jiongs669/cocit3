@@ -2,19 +2,19 @@ package com.kmjsoft.cocit.entityengine.manager;
 
 import java.util.List;
 
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.NoTransConnCallback;
-import com.jiongsoft.cocit.orm.OrmCallback;
-import com.jiongsoft.cocit.orm.Pager;
-import com.kmjsoft.cocit.entityengine.bizplugin.ActionPlugin;
+import com.kmjsoft.cocit.entity.actionplugin.IActionPlugin;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.NoTransConnCallback;
+import com.kmjsoft.cocit.orm.OrmCallback;
+import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 
 /**
  * 业务会话: 是ORM的封装。
  * <OL>
  * <LI>支持事务：每个方法都在一个事物单元中完成，ORM则不支持；
- * <LI>支持业务插件：调用方法时可以指定业务插件{@link ActionPlugin}，ORM 则不支持；
- * <LI>支持不同ORM的克隆； 参见{@link #me(IOrm)}
+ * <LI>支持业务插件：调用方法时可以指定业务插件{@link IActionPlugin}，ORM 则不支持；
+ * <LI>支持不同ORM的克隆； 参见{@link #me(ExtOrm)}
  * <LI>支持实体泛型的克隆；参见{@link #me()}
  * </OL>
  * 
@@ -40,14 +40,14 @@ public interface IBizSession<T> {
 	 *            ORM
 	 * @return 克隆对象
 	 */
-	public <X> IBizSession<X> me(IOrm orm);
+	public <X> IBizSession<X> me(ExtOrm orm);
 
 	/**
 	 * 获取ORM
 	 * 
 	 * @return
 	 */
-	public IOrm orm();
+	public ExtOrm orm();
 
 	/**
 	 * 保存实体对象： 可以保存单个实体、实体集合、数组、Map等
@@ -62,7 +62,7 @@ public interface IBizSession<T> {
 	 *            业务插件
 	 * @return 保存了多少条记录
 	 */
-	public int save(T obj, ActionPlugin... plugins);
+	public int save(T obj, IActionPlugin... plugins);
 
 	/**
 	 * 保存实体对象： 可以保存单个实体、实体集合、数组、Map等
@@ -81,7 +81,7 @@ public interface IBizSession<T> {
 	 *            业务插件
 	 * @return 保存了多少条记录 b
 	 */
-	public int save(T obj, CndExpr fieldRexpr, ActionPlugin... plugins);
+	public int save(T obj, CndExpr fieldRexpr, IActionPlugin... plugins);
 
 	/**
 	 * 批量修改： 批量修改满足条件的数据字段。
@@ -106,7 +106,7 @@ public interface IBizSession<T> {
 	 *            业务插件
 	 * @return 保存了多少条记录
 	 */
-	public int updateMore(T obj, CndExpr expr, ActionPlugin... plugins);
+	public int updateMore(T obj, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 删除实体对象： 可以删除单个实体、实体集合、数组、Map等
@@ -121,7 +121,7 @@ public interface IBizSession<T> {
 	 *            业务插件
 	 * @return 删除了多少条记录
 	 */
-	public int delete(T obj, ActionPlugin... plugins);
+	public int delete(T obj, IActionPlugin... plugins);
 
 	/**
 	 * 删除实体对象： 删除满足实体ID的实体对象
@@ -138,7 +138,7 @@ public interface IBizSession<T> {
 	 *            实体ID
 	 * @return 删除了多少条记录
 	 */
-	public int delete(Class<T> klass, Long id, ActionPlugin... plugins);
+	public int delete(Class<T> klass, Long id, IActionPlugin... plugins);
 
 	/**
 	 * 批量删除： 删除满足条件的实体数据
@@ -151,7 +151,7 @@ public interface IBizSession<T> {
 	 *            删除条件
 	 * @return 删除了多少条记录
 	 */
-	public int deleteMore(Class<T> klass, CndExpr expr, ActionPlugin... plugins);
+	public int deleteMore(Class<T> klass, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 获取实体对象
@@ -168,7 +168,7 @@ public interface IBizSession<T> {
 	 *            实体ID
 	 * @return 实体对象
 	 */
-	public T load(Class<T> klass, Long id, ActionPlugin... plugins);
+	public T load(Class<T> klass, Long id, IActionPlugin... plugins);
 
 	/**
 	 * 获取实体对象
@@ -189,7 +189,7 @@ public interface IBizSession<T> {
 	 *            实体ID
 	 * @return 实体对象
 	 */
-	public T load(Class<T> klass, Long id, CndExpr fieldRexpr, ActionPlugin... plugins);
+	public T load(Class<T> klass, Long id, CndExpr fieldRexpr, IActionPlugin... plugins);
 
 	/**
 	 * 获取实体对象
@@ -210,9 +210,9 @@ public interface IBizSession<T> {
 	 *            条件表达式
 	 * @return 实体对象
 	 */
-	public T load(Class<T> klass, CndExpr expr, ActionPlugin... plugins);
+	public T load(Class<T> klass, CndExpr expr, IActionPlugin... plugins);
 
-	public int count(Class<T> klass, CndExpr expr, ActionPlugin... plugins);
+	public int count(Class<T> klass, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 查询实体对象
@@ -237,7 +237,7 @@ public interface IBizSession<T> {
 	 *            查询条件表达式
 	 * @return 对象集合
 	 */
-	public List<T> query(Class<T> klass, CndExpr expr, ActionPlugin... plugins);
+	public List<T> query(Class<T> klass, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 查询实体对象
@@ -258,7 +258,7 @@ public interface IBizSession<T> {
 	 *            业务插件
 	 * @return 对相集合
 	 */
-	public List<T> query(Pager<T> pager, ActionPlugin... plugins);
+	public List<T> query(Pager<T> pager, IActionPlugin... plugins);
 
 	/**
 	 * 运行插件业务逻辑
@@ -275,7 +275,7 @@ public interface IBizSession<T> {
 	 *            字段正则表达式
 	 * @return 执行结果
 	 */
-	public Object run(Object obj, CndExpr expr, ActionPlugin... plugins);
+	public Object run(Object obj, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 用数据库连接执行业务逻辑
@@ -291,36 +291,36 @@ public interface IBizSession<T> {
 	/**
 	 * 异步保存： 其他文档参将对应的同步方法
 	 */
-	public void asynSave(T obj, ActionPlugin... plugins);
+	public void asynSave(T obj, IActionPlugin... plugins);
 
 	/**
 	 * 异步保存： 其他文档参将对应的同步方法
 	 */
-	public void asynSave(T obj, CndExpr fieldRexpr, ActionPlugin... plugins);
+	public void asynSave(T obj, CndExpr fieldRexpr, IActionPlugin... plugins);
 
 	/**
 	 * 异步批量修改： 其他文档参将对应的同步方法
 	 */
-	public void asynUpdateMore(T obj, CndExpr expr, ActionPlugin... plugins);
+	public void asynUpdateMore(T obj, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 异步删除： 其他文档参将对应的同步方法
 	 */
-	public void asynDelete(T obj, ActionPlugin... plugins);
+	public void asynDelete(T obj, IActionPlugin... plugins);
 
 	/**
 	 * 异步批量删除： 其他文档参将对应的同步方法
 	 */
-	public void asynDeleteMore(Class<T> klass, CndExpr expr, ActionPlugin... plugins);
+	public void asynDeleteMore(Class<T> klass, CndExpr expr, IActionPlugin... plugins);
 
 	/**
 	 * 异步分页查询： 其他文档参将对应的同步方法
 	 */
-	public void asynQuery(Pager<T> pager, ActionPlugin... plugins);
+	public void asynQuery(Pager<T> pager, IActionPlugin... plugins);
 
 	/**
 	 * 异步运行： 其他文档参将对应的同步方法
 	 */
-	public Object asynRun(Object obj, CndExpr fieldRexpr, ActionPlugin... plugins);
+	public Object asynRun(Object obj, CndExpr fieldRexpr, IActionPlugin... plugins);
 
 }

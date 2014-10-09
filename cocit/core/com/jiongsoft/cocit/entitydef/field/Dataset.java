@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.MvcConst.MvcUtil;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
 /**
  * 用于字段类型为数据集的情况
@@ -20,7 +20,7 @@ import com.kmjsoft.cocit.orm.annotation.CocField;
  * @author Administrator
  * 
  */
-@CocField(precision = 2000, uiTemplate = "ui.widget.field.Composite")
+@CocColumn(precision = 2000, uiTemplate = "ui.widget.field.Composite")
 public class Dataset extends JsonField<Dataset> {
 	public Dataset() {
 		this("");
@@ -30,21 +30,21 @@ public class Dataset extends JsonField<Dataset> {
 		super(str);
 	}
 
-	@CocField(name = "继承选项", order = 1, options = "0:不继承,1:继承数据", desc = "是否继承上级板块数据源查询结果集")
+	@CocColumn(name = "继承选项", SN = 1, options = "0:不继承,1:继承数据", desc = "是否继承上级板块数据源查询结果集")
 	private boolean inherit;
 
 	// 实体表管理模块 字典数据来自模块实体表
-	@CocField(name = "数据模块", fkTable = BIZSYS_ADMIN_MODULE, order = 2, options = "['type eq 2']")
+	@CocColumn(name = "数据模块", fkEntity = BIZSYS_ADMIN_MODULE, SN = 2, options = "['type eq 2']")
 	private String moduleGuid;
 
 	// @CocField(name = "业务模块", refrenceSystem = BIZSYS_SOFT_MODULE, order = 1,
 	// options = "['type eq 2']")
 	// private String moduleGuid;// 功能模块
 
-	@CocField(name = "数据分类", order = 3, combobox = true, uiTemplate = "ui.widget.field.ComboboxSys", cascadeMode = "moduleGuid:*:E")
+	@CocColumn(name = "数据分类", SN = 3, combobox = true, uiTemplate = "ui.widget.field.ComboboxSys", cascadeMode = "moduleGuid:*:E")
 	private String rules;// 查询规则
 
-	@CocField(name = "动态分类", order = 4, options = "0:不支持,1:路径参数", desc = "是否支持URL路径参数作为动态数据分类条件？只用于数据分类中指定了外键字段的情况。")
+	@CocColumn(name = "动态分类", SN = 4, options = "0:不支持,1:路径参数", desc = "是否支持URL路径参数作为动态数据分类条件？只用于数据分类中指定了外键字段的情况。")
 	private boolean dynamic;
 
 	private String rules2;// rules label
@@ -77,7 +77,7 @@ public class Dataset extends JsonField<Dataset> {
 	 * <LI>gl: between, greater and less
 	 * </UL>
 	 */
-	@CocField(name = "查询条件", order = 5)
+	@CocColumn(name = "查询条件", SN = 5)
 	private String cnds;
 
 	/**
@@ -85,24 +85,24 @@ public class Dataset extends JsonField<Dataset> {
 	 * <p>
 	 * 语法：keywords like %s, field1 eq %s, ...
 	 */
-	@CocField(name = "动态条件", order = 6)
+	@CocColumn(name = "动态条件", SN = 6)
 	private String dcnds;
 
-	@CocField(name = "分页大小", order = 7, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "分页大小", SN = 7, uiTemplate = "ui.widget.field.Spinner")
 	private int pageSize;
 
 	// 排序语法，如： order ASC, id DESC
-	@CocField(name = "排序字段", order = 8)
+	@CocColumn(name = "排序字段", SN = 8)
 	private String orderBy;
 
 	/**
 	 * 逗号分隔的字段列表，只查询指定的字段，以便提高查询效率，不指定则查询所有字段。
 	 */
 	@Column(length = 128)
-	@CocField(name = "查询字段", order = 9, desc = "只查询指定的字段，以便提高查询效率")
+	@CocColumn(name = "查询字段", SN = 9, desc = "只查询指定的字段，以便提高查询效率")
 	private String fieldRule;
 
-	@CocField(name = "分组字段", order = 10)
+	@CocColumn(name = "分组字段", SN = 10)
 	private String groupBy;// 分组字段
 
 	@Override

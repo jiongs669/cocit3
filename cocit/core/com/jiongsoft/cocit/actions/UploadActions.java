@@ -1,8 +1,8 @@
 package com.jiongsoft.cocit.actions;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.bizSession;
-import static com.jiongsoft.cocit.Demsy.contextDir;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.bizSession;
+import static com.kmjsoft.cocit.Demsy.contextDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,6 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.FieldMeta;
 import org.nutz.mvc.upload.TempFile;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IAppConfig;
 import com.jiongsoft.cocit.entitydef.field.Upload;
 import com.jiongsoft.cocit.lang.Dates;
@@ -33,6 +32,7 @@ import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.modules.ckfinder.CKFinder;
 import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.nutz.DemsyUploadAdaptor;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.web.IUploadInfo;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
@@ -208,8 +208,8 @@ public class UploadActions implements MvcConst {
 		IUploadInfo info = (IUploadInfo) Mirror.me(Demsy.entityDefManager.getStaticType(EntityConst.BIZSYS_ADMIN_UPLOAD)).born();
 		try {
 			Demsy me = Demsy.me();
-			if (me.getSoft() != null)
-				info.setTenantId(me.getSoft().getId());
+			if (me.getTenant() != null)
+				info.setTenantId(me.getTenant().getId());
 			info.setContentType(meta.getContentType());
 			info.setExtName("UPLOADER");
 			info.setLocalName(meta.getFileLocalName());

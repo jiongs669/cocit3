@@ -3,10 +3,10 @@ package com.kmjsoft.cocit.entityengine.manager;
 import java.util.List;
 
 import com.jiongsoft.cocit.lang.DemsyException;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.security.IModule;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 
 /**
@@ -20,11 +20,11 @@ import com.kmjsoft.cocit.orm.expr.CndExpr;
  * @param <T>
  */
 public interface IBizManager<T> {
-	public <X> IBizManager<X> me(IOrm orm);
+	public <X> IBizManager<X> me(ExtOrm orm);
 
 	public IBizSession bizSession();
 
-	public IOrm orm();
+	public ExtOrm orm();
 
 	public Class getType();
 

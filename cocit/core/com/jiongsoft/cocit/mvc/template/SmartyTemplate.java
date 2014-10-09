@@ -14,11 +14,11 @@ import org.lilystudio.smarty4j.Engine;
 import org.lilystudio.smarty4j.Template;
 import org.lilystudio.smarty4j.TemplateException;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Files;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 public class SmartyTemplate extends AbstractTemplate {
 	private static Log log = Logs.getLog(SmartyTemplate.class);

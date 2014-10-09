@@ -1,8 +1,8 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.moduleManager;
-import static com.jiongsoft.cocit.Demsy.security;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.security;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_BZUDF_FIELD;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_BZUDF_SYSTEM;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_LIB_FIELD;
@@ -47,7 +47,6 @@ import org.nutz.resource.Scans;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.entitydef.field.IExtField;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.DemsyException;
@@ -61,24 +60,25 @@ import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.lang.Nodes.Node;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.Pager;
 import com.jiongsoft.cocit.security.ILogin;
 import com.jiongsoft.cocit.util.sort.SortUtils;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.IDataEntity;
-import com.kmjsoft.cocit.entity.config.IPreferenceOfTenant;
+import com.kmjsoft.cocit.entity.config.ITenantPreference;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.definition.IFieldDataType;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.definition.IFieldGroup;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.definition.IEntityColumnGroup;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entityengine.definition.IEntityDefManager;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
-import com.kmjsoft.cocit.orm.annotation.CocTable;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.orm.annotation.CocEntity;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.orm.expr.ExprRule;
@@ -117,7 +117,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		}
 	}
 
-	protected IOrm orm() {
+	protected ExtOrm orm() {
 		return Demsy.orm();
 	}
 
@@ -162,7 +162,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return ret;
 	}
 
-	public void validateSystems(ISystemTenant soft) throws DemsyException {
+	public void validateSystems(ITenant soft) throws DemsyException {
 		List<? extends IEntityDefinition> systems = getSystems(soft);
 		StringBuffer sb = new StringBuffer();
 		for (IEntityDefinition sys : systems) {
@@ -185,12 +185,12 @@ public abstract class BizEngine implements IEntityDefManager {
 				continue;
 			}
 			try {
-				CocTable ann = (CocTable) type.getAnnotation(CocTable.class);
+				CocEntity ann = (CocEntity) type.getAnnotation(CocEntity.class);
 				if (ann != null) {
-					if (Str.isEmpty(ann.code())) {
+					if (Str.isEmpty(ann.GUID())) {
 						staticSystemTypes.put("_" + type.getSimpleName(), type);
 					} else {
-						staticSystemTypes.put(ann.code(), type);
+						staticSystemTypes.put(ann.GUID(), type);
 					}
 				}
 			} catch (Throwable e) {
@@ -200,7 +200,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<IEntityDefinition> setupSystemFromPackage(ISystemTenant soft) throws DemsyException {
+	public List<IEntityDefinition> setupSystemFromPackage(ITenant soft) throws DemsyException {
 		if (staticSystemTypes.size() == 0) {
 			initStaticSystems();
 		}
@@ -218,7 +218,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List setupFromPackage(ISystemTenant soft) {
+	public List setupFromPackage(ITenant soft) {
 		List ret = new LinkedList();
 
 		Iterator<Class> types = staticSystemTypes.values().iterator();
@@ -245,7 +245,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public IEntityDefinition setupSystemFromDB(ISystemTenant soft, String tableName) {
+	public IEntityDefinition setupSystemFromDB(ITenant soft, String tableName) {
 		// TODO:
 		return null;
 	}
@@ -282,12 +282,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	 *            业务字段
 	 * @return
 	 */
-	public abstract String getTargetPropName(IEntityField field);
+	public abstract String getTargetPropName(IEntityColumn field);
 
-	public abstract IEntityField parseBizField(String tenantGuid, Mirror entityObj, String prop, IEntityDefinition system, IEntityField field);
+	public abstract IEntityColumn parseBizField(String tenantGuid, Mirror entityObj, String prop, IEntityDefinition system, IEntityColumn field);
 
 	@Override
-	public int getPrecision(IEntityField fld) {
+	public int getPrecision(IEntityColumn fld) {
 		Integer p = fld.getPrecision();
 		if (p == null || p == 0) {
 			if (isString(fld))
@@ -299,7 +299,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return p;
 	}
 
-	public boolean isSystemFK(IEntityField fld) {
+	public boolean isSystemFK(IEntityColumn fld) {
 		if (fld.getRefrenceSystem() != null && !this.isSubSystem(fld)) {
 			return this.getPropName(fld) != null && fld.getRefrenceField() == null;
 		}
@@ -307,7 +307,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return false;
 	}
 
-	public boolean isFieldRef(IEntityField fld) {
+	public boolean isFieldRef(IEntityColumn fld) {
 		if (fld.getRefrenceField() != null)
 			return true;
 
@@ -315,8 +315,8 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public boolean isEnabled(IEntityField fld) {
-		IFieldGroup group = fld.getFieldGroup();
+	public boolean isEnabled(IEntityColumn fld) {
+		IEntityColumnGroup group = fld.getFieldGroup();
 		if (group == null) {
 			return false;
 		}
@@ -336,11 +336,11 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfEnabled(IEntityDefinition system) {
-		List<? extends IEntityField> list = this.getFields(system);
+	public List<? extends IEntityColumn> getFieldsOfEnabled(IEntityDefinition system) {
+		List<? extends IEntityColumn> list = this.getFields(system);
 
-		List<IEntityField> ret = new LinkedList();
-		for (IEntityField f : list) {
+		List<IEntityColumn> ret = new LinkedList();
+		for (IEntityColumn f : list) {
 			if (this.isEnabled(f))
 				ret.add(f);
 		}
@@ -349,11 +349,11 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfEnabled(IFieldGroup group) {
-		List<? extends IEntityField> list = this.getFields(group);
+	public List<? extends IEntityColumn> getFieldsOfEnabled(IEntityColumnGroup group) {
+		List<? extends IEntityColumn> list = this.getFields(group);
 
-		List<IEntityField> ret = new LinkedList();
-		for (IEntityField f : list) {
+		List<IEntityColumn> ret = new LinkedList();
+		for (IEntityColumn f : list) {
 			if (this.isEnabled(f))
 				ret.add(f);
 		}
@@ -362,9 +362,9 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public IEntityField getFieldOfUnSelfTree(IEntityDefinition system) {
-		List<? extends IEntityField> refFields = biz(system.getId()).fields();
-		for (IEntityField fld : refFields) {
+	public IEntityColumn getFieldOfUnSelfTree(IEntityDefinition system) {
+		List<? extends IEntityColumn> refFields = biz(system.getId()).fields();
+		for (IEntityColumn fld : refFields) {
 			if (fld.isGroupBy()) {
 				return fld;
 			}
@@ -374,17 +374,17 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public IEntityField getFieldOfSelfTree(IEntityDefinition system) {
+	public IEntityColumn getFieldOfSelfTree(IEntityDefinition system) {
 		if (system == null) {
 			return null;
 		}
-		List<? extends IEntityField> refFields = biz(system.getId()).fields();
-		for (IEntityField fld : refFields) {
+		List<? extends IEntityColumn> refFields = biz(system.getId()).fields();
+		for (IEntityColumn fld : refFields) {
 			if (fld.getSystem().equals(fld.getRefrenceSystem()))
 				return fld;
 		}
 
-		for (IEntityField fld : getFieldsOfSystemFK(system)) {
+		for (IEntityColumn fld : getFieldsOfSystemFK(system)) {
 			if (fld.getRefrenceSystem().equals(system))
 				return fld;
 		}
@@ -393,12 +393,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfSystemFK(IEntityDefinition system) {
-		List<IEntityField> ret = new LinkedList();
+	public List<? extends IEntityColumn> getFieldsOfSystemFK(IEntityDefinition system) {
+		List<IEntityColumn> ret = new LinkedList();
 
-		List<? extends IEntityField> fields = this.getFieldsOfEnabled(system);
+		List<? extends IEntityColumn> fields = this.getFieldsOfEnabled(system);
 		if (fields != null) {
-			for (IEntityField field : fields) {
+			for (IEntityColumn field : fields) {
 				if (this.isSystemFK(field)) {
 					ret.add(field);
 				}
@@ -409,12 +409,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfSystemFK(IEntityDefinition system, Class fkType) {
-		List<IEntityField> ret = new LinkedList();
+	public List<? extends IEntityColumn> getFieldsOfSystemFK(IEntityDefinition system, Class fkType) {
+		List<IEntityColumn> ret = new LinkedList();
 
-		List<? extends IEntityField> fields = getFieldsOfEnabled(system);
+		List<? extends IEntityColumn> fields = getFieldsOfEnabled(system);
 		if (fields != null) {
-			for (IEntityField field : fields) {
+			for (IEntityColumn field : fields) {
 				if (this.isSystemFK(field)) {
 					Class fieldType = this.getType(field);
 					if (fkType.isAssignableFrom(fieldType) && !getType(system).equals(fieldType))
@@ -426,9 +426,9 @@ public abstract class BizEngine implements IEntityDefManager {
 		return ret;
 	}
 
-	protected abstract Option[] geDicOptions(IEntityField field);
+	protected abstract Option[] geDicOptions(IEntityColumn field);
 
-	public Option[] getOptions(IEntityField field) {
+	public Option[] getOptions(IEntityColumn field) {
 		if (!this.isSystemFK(field)) {
 			String str = field.getOptions();
 			if (!Str.isEmpty(str)) {
@@ -452,7 +452,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			}
 		} else if (str.startsWith("{") && str.endsWith("}")) {
 			String key = str.substring(1, str.length() - 1);
-			IPreferenceOfTenant config = moduleManager.getSoftConfig(key);
+			ITenantPreference config = moduleManager.getSoftConfig(key);
 			if (config != null && !Str.isEmpty(config.getValue())) {
 				return evalOptions(config.getValue());
 			}
@@ -479,12 +479,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfFK(IEntityDefinition system) {
-		List<IEntityField> ret = new LinkedList();
+	public List<? extends IEntityColumn> getFieldsOfFK(IEntityDefinition system) {
+		List<IEntityColumn> ret = new LinkedList();
 
-		List<? extends IEntityField> fields = getFieldsOfEnabled(system);
+		List<? extends IEntityColumn> fields = getFieldsOfEnabled(system);
 		if (fields != null) {
-			for (IEntityField field : fields) {
+			for (IEntityColumn field : fields) {
 				if (this.isSystemFK(field) || this.isV1Dic(field))
 					ret.add(field);
 			}
@@ -494,11 +494,11 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfNavi(IEntityDefinition system) {
-		List<IEntityField> ret = new LinkedList();
+	public List<? extends IEntityColumn> getFieldsOfNavi(IEntityDefinition system) {
+		List<IEntityColumn> ret = new LinkedList();
 
-		List<? extends IEntityField> fields = getFieldsOfEnabled(system);
-		for (IEntityField field : fields) {
+		List<? extends IEntityColumn> fields = getFieldsOfEnabled(system);
+		for (IEntityColumn field : fields) {
 			if (field.isDisabledNavi()) {
 				continue;
 			}
@@ -510,7 +510,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public int getGridWidth(IEntityField field) {
+	public int getGridWidth(IEntityColumn field) {
 		int w = field.getGridWidth();
 		if (w > 0)
 			return w;
@@ -544,58 +544,58 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public boolean isManyToOne(IEntityField field) {
+	public boolean isManyToOne(IEntityColumn field) {
 		IFieldDataType type = field.getType();
-		return (type.isSystem() || (type.isV1Dic() && !type.isManyToMany()) || type.isV1GEO()) && !field.isSysMultiple();
+		return (type.isSystem() || (type.isV1Dic() && !type.isManyToMany()) || type.isV1GEO()) && !field.isFkMultipleValue();
 	}
 
 	@Override
-	public boolean isV1Dic(IEntityField field) {
+	public boolean isV1Dic(IEntityColumn field) {
 		return field.getType().isV1Dic();
 	}
 
 	@Override
-	public boolean isBoolean(IEntityField field) {
+	public boolean isBoolean(IEntityColumn field) {
 		return field.getType().isBoolean();
 	}
 
 	@Override
-	public boolean isOneToOne(IEntityField field) {
+	public boolean isOneToOne(IEntityColumn field) {
 		return false;
 	}
 
 	@Override
-	public boolean isOneToMany(IEntityField field) {
+	public boolean isOneToMany(IEntityColumn field) {
 		return false;
 	}
 
 	@Override
-	public boolean isManyToMany(IEntityField field) {
-		return field.isSysMultiple() || field.getType().isManyToMany();
+	public boolean isManyToMany(IEntityColumn field) {
+		return field.isFkMultipleValue() || field.getType().isManyToMany();
 	}
 
 	@Override
-	public boolean isNumber(IEntityField field) {
+	public boolean isNumber(IEntityColumn field) {
 		return field.getType().isNumber();
 	}
 
 	@Override
-	public boolean isInteger(IEntityField field) {
+	public boolean isInteger(IEntityColumn field) {
 		return field.getType().isNumber();
 	}
 
 	@Override
-	public boolean isRichText(IEntityField field) {
+	public boolean isRichText(IEntityColumn field) {
 		return field.getType().isRichText();
 	}
 
 	@Override
-	public boolean isDate(IEntityField field) {
+	public boolean isDate(IEntityColumn field) {
 		return field.getType().isDate();
 	}
 
 	@Override
-	public boolean isText(IEntityField field) {
+	public boolean isText(IEntityColumn field) {
 		if (field.getType().isString()) {
 			return getPrecision(field) > EntityConst.INPUT_FIELD_MAX_LENGTH;
 		}
@@ -604,17 +604,17 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public boolean isString(IEntityField field) {
+	public boolean isString(IEntityColumn field) {
 		return field.getType().isString();
 	}
 
 	@Override
-	public boolean isUpload(IEntityField field) {
+	public boolean isUpload(IEntityColumn field) {
 		return field.getType().isUpload();
 	}
 
 	@Override
-	public boolean isImage(IEntityField field) {
+	public boolean isImage(IEntityColumn field) {
 		boolean upload = isUpload(field);
 		if (upload) {
 			String[] exts = Str.toArray(field.getUploadType(), ",;|");
@@ -629,12 +629,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public boolean isMultiUpload(IEntityField field) {
+	public boolean isMultiUpload(IEntityColumn field) {
 		return "MultiUpload".equals(field.getType().getCode());
 	}
 
 	@Override
-	public boolean isMultiImage(IEntityField field) {
+	public boolean isMultiImage(IEntityColumn field) {
 		boolean upload = isMultiUpload(field);
 		if (upload) {
 			String[] exts = Str.toArray(field.getUploadType(), ",;|");
@@ -649,13 +649,13 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public boolean isSubSystem(IEntityField field) {
+	public boolean isSubSystem(IEntityColumn field) {
 		String type = field.getType().getCode();
 		return "SubSystem".equals(type) || "FakeSubSystem".equals(type);
 	}
 
 	@Override
-	public boolean isFakeSubSystem(IEntityField field) {
+	public boolean isFakeSubSystem(IEntityColumn field) {
 		String type = field.getType().getCode();
 		return "FakeSubSystem".equals(type);
 	}
@@ -679,7 +679,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public boolean isGridField(IEntityField field) {
+	public boolean isGridField(IEntityColumn field) {
 		return field.isGridField();
 	}
 
@@ -724,24 +724,24 @@ public abstract class BizEngine implements IEntityDefManager {
 		return mode;
 	}
 
-	public String getMode(IFieldGroup group, IAction action) {
+	public String getMode(IEntityColumnGroup group, IEntityAction entityAction) {
 		if (group == null) {
 			return "";
 		}
-		String actionMode = action == null ? "" : action.getMode();
+		String actionMode = entityAction == null ? "" : entityAction.getMode();
 
 		String mode = group.getMode();
 		return parseMode(actionMode, mode);
 	}
 
 	@Override
-	public String getMode(IEntityField field, IAction action, boolean mustPriority, String defalutMode) {
+	public String getMode(IEntityColumn field, IEntityAction entityAction, boolean mustPriority, String defalutMode) {
 		if (field == null) {
 			return "";
 		}
 
-		String actionMode = action == null ? "" : action.getMode();
-		String groupMode = getMode(field.getFieldGroup(), action);
+		String actionMode = entityAction == null ? "" : entityAction.getMode();
+		String groupMode = getMode(field.getFieldGroup(), entityAction);
 		String mode = field.getMode();
 		String ret = parseMode(actionMode, mode);
 		if (ret == null || ret.length() == 0) {
@@ -785,11 +785,11 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public Map<String, String> getMode(IEntityDefinition system, IAction action, Object data) {
-		List<? extends IEntityField> fields = this.getFieldsOfEnabled(system);
+	public Map<String, String> getMode(IEntityDefinition system, IEntityAction entityAction, Object data) {
+		List<? extends IEntityColumn> fields = this.getFieldsOfEnabled(system);
 		Map<String, String> fieldMode = new HashMap();
-		for (IEntityField field : fields) {
-			String mode = this.getMode(field, action, true, null);
+		for (IEntityColumn field : fields) {
+			String mode = this.getMode(field, entityAction, true, null);
 			String cascadeMode = this.getCascadeMode(field, data)[1];
 			if (getModeValue(mode) < getModeValue(cascadeMode)) {
 				mode = cascadeMode;
@@ -817,14 +817,14 @@ public abstract class BizEngine implements IEntityDefManager {
 	// return ret;
 	// }
 
-	protected abstract boolean isMappingToMaster(IEntityField fld);
+	protected abstract boolean isMappingToMaster(IEntityColumn fld);
 
 	@Override
-	public List<IEntityField> getFieldsOfSlave(IEntityDefinition system) {
-		List<IEntityField> ret = new LinkedList();
+	public List<IEntityColumn> getFieldsOfSlave(IEntityDefinition system) {
+		List<IEntityColumn> ret = new LinkedList();
 
-		List<IEntityField> fields = this.getFieldsOfExport(system);
-		for (IEntityField f : fields) {
+		List<IEntityColumn> fields = this.getFieldsOfExport(system);
+		for (IEntityColumn f : fields) {
 			if (!isMappingToMaster(f)) {
 				continue;
 			}
@@ -839,8 +839,8 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	public boolean isSlave(IEntityDefinition system) {
-		List<? extends IEntityField> fields = this.getFieldsOfSystemFK(system);
-		for (IEntityField f : fields) {
+		List<? extends IEntityColumn> fields = this.getFieldsOfSystemFK(system);
+		for (IEntityColumn f : fields) {
 			if (isMappingToMaster(f)) {
 				return true;
 			}
@@ -853,8 +853,8 @@ public abstract class BizEngine implements IEntityDefManager {
 	public List<? extends IEntityDefinition> getSystemsOfSlave(IEntityDefinition system) {
 		List<IEntityDefinition> ret = new LinkedList();
 
-		List<IEntityField> fields = this.getFieldsOfSlave(system);
-		for (IEntityField f : fields) {
+		List<IEntityColumn> fields = this.getFieldsOfSlave(system);
+		for (IEntityColumn f : fields) {
 			ret.add(f.getSystem());
 		}
 
@@ -862,12 +862,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<IEntityField> getFieldsOfExport(IEntityDefinition system) {
-		List<IEntityField> ret = new ArrayList();
+	public List<IEntityColumn> getFieldsOfExport(IEntityDefinition system) {
+		List<IEntityColumn> ret = new ArrayList();
 		// 哪些字段引用了该系统
-		List<? extends IEntityField> fields = biz(system.getId()).fieldsOfExport();
+		List<? extends IEntityColumn> fields = biz(system.getId()).fieldsOfExport();
 		if (fields != null) {
-			for (IEntityField field : fields) {
+			for (IEntityColumn field : fields) {
 				if (field.getRefrenceField() != null) {
 					continue;
 				}
@@ -881,12 +881,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFieldsOfGrid(IEntityDefinition system, String fields) {
-		List<? extends IEntityField> list = this.getFieldsOfEnabled(system);
+	public List<? extends IEntityColumn> getFieldsOfGrid(IEntityDefinition system, String fields) {
+		List<? extends IEntityColumn> list = this.getFieldsOfEnabled(system);
 		SortUtils.sort(list, F_GRID_ORDER, true);
 
-		List<IEntityField> ret = new LinkedList();
-		List<IEntityField> other = new LinkedList();
+		List<IEntityColumn> ret = new LinkedList();
+		List<IEntityColumn> other = new LinkedList();
 
 		List<String> names = Str.toList(fields, ",");
 		int byName = names == null ? 0 : names.size();
@@ -899,7 +899,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			}
 		}
 		int count = 0;
-		for (IEntityField f : list) {
+		for (IEntityColumn f : list) {
 			count++;
 			if (byName > 0) {
 				if (names.contains(f.getPropName())) {
@@ -923,7 +923,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFields(IEntityDefinition system) {
+	public List<? extends IEntityColumn> getFields(IEntityDefinition system) {
 		if (system == null)
 			return new LinkedList();
 
@@ -938,10 +938,10 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List<? extends IEntityField> getFields(IFieldGroup group) {
-		List<? extends IEntityField> list = biz(group.getSystem().getId()).fields();
-		List<IEntityField> ret = new LinkedList();
-		for (IEntityField f : list) {
+	public List<? extends IEntityColumn> getFields(IEntityColumnGroup group) {
+		List<? extends IEntityColumn> list = biz(group.getSystem().getId()).fields();
+		List<IEntityColumn> ret = new LinkedList();
+		for (IEntityColumn f : list) {
 			if (group.equals(f.getFieldGroup())) {
 				ret.add(f);
 			}
@@ -950,7 +950,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public String getPropName(IEntityField f) {
+	public String getPropName(IEntityColumn f) {
 		if (f == null)
 			return null;
 
@@ -969,7 +969,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return prop;
 	}
 
-	public String getTargetClassName(IEntityField field) {
+	public String getTargetClassName(IEntityColumn field) {
 		return "List<" + getSimpleClassName(field.getSystem()) + ">";
 	}
 
@@ -980,7 +980,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	 *            业务字段
 	 * @return 字段类简称
 	 */
-	public String getClassName(IEntityField field) {
+	public String getClassName(IEntityColumn field) {
 		String name = "";
 
 		IEntityDefinition refSystem = field.getRefrenceSystem();
@@ -1014,7 +1014,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return getPackageOfAutoSystem(system) + "." + getSimpleClassName(system);
 	}
 
-	public Class getGenericType(IEntityField field) throws DemsyException {
+	public Class getGenericType(IEntityColumn field) throws DemsyException {
 		Class type = getType(field);
 		if (type.equals(List.class)) {
 			return getType(field.getRefrenceSystem());
@@ -1023,7 +1023,7 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public Class getType(IEntityField field) throws DemsyException {
+	public Class getType(IEntityColumn field) throws DemsyException {
 		Class type = this.getType(field.getSystem());
 		String propname = this.getPropName(field);
 		if (propname == null)
@@ -1041,11 +1041,11 @@ public abstract class BizEngine implements IEntityDefManager {
 		if (system == null || system.getId() <= 0) {
 			return null;
 		}
-		if (!Str.isEmpty(system.getEntityClass())) {
+		if (!Str.isEmpty(system.getEntityClassName())) {
 			Class cls = bizSystemTypes.get(system.getId());
 			try {
 				if (cls == null) {
-					cls = Cls.forName(system.getEntityClass());
+					cls = Cls.forName(system.getEntityClassName());
 					bizSystemTypes.put(system.getId(), cls);
 				}
 			} catch (Throwable e) {
@@ -1064,7 +1064,7 @@ public abstract class BizEngine implements IEntityDefManager {
 				}
 
 				// 版本验证
-				CocTable info = (CocTable) cls.getAnnotation(CocTable.class);
+				CocEntity info = (CocEntity) cls.getAnnotation(CocEntity.class);
 				String newVersion = getVersion(system);
 				String oldVersion = info.version();
 				if (!newVersion.equals(oldVersion)) {
@@ -1125,13 +1125,13 @@ public abstract class BizEngine implements IEntityDefManager {
 		return system.getDataTableName();
 	}
 
-	public Map<String, IEntityField> getFieldsMap(IEntityDefinition system) {
+	public Map<String, IEntityColumn> getFieldsMap(IEntityDefinition system) {
 		return this.getFieldsMap(this.getFieldsOfEnabled(system));
 	}
 
-	public Map<String, IEntityField> getFieldsMap(List<? extends IEntityField> list) {
-		Map<String, IEntityField> map = new HashMap();
-		for (IEntityField fld : list) {
+	public Map<String, IEntityColumn> getFieldsMap(List<? extends IEntityColumn> list) {
+		Map<String, IEntityColumn> map = new HashMap();
+		for (IEntityColumn fld : list) {
 			map.put(this.getPropName(fld), fld);
 		}
 		return map;
@@ -1174,7 +1174,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return biz(systemID).get();
 	}
 
-	public IAction getAction(Long systemID, String opMode) {
+	public IEntityAction getAction(Long systemID, String opMode) {
 		return biz(systemID).action(opMode);
 	}
 
@@ -1208,12 +1208,12 @@ public abstract class BizEngine implements IEntityDefManager {
 	// }
 
 	@Override
-	public List<? extends IEntityDefinition> getSystems(ISystemTenant soft) {
+	public List<? extends IEntityDefinition> getSystems(ITenant soft) {
 		return orm().query(entityDefManager.getStaticType(BIZSYS_BZUDF_SYSTEM), Expr.eq(F_SOFT_ID, soft.getId()));
 	}
 
 	@Override
-	public List<? extends IFieldGroup> getFieldGroups(IEntityDefinition system) {
+	public List<? extends IEntityColumnGroup> getFieldGroups(IEntityDefinition system) {
 		return biz(system.getId()).groups();
 	}
 
@@ -1247,8 +1247,8 @@ public abstract class BizEngine implements IEntityDefManager {
 		if (log.isTraceEnabled())
 			log.tracef("加载业务数据... [%s] %s", system, JSON.toJson(obj));
 
-		List<? extends IEntityField> fks = this.getFieldsOfSystemFK(system);
-		for (IEntityField fk : fks) {
+		List<? extends IEntityColumn> fks = this.getFieldsOfSystemFK(system);
+		for (IEntityColumn fk : fks) {
 			try {
 				loadFieldValue(obj, fk);
 			} catch (DemsyException e) {
@@ -1256,7 +1256,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			}
 		}
 
-		for (IEntityField fk : this.getFieldsOfEnabled(system)) {
+		for (IEntityColumn fk : this.getFieldsOfEnabled(system)) {
 			try {
 				loadFieldDefaultValue(obj, fk);
 			} catch (DemsyException e) {
@@ -1268,7 +1268,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			log.tracef("加载业务结束. [%s] %s", system, JSON.toJson(obj));
 	}
 
-	public String[] getCascadeMode(IEntityField field, Object obj) {
+	public String[] getCascadeMode(IEntityColumn field, Object obj) {
 		String[] strs = Str.toArray(field.getCascadeMode(), " ");
 		if (strs == null) {
 			return new String[2];
@@ -1298,7 +1298,7 @@ public abstract class BizEngine implements IEntityDefManager {
 					List<String> valueList = Str.toList(cascadeList, ",");
 
 					Object parentValue = Obj.getValue(obj, cascadeField);
-					IEntityField parentField = this.getField(field.getSystem(), cascadeField);
+					IEntityColumn parentField = this.getField(field.getSystem(), cascadeField);
 					String code = "";
 					if (parentValue == null) {
 					} else if (this.isSystemFK(parentField)) {
@@ -1419,11 +1419,11 @@ public abstract class BizEngine implements IEntityDefManager {
 		return expr;
 	}
 
-	private Object getFieldValue(Object obj, IEntityField field) {
+	private Object getFieldValue(Object obj, IEntityColumn field) {
 		return Obj.getValue(obj, getPropName(field));
 	}
 
-	private Object loadFieldValue(Object obj, IEntityField field) throws DemsyException {
+	private Object loadFieldValue(Object obj, IEntityColumn field) throws DemsyException {
 		String fldname = this.getPropName(field);
 		Object fldvalue = Obj.getValue(obj, fldname);
 		if (fldvalue == null) {
@@ -1484,7 +1484,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return fldvalue;
 	}
 
-	private Object loadFieldDefaultValue(Object obj, IEntityField field) throws DemsyException {
+	private Object loadFieldDefaultValue(Object obj, IEntityColumn field) throws DemsyException {
 		String fldname = this.getPropName(field);
 		Object fldvalue = Obj.getValue(obj, fldname);
 		if (fldvalue != null)
@@ -1511,9 +1511,9 @@ public abstract class BizEngine implements IEntityDefManager {
 		return fldvalue;
 	}
 
-	public void validate(IEntityDefinition system, IAction action, Object data, Map<String, String> fieldMode) throws DemsyException {
+	public void validate(IEntityDefinition system, IEntityAction entityAction, Object data, Map<String, String> fieldMode) throws DemsyException {
 		if (fieldMode == null) {
-			fieldMode = this.getMode(system, action, data);
+			fieldMode = this.getMode(system, entityAction, data);
 		}
 		Iterator<String> keys = fieldMode.keySet().iterator();
 		List<String> props = new LinkedList();
@@ -1538,7 +1538,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		}
 
 		if (props.size() > 0) {
-			Map<String, IEntityField> map = this.getFieldsMap(this.getFieldsOfEnabled(system));
+			Map<String, IEntityColumn> map = this.getFieldsMap(this.getFieldsOfEnabled(system));
 			StringBuffer sb = new StringBuffer();
 			for (String prop : props) {
 				sb.append(",").append(map.get(prop).getName());
@@ -1547,12 +1547,12 @@ public abstract class BizEngine implements IEntityDefManager {
 		}
 	}
 
-	private IEntityField getField(IEntityDefinition system, String prop) {
+	private IEntityColumn getField(IEntityDefinition system, String prop) {
 		return this.getFieldsMap(this.getFieldsOfEnabled(system)).get(prop);
 	}
 
 	@Override
-	public Nodes makeOptionNodes(IEntityField field, String mode, Object data, String idField) {
+	public Nodes makeOptionNodes(IEntityColumn field, String mode, Object data, String idField) {
 		Nodes root = Nodes.make();
 
 		try {
@@ -1662,7 +1662,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return item;
 	}
 
-	public List<String> makeCascadeExpr(Object obj, IEntityField field, String mode) {
+	public List<String> makeCascadeExpr(Object obj, IEntityColumn field, String mode) {
 		if (obj == null) {
 			return null;
 		}
@@ -1709,7 +1709,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return rules;
 	}
 
-	private void makeFieldOptions(Nodes root, Node node, Object obj, IEntityField field, String mode, String paramPrefix, String idField) throws DemsyException {
+	private void makeFieldOptions(Nodes root, Node node, Object obj, IEntityColumn field, String mode, String paramPrefix, String idField) throws DemsyException {
 		String parentNode = node == null ? "" : "" + node.getId();
 		String nodePrefix = Str.isEmpty(parentNode) ? "_" : parentNode + "_";
 
@@ -1720,7 +1720,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			CndExpr expr = this.toExpr(rules);
 
 			// 获取该字段引用的外键系统
-			IModule module = moduleManager.getModule(Demsy.me().getSoft(), field.getSystem());
+			IModule module = moduleManager.getModule(Demsy.me().getTenant(), field.getSystem());
 			IEntityDefinition refSys = field.getRefrenceSystem();
 			String fkField = entityDefManager.getPropName(field);
 			Class refType = entityDefManager.getType(refSys);
@@ -1734,7 +1734,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			}
 
 			// 获取外键系统业务管理器
-			IOrm orm = Demsy.orm();
+			ExtOrm orm = Demsy.orm();
 			// IBizManager bizManager =
 			// bizManagerFactory.getManager(moduleEngine.getModule(Demsy.me().getSoft(),
 			// refSys));
@@ -1744,7 +1744,7 @@ public abstract class BizEngine implements IEntityDefManager {
 			String groupTree = null;// 数据非自身树
 
 			// 计算数据分组、自身分组
-			IEntityField groupByFld = getFieldOfUnSelfTree(refSys);
+			IEntityColumn groupByFld = getFieldOfUnSelfTree(refSys);
 			if (groupByFld != null) {
 				// if (node != null) {
 				// root.getChildren().remove(node);
@@ -1752,12 +1752,12 @@ public abstract class BizEngine implements IEntityDefManager {
 				// parentNode = null;
 
 				group = getPropName(groupByFld);
-				IEntityField groupTreeFld = getFieldOfSelfTree(groupByFld.getRefrenceSystem());
+				IEntityColumn groupTreeFld = getFieldOfSelfTree(groupByFld.getRefrenceSystem());
 				if (groupTreeFld != null) {
 					groupTree = getPropName(groupTreeFld);
 				}
 			}
-			IEntityField selfTreeFld = getFieldOfSelfTree(refSys);
+			IEntityColumn selfTreeFld = getFieldOfSelfTree(refSys);
 			if (selfTreeFld != null) {
 				selfTree = getPropName(selfTreeFld);
 			}
@@ -1870,10 +1870,10 @@ public abstract class BizEngine implements IEntityDefManager {
 
 		Nodes root = Nodes.make();
 
-		List<? extends IEntityField> fkFields = this.getFieldsOfNavi(entityDefinition);
-		IEntityField selfTreeFld = getFieldOfSelfTree(entityDefinition);
+		List<? extends IEntityColumn> fkFields = this.getFieldsOfNavi(entityDefinition);
+		IEntityColumn selfTreeFld = getFieldOfSelfTree(entityDefinition);
 
-		for (IEntityField fld : fkFields) {
+		for (IEntityColumn fld : fkFields) {
 
 			Node node = root.addNode(null, "fld_" + fld.getId()).setName("按 " + fld.getName());
 
@@ -1906,11 +1906,11 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public List setupFromJson(ISystemTenant soft, Class klass) {
+	public List setupFromJson(ITenant soft, Class klass) {
 		if (klass == null) {
 			return null;
 		}
-		CocTable sysann = (CocTable) klass.getAnnotation(CocTable.class);
+		CocEntity sysann = (CocEntity) klass.getAnnotation(CocEntity.class);
 		if (sysann == null || Str.isEmpty(sysann.jsonData())) {
 			return null;
 		}
@@ -1919,11 +1919,11 @@ public abstract class BizEngine implements IEntityDefManager {
 	}
 
 	@Override
-	public <T> List<T> setupFromJson(ISystemTenant soft, Class<T> klass, String json) {
+	public <T> List<T> setupFromJson(ITenant soft, Class<T> klass, String json) {
 		return setupFromJson(orm(), soft, klass, F_CODE, json);
 	}
 
-	private <T> List<T> setupFromJson(IOrm orm, ISystemTenant soft, Class<T> klass, String idFld, String jsonData) {
+	private <T> List<T> setupFromJson(ExtOrm orm, ITenant soft, Class<T> klass, String idFld, String jsonData) {
 		List<T> newList = new ArrayList();
 
 		List<T> array = (List<T>) JSON.loadFromJson(klass, jsonData);
@@ -1947,7 +1947,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return newList;
 	}
 
-	private List saveObj(IOrm orm, ISystemTenant soft, Object newObj, CndExpr expr, String idFld) {
+	private List saveObj(ExtOrm orm, ITenant soft, Object newObj, CndExpr expr, String idFld) {
 		List ret = new LinkedList();
 
 		Mirror me = Mirror.me(newObj);
@@ -2043,14 +2043,14 @@ public abstract class BizEngine implements IEntityDefManager {
 		return ret;
 	}
 
-	public int importFromJson(final ISystemTenant soft, final String folder) {
+	public int importFromJson(final ITenant soft, final String folder) {
 		Trans.exec(new Atom() {
 			public void run() {
 				log.debugf("导入JSON软件数据... [soft: %s, folder: %s]", soft, folder);
 				if (soft == null) {
 					throw new DemsyException("未指定应用软件!");
 				}
-				IOrm orm = orm();
+				ExtOrm orm = orm();
 
 				File ffolder = new File(folder);
 
@@ -2068,7 +2068,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return 0;
 	}
 
-	protected int importFromJson(ISystemTenant soft, IOrm orm, File ffolder, boolean includeFK) {
+	protected int importFromJson(ITenant soft, ExtOrm orm, File ffolder, boolean includeFK) {
 		int len = 0;
 		File[] files = ffolder.listFiles();
 
@@ -2147,7 +2147,7 @@ public abstract class BizEngine implements IEntityDefManager {
 		return len;
 	}
 
-	public int exportToJson(ISystemTenant soft, String folder, CndExpr expr) throws IOException {
+	public int exportToJson(ITenant soft, String folder, CndExpr expr) throws IOException {
 		log.debugf("导出JSON数据... [soft: %s, folder: %s]", soft, folder);
 
 		int ret = 0;
@@ -2236,8 +2236,8 @@ public abstract class BizEngine implements IEntityDefManager {
 		return ret;
 	}
 
-	public IEntityField getField(Long fieldID) {
-		return (IEntityField) orm().load(this.getStaticType(BIZSYS_BZUDF_FIELD), fieldID);
+	public IEntityColumn getField(Long fieldID) {
+		return (IEntityColumn) orm().load(this.getStaticType(BIZSYS_BZUDF_FIELD), fieldID);
 	}
 
 	@Override

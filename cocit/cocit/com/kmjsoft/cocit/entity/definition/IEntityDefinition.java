@@ -27,7 +27,7 @@ public interface IEntityDefinition extends INamedEntity {
 	String getDataTableName();
 
 	/**
-	 * 排序表达式：如“grid:id desc, tree:name asc”表示“在GRID中按name倒排序树形界面中按name排序”。
+	 * 排序表达式：如“grid:id DESC, tree:name ASC”表示“在GRID中按name倒排序树形界面中按name排序”。
 	 * 
 	 * @return
 	 */
@@ -57,7 +57,7 @@ public interface IEntityDefinition extends INamedEntity {
 	 * 
 	 * @return
 	 */
-	String getEntityClass();
+	String getEntityClassName();
 
 	// /**
 	// * 获取功能模块“数据实体”拥有者关联的字段，用来控制功能模块“数据实体”安全。
@@ -76,16 +76,18 @@ public interface IEntityDefinition extends INamedEntity {
 	// ===========================================================================================================
 
 	/**
+	 * UI类型：即描述默认以什么方式展现功能模块主界面？
+	 * 
+	 * @return
+	 */
+	byte getUiType();
+
+	/**
 	 * UI模版：即自定义功能模块主界面的JSP路径。实体模块管理界面可以不采用平台提供的默认展现方式，而是自定义模块界面。
 	 * 
 	 * @return
 	 */
 	String getUiTemplate();
 
-	/**
-	 * UI类型：即描述默认以什么方式展现功能模块主界面？
-	 * 
-	 * @return
-	 */
-	byte getUiType();
+	String getPathPrefix();
 }

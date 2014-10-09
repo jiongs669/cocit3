@@ -1,23 +1,23 @@
 package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(uiTemplate = "ui.widget.field.Composite")
+@CocColumn(uiTemplate = "ui.widget.field.Composite")
 public class CssLink extends JsonField<CssLink> {
-	@CocField(name = "链接", order = 10, uiTemplate = "ui.widget.field.CssFont")
+	@CocColumn(name = "链接", SN = 10, uiTemplate = "ui.widget.field.CssFont")
 	protected CssFont a;
 
-	@CocField(name = "未访问的链接", order = 11, uiTemplate = "ui.widget.field.CssFont")
+	@CocColumn(name = "未访问的链接", SN = 11, uiTemplate = "ui.widget.field.CssFont")
 	protected CssFont aLink;
 
-	@CocField(name = "已访问的链接", order = 12, uiTemplate = "ui.widget.field.CssFont")
+	@CocColumn(name = "已访问的链接", SN = 12, uiTemplate = "ui.widget.field.CssFont")
 	protected CssFont aVisited;
 
-	@CocField(name = "鼠标悬停链接", order = 13, uiTemplate = "ui.widget.field.CssFont")
+	@CocColumn(name = "鼠标悬停链接", SN = 13, uiTemplate = "ui.widget.field.CssFont")
 	protected CssFont aHover;
 
-	@CocField(name = "被选中的链接", order = 14, uiTemplate = "ui.widget.field.CssFont")
+	@CocColumn(name = "被选中的链接", SN = 14, uiTemplate = "ui.widget.field.CssFont")
 	protected CssFont aActive;
 
 	public CssLink() {

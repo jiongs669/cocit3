@@ -1,7 +1,7 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
 import static com.kmjsoft.cocit.entity.EntityConst.F_CODE;
 import static com.kmjsoft.cocit.entity.EntityConst.F_SOFT_ID;
 import static com.kmjsoft.cocit.entity.EntityConst.MODULE_OTHER;
@@ -11,23 +11,23 @@ import java.util.List;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Obj;
 import com.jiongsoft.cocit.lang.Str;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.nutz.IExtDao;
-import com.jiongsoft.cocit.orm.nutz.impl.OrmImpl;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.IDataEntity;
 import com.kmjsoft.cocit.entity.definition.IEntityCatalog;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.impl.entitydef.BizCatalog;
+import com.kmjsoft.cocit.entity.impl.definition.EntityCatalog;
 import com.kmjsoft.cocit.entity.impl.security.Module;
-import com.kmjsoft.cocit.entity.impl.security.SoftEnv;
+import com.kmjsoft.cocit.entity.impl.security.SystemEntity;
 import com.kmjsoft.cocit.entity.impl.security.Tenant;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
+import com.kmjsoft.cocit.orm.nutz.IExtDao;
+import com.kmjsoft.cocit.orm.nutz.impl.OrmImpl;
 
 public class SFTModuleEngine extends ModuleEngine {
 
@@ -39,7 +39,7 @@ public class SFTModuleEngine extends ModuleEngine {
 	}
 
 	@Override
-	public synchronized void upgradeModules(final ISystemTenant s) {
+	public synchronized void upgradeModules(final ITenant s) {
 		Trans.exec(new Atom() {
 			public void run() {
 				// int size;
@@ -59,7 +59,7 @@ public class SFTModuleEngine extends ModuleEngine {
 	}
 
 	@Override
-	public synchronized void upgradeWebContent(final ISystemTenant s) {
+	public synchronized void upgradeWebContent(final ITenant s) {
 		Trans.exec(new Atom() {
 			public void run() {
 				// int size;
@@ -443,9 +443,9 @@ public class SFTModuleEngine extends ModuleEngine {
 	private Tenant setupDefaultSoft(OrmImpl orm) {
 		IExtDao dao = orm.getDao();
 
-		SoftEnv user = (SoftEnv) getCorpByDefault();
+		SystemEntity user = (SystemEntity) getCorpByDefault();
 		if (user == null) {
-			user = new SoftEnv();
+			user = new SystemEntity();
 		}
 		user.setName(appconfig.getDefaultCorpName());
 		user.setCode(appconfig.getDefaultCorpCode());
@@ -496,13 +496,13 @@ public class SFTModuleEngine extends ModuleEngine {
 	// }
 
 	// 用于安装平台时转换业务类为模块
-	private IModule convert(IOrm orm, ISystemTenant soft, IEntityCatalog icatalog) {
-		BizCatalog catalog = (BizCatalog) icatalog;
+	private IModule convert(ExtOrm orm, ITenant soft, IEntityCatalog icatalog) {
+		EntityCatalog catalog = (EntityCatalog) icatalog;
 		if (catalog == null) {
 			return null;
 		}
 
-		catalog = (BizCatalog) orm.load(BizCatalog.class, catalog.getId());
+		catalog = (EntityCatalog) orm.load(EntityCatalog.class, catalog.getId());
 		if (catalog == null)
 			return null;
 
@@ -514,7 +514,7 @@ public class SFTModuleEngine extends ModuleEngine {
 		module.setName(catalog.getName());
 		module.setType(IModule.TYPE_FOLDER);
 		module.setParent((Module) convert(orm, soft, catalog.getParent()));
-		module.setTenantGuid(soft.getDataGuid());
+		module.setTenantOwnerGuid(soft.getDataGuid());
 		module.setSerialNumber(catalog.getSerialNumber());
 		module.setCode(catalog.getCode());
 		module.setBuildin(true);
@@ -529,7 +529,7 @@ public class SFTModuleEngine extends ModuleEngine {
 	/**
 	 * 供插件调用，用于自动生成模块文件夹
 	 */
-	public IModule makeModule(IOrm orm, ISystemTenant soft, IEntityCatalog catalog) {
+	public IModule makeModule(ExtOrm orm, ITenant soft, IEntityCatalog catalog) {
 		if (catalog == null || (Str.isEmpty(catalog.getDataGuid()) && Str.isEmpty(catalog.getCode())))
 			return null;
 
@@ -543,7 +543,7 @@ public class SFTModuleEngine extends ModuleEngine {
 			module.setCode(catalog.getDataGuid());
 			module.setType(IModule.TYPE_FOLDER);
 			module.setParent((Module) makeModule(orm, soft, (IEntityCatalog) catalog.getParent()));
-			module.setTenantGuid(soft.getDataGuid());
+			module.setTenantOwnerGuid(soft.getDataGuid());
 
 			orm.save(module);
 		}
@@ -554,7 +554,7 @@ public class SFTModuleEngine extends ModuleEngine {
 	/**
 	 * 供插件调用，用于自动生成模块文件夹
 	 */
-	public IModule makeModule(IOrm orm, ISystemTenant soft, IEntityDefinition system) {
+	public IModule makeModule(ExtOrm orm, ITenant soft, IEntityDefinition system) {
 		if (system == null)
 			return null;
 
@@ -563,12 +563,12 @@ public class SFTModuleEngine extends ModuleEngine {
 			module = new Module();
 			module.setName(system.getName());
 			module.setCode(system.getDataGuid());
-			module.setType(IModule.TYPE_BIZ);
+			module.setType(IModule.TYPE_ENTITY);
 			module.setParent((Module) this.makeModule(orm, soft, system.getCatalog()));
 			module.setRefSystem(system);
 			module.setPathPrefix(system.getPathPrefix());
 			module.setHidden(entityDefManager.isSlave(system));
-			module.setTenantGuid(soft.getDataGuid());
+			module.setTenantOwnerGuid(soft.getDataGuid());
 
 			orm.save(module);
 		}
@@ -593,7 +593,7 @@ public class SFTModuleEngine extends ModuleEngine {
 	// return ret;
 	// }
 
-	private int setupDemsyModules(IOrm orm, Tenant soft) {
+	private int setupDemsyModules(ExtOrm orm, Tenant soft) {
 		int ret = 0;
 
 		String moduleFolder = MODULE_OTHER;
@@ -615,14 +615,14 @@ public class SFTModuleEngine extends ModuleEngine {
 			module.setName(sys.getName());
 			module.setSerialNumber(sys.getSerialNumber());
 			module.setCode(code);
-			module.setType(IModule.TYPE_BIZ);
+			module.setType(IModule.TYPE_ENTITY);
 			module.setRefSystem(sys);
 			module.setPathPrefix(sys.getPathPrefix());
 			module.setHidden(entityDefManager.isSlave(sys));
 			module.setStatusCode(IDataEntity.STATUS_CODE_BUILDIN);
-			module.setTenantGuid(soft.getDataGuid());
+			module.setTenantOwnerGuid(soft.getDataGuid());
 
-			Module parentModule = (Module) convert(orm, soft, (BizCatalog) sys.getCatalog());
+			Module parentModule = (Module) convert(orm, soft, (EntityCatalog) sys.getCatalog());
 			if (parentModule == null) {
 				if (otherModule == null) {
 					otherModule = new Module();
@@ -631,7 +631,7 @@ public class SFTModuleEngine extends ModuleEngine {
 					otherModule.setType(IModule.TYPE_FOLDER);
 					otherModule.setSerialNumber(9999);
 					otherModule.setBuildin(true);
-					otherModule.setTenantGuid(soft.getDataGuid());
+					otherModule.setTenantOwnerGuid(soft.getDataGuid());
 					otherModule.setParent(null);
 					Obj.makeSetupGuid(otherModule, moduleFolder);
 					orm.save(otherModule);

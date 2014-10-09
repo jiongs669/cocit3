@@ -1,9 +1,9 @@
 package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.JSON;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(precision = 255)
+@CocColumn(precision = 255)
 public class Upload implements IExtField {
 
 	private String path;

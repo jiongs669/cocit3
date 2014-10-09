@@ -12,9 +12,9 @@ import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.CoreConstants;
 
-import com.jiongsoft.cocit.Demsy;
-import com.jiongsoft.cocit.Demsy.Monitor;
 import com.jiongsoft.cocit.lang.Str;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy.Monitor;
 import com.kmjsoft.cocit.entity.impl.log.RunningLog;
 
 public class LogbackAppender extends AppenderBase<ILoggingEvent> {

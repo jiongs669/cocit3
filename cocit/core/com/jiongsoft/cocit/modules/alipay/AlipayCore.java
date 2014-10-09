@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
 
 /* *
  *类名：AlipayFunction
@@ -30,7 +30,7 @@ public class AlipayCore {
 	 */
 	public static String buildMysign(Map<String, String> sArray) {
 		String prestr = createLinkString(sArray); // 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-		prestr = prestr + SoftConfigManager.me().getAlipayKey(); // 把拼接后的字符串再与安全校验码直接连接起来
+		prestr = prestr + TenantPreferenceManager.me().getAlipayKey(); // 把拼接后的字符串再与安全校验码直接连接起来
 		String mysign = AlipayMd5Encrypt.md5(prestr);
 		return mysign;
 	}

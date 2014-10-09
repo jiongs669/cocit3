@@ -1,8 +1,8 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.security;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.security;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_DATASOURCE;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_LIB_ACTION;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_SOFT;
@@ -25,7 +25,6 @@ import java.util.Map;
 import org.nutz.dao.Sqls;
 import org.nutz.lang.Mirror;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IDataSourceConfig;
 import com.jiongsoft.cocit.entitydef.field.Upload;
 import com.jiongsoft.cocit.lang.Assert;
@@ -40,25 +39,26 @@ import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.MvcConst.MvcUtil;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.nutz.EnMappingImpl;
-import com.jiongsoft.cocit.orm.nutz.impl.OrmImpl;
 import com.jiongsoft.cocit.util.sort.SortUtils;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.IDataEntity;
 import com.kmjsoft.cocit.entity.INamedEntity;
-import com.kmjsoft.cocit.entity.config.IPreferenceOfTenant;
+import com.kmjsoft.cocit.entity.actionplugin.IActionPlugin;
+import com.kmjsoft.cocit.entity.config.ITenantPreference;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 import com.kmjsoft.cocit.entity.security.IModule;
 import com.kmjsoft.cocit.entity.security.ISystem;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
-import com.kmjsoft.cocit.entityengine.bizplugin.ActionPlugin;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
 import com.kmjsoft.cocit.module.IModuleManager;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
+import com.kmjsoft.cocit.orm.nutz.EnMappingImpl;
+import com.kmjsoft.cocit.orm.nutz.impl.OrmImpl;
 import com.kmjsoft.cocit.util.UrlAPI;
 
 public abstract class ModuleEngine implements IModuleManager {
@@ -70,40 +70,40 @@ public abstract class ModuleEngine implements IModuleManager {
 
 	protected Map<Long, CacheSoft> softIdCache;
 
-	protected Map<Long, IAction> actionLibCache;
+	protected Map<Long, IEntityAction> actionLibCache;
 
 	protected Map<Long, IDataSourceConfig> dataSourceCache;
 
-	protected Map<Long, ActionPlugin[]> actionPlugins;
+	protected Map<Long, IActionPlugin[]> iActionPlugins;
 
 	public ModuleEngine() {
 		corpCache = new HashMap();
 		softCache = new HashMap();
 		softIdCache = new HashMap();
 		actionLibCache = new HashMap();
-		actionPlugins = new HashMap();
+		iActionPlugins = new HashMap();
 	}
 
 	@Override
-	public ActionPlugin[] getPlugins(IAction action) {
-		ActionPlugin[] ret = actionPlugins.get(action.getId());
+	public IActionPlugin[] getPlugins(IEntityAction entityAction) {
+		IActionPlugin[] ret = iActionPlugins.get(entityAction.getId());
 		if (ret != null)
 			return ret;
 
-		String[] pluginArray = Str.toArray(action.getPlugin(), ",");
-		List<ActionPlugin> plugins = new ArrayList(pluginArray.length);
+		String[] pluginArray = Str.toArray(entityAction.getPlugin(), ",");
+		List<IActionPlugin> plugins = new ArrayList(pluginArray.length);
 		for (String pstr : pluginArray) {
 			try {
-				ActionPlugin plugin = (ActionPlugin) Mirror.me(Cls.forName(pstr)).born();
+				IActionPlugin plugin = (IActionPlugin) Mirror.me(Cls.forName(pstr)).born();
 				plugins.add(plugin);
 			} catch (Throwable e) {
-				log.errorf("加载业务插件出错! [action=%s] %s", action, e);
+				log.errorf("加载业务插件出错! [action=%s] %s", entityAction, e);
 			}
 		}
 
-		ret = new ActionPlugin[plugins.size()];
+		ret = new IActionPlugin[plugins.size()];
 		plugins.toArray(ret);
-		actionPlugins.put(action.getId(), ret);
+		iActionPlugins.put(entityAction.getId(), ret);
 
 		return ret;
 	}
@@ -124,7 +124,7 @@ public abstract class ModuleEngine implements IModuleManager {
 
 	@Override
 	public IEntityDefinition getSystem(IModule module) {
-		if (module != null && module.getType() == IModule.TYPE_BIZ) {
+		if (module != null && module.getType() == IModule.TYPE_ENTITY) {
 			return entityDefManager.getSystem(module.getRefID());
 		}
 
@@ -150,12 +150,12 @@ public abstract class ModuleEngine implements IModuleManager {
 	}
 
 	@Override
-	public ISystemTenant getSoftByDefault() {
+	public ITenant getSoftByDefault() {
 		return soft().get();
 	}
 
 	@Override
-	public ISystemTenant getSoft(String domainOrCode) {
+	public ITenant getSoft(String domainOrCode) {
 		if (Str.isEmpty(domainOrCode) || domainOrCode.equals("localhost") || domainOrCode.equals("127.0.0.1")) {
 			domainOrCode = appconfig.getDefaultSoftCode();
 		}
@@ -163,7 +163,7 @@ public abstract class ModuleEngine implements IModuleManager {
 	}
 
 	@Override
-	public ISystemTenant getSoft(Long id) {
+	public ITenant getSoft(Long id) {
 		return soft(id).get();
 	}
 
@@ -187,7 +187,7 @@ public abstract class ModuleEngine implements IModuleManager {
 		return ret;
 	}
 
-	public IPreferenceOfTenant getSoftConfig(String key) {
+	public ITenantPreference getSoftConfig(String key) {
 		return soft().configs().get(key);
 	}
 
@@ -202,9 +202,9 @@ public abstract class ModuleEngine implements IModuleManager {
 	}
 
 	@Override
-	public IModule getModule(ISystemTenant soft, IEntityDefinition system) {
+	public IModule getModule(ITenant soft, IEntityDefinition system) {
 		if (soft == null) {
-			soft = Demsy.me().getSoft();
+			soft = Demsy.me().getTenant();
 		}
 		return this.getModule(soft.getDataGuid(), system);
 	}
@@ -221,7 +221,7 @@ public abstract class ModuleEngine implements IModuleManager {
 
 		List<? extends IEntityDefinition> slaveSystems = entityDefManager.getSystemsOfSlave(getSystem(module));
 		for (IEntityDefinition sys : slaveSystems) {
-			IModule slaveModule = this.getModule(module.getTenantGuid(), sys);
+			IModule slaveModule = this.getModule(module.getTenantOwnerGuid(), sys);
 			if (slaveModule != null) {
 				modules.add(slaveModule);
 			}
@@ -231,11 +231,11 @@ public abstract class ModuleEngine implements IModuleManager {
 	}
 
 	@Override
-	public IAction getAction(IModule mdl, Serializable opID) {
+	public IEntityAction getAction(IModule mdl, Serializable opID) {
 		if (mdl == null)
 			return null;
 
-		if (mdl.getType() == IModule.TYPE_BIZ) {
+		if (mdl.getType() == IModule.TYPE_ENTITY) {
 			if (opID instanceof String)
 				return ((BizEngine) entityDefManager).biz(getSystem(mdl).getId()).action((String) opID);
 			else if (opID instanceof Number)
@@ -249,17 +249,17 @@ public abstract class ModuleEngine implements IModuleManager {
 	}
 
 	@Override
-	public List<? extends IModule> getModules(ISystemTenant soft) {
+	public List<? extends IModule> getModules(ITenant soft) {
 		return soft(soft.getId()).modules();
 	}
 
 	@Override
-	public Nodes makeNodesByModule(ISystemTenant soft) {
+	public Nodes makeNodesByModule(ITenant soft) {
 		return this.makeNodesByModule(soft, Demsy.me().login().getRoleType());
 	}
 
 	@Override
-	public Nodes makeNodesByModule(ISystemTenant soft, byte role) {
+	public Nodes makeNodesByModule(ITenant soft, byte role) {
 		Assert.notNull(soft, "没有指定应用软件，不能获取模块功能菜单!");
 
 		List<? extends IModule> modules = soft(soft.getId()).modules();
@@ -320,7 +320,7 @@ public abstract class ModuleEngine implements IModuleManager {
 		switch (module.getType()) {
 		case IModule.TYPE_FOLDER:
 			break;
-		case IModule.TYPE_BIZ:
+		case IModule.TYPE_ENTITY:
 			if (UrlAPI.URL_NS.equals(pathPrefix)) {
 				node.setParams(MvcUtil.contextPath(UrlAPI.GET_ENTITY_MODULE_UI, UrlAPI.encodeArgs(module.getId())));
 			} else {
@@ -337,7 +337,7 @@ public abstract class ModuleEngine implements IModuleManager {
 
 	@Override
 	public Nodes makeNodesByAction(IModule mdl) {
-		if (mdl.getType() == IModule.TYPE_BIZ) {
+		if (mdl.getType() == IModule.TYPE_ENTITY) {
 			IEntityDefinition sys = getSystem(mdl);
 			Nodes root = makeActionNodes(mdl, sys);
 
@@ -351,8 +351,8 @@ public abstract class ModuleEngine implements IModuleManager {
 			// }
 			// }
 
-			String softID = mdl.getTenantGuid();
-			List<? extends IEntityField> fieldsOfSlave = entityDefManager.getFieldsOfSlave(sys);
+			String softID = mdl.getTenantOwnerGuid();
+			List<? extends IEntityColumn> fieldsOfSlave = entityDefManager.getFieldsOfSlave(sys);
 
 			// 添加子系统“新增”操作到主系统操作菜单中
 			// if (fields.size() > 0) {
@@ -388,7 +388,7 @@ public abstract class ModuleEngine implements IModuleManager {
 			// 自动生成字段字段批量修改菜单
 			List<Node> items = this.filterNodes(children, TYPE_BZ_AUTO_MAKED_UPDATE_MENUS);// 过滤自动生成菜单项
 			if (items.size() > 0) {
-				Map<String, IEntityField> fldsMap = entityDefManager.getFieldsMap(entityDefManager.getFieldsOfNavi(sys));
+				Map<String, IEntityColumn> fldsMap = entityDefManager.getFieldsMap(entityDefManager.getFieldsOfNavi(sys));
 				Node unknownItem = null;
 
 				List<String> props = new LinkedList();
@@ -420,9 +420,9 @@ public abstract class ModuleEngine implements IModuleManager {
 				if (unknownItem != null) {
 					int count = 1;
 
-					Iterator<IEntityField> it = fldsMap.values().iterator();
+					Iterator<IEntityColumn> it = fldsMap.values().iterator();
 					while (it.hasNext()) {
-						IEntityField fld = it.next();
+						IEntityColumn fld = it.next();
 
 						if (fld.getPropName().equals(F_BUILDIN)) {
 							continue;
@@ -470,7 +470,7 @@ public abstract class ModuleEngine implements IModuleManager {
 					groupsSubMdlID = "grpssubmdl_" + mdl.getId();
 					root.addNode(null, groupsSubMdlID).setName("明细数据");
 				}
-				for (IEntityField f : fieldsOfSlave) {
+				for (IEntityColumn f : fieldsOfSlave) {
 					String param = entityDefManager.getPropName(f) + ".id";
 
 					IEntityDefinition subsys = f.getSystem();
@@ -512,7 +512,7 @@ public abstract class ModuleEngine implements IModuleManager {
 		throw new java.lang.UnsupportedOperationException("不支持的模块类型!");
 	}
 
-	private void makeUpdateMenu(IModule mdl, IEntityField fld, Nodes root, Node item) {
+	private void makeUpdateMenu(IModule mdl, IEntityColumn fld, Nodes root, Node item) {
 		String prop = entityDefManager.getPropName(fld);
 		if (fld == null) {
 			return;
@@ -524,7 +524,7 @@ public abstract class ModuleEngine implements IModuleManager {
 				if (!Cls.isEntityType(klass)) {
 					klass = entityDefManager.getType(refSys);
 				}
-				IOrm orm = Demsy.orm();
+				ExtOrm orm = Demsy.orm();
 				Class type = entityDefManager.getType(refSys);
 
 				if (orm.count(type, null) < 10) {
@@ -581,9 +581,9 @@ public abstract class ModuleEngine implements IModuleManager {
 
 		Nodes root = Nodes.make();
 		try {
-			List<? extends ISystemTenant> list = Demsy.orm().query(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT));
+			List<? extends ITenant> list = Demsy.orm().query(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT));
 
-			for (ISystemTenant ele : list) {
+			for (ITenant ele : list) {
 				ISystem corp = ele.getSystem();
 				if (corp == null)
 					continue;
@@ -626,7 +626,7 @@ public abstract class ModuleEngine implements IModuleManager {
 			if (action.isDisabled() || Str.isEmpty(action.getName()))
 				continue;
 
-			IAction parent = action.getParentAction();
+			IEntityAction parent = action.getParentAction();
 
 			Node node = root.addNode(parent == null ? "" : parent.getId(), action.getId());
 			node.setName(action.getName());
@@ -673,10 +673,10 @@ public abstract class ModuleEngine implements IModuleManager {
 	// return this.soft(softObj.getId()).realm(realmCode);
 	// }
 
-	public IAction getActionComponent(Long id) {
+	public IEntityAction getActionComponent(Long id) {
 		if (this.actionLibCache.size() == 0) {
-			List<IAction> list = Demsy.orm().query(entityDefManager.getStaticType(BIZSYS_DEMSY_LIB_ACTION));
-			for (IAction ele : list) {
+			List<IEntityAction> list = Demsy.orm().query(entityDefManager.getStaticType(BIZSYS_DEMSY_LIB_ACTION));
+			for (IEntityAction ele : list) {
 				actionLibCache.put(ele.getId(), ele);
 			}
 		}
@@ -696,11 +696,11 @@ public abstract class ModuleEngine implements IModuleManager {
 		return this.dataSourceCache.get(dataSource);
 	}
 
-	public void increase(IOrm orm, Object obj, String field) {
+	public void increase(ExtOrm orm, Object obj, String field) {
 		increase(orm, obj, field, 1);
 	}
 
-	public void increase(IOrm orm, Object obj, String field, int v) {
+	public void increase(ExtOrm orm, Object obj, String field, int v) {
 		EnMappingImpl en = (EnMappingImpl) orm.getEnMapping(obj.getClass());
 		Serializable id = Obj.getId(en, obj);
 
@@ -719,11 +719,11 @@ public abstract class ModuleEngine implements IModuleManager {
 		((OrmImpl) orm).getDao().execute(Sqls.create(sqlstr));
 	}
 
-	public void decrease(IOrm orm, Object obj, String field) {
+	public void decrease(ExtOrm orm, Object obj, String field) {
 		decrease(orm, obj, field, 1);
 	}
 
-	public void decrease(IOrm orm, Object obj, String field, int v) {
+	public void decrease(ExtOrm orm, Object obj, String field, int v) {
 		Number value = Obj.getValue(obj, field);
 		if (value != null && value.intValue() > 0) {
 			EnMappingImpl en = (EnMappingImpl) orm.getEnMapping(obj.getClass());

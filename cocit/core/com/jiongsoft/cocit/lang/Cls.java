@@ -45,8 +45,8 @@ import javax.persistence.Entity;
 import org.nutz.aop.ClassAgent;
 import org.nutz.lang.Mirror;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.ctx.aop.LazyClassAgent;
+import com.kmjsoft.cocit.Demsy;
 
 public abstract class Cls {
 

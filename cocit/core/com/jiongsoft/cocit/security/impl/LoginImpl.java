@@ -12,7 +12,7 @@ import com.jiongsoft.cocit.security.ILogin;
 import com.jiongsoft.cocit.security.ISecurity;
 import com.jiongsoft.cocit.security.SecurityException;
 import com.kmjsoft.cocit.entity.security.IAdminUser;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
 
@@ -23,7 +23,7 @@ public class LoginImpl implements ILogin {
 
 	private IUser user;
 
-	private ISystemTenant soft;
+	private ITenant soft;
 
 	private long module;
 
@@ -39,7 +39,7 @@ public class LoginImpl implements ILogin {
 
 	private ISecurity security;
 
-	LoginImpl(ISecurity security, HttpServletRequest request, ISystemTenant app, String realm, String username, String password) throws SecurityException {
+	LoginImpl(ISecurity security, HttpServletRequest request, ITenant app, String realm, String username, String password) throws SecurityException {
 		log.debug("创建登录信息对象......");
 
 		this.security = security;
@@ -82,7 +82,7 @@ public class LoginImpl implements ILogin {
 		}
 	}
 
-	public LoginImpl(ISystemTenant app, IUser user) {
+	public LoginImpl(ITenant app, IUser user) {
 		this.soft = app;
 		this.username = user.getUsername();
 
@@ -99,7 +99,7 @@ public class LoginImpl implements ILogin {
 				roleType = admin.getRole().getType();
 			else
 				roleType = SecurityManager.ROLE_ADMIN_USER;
-		} else if (user instanceof ISystemTenant) {
+		} else if (user instanceof ITenant) {
 			roleType = SecurityManager.ROLE_ADMIN_ROOT;
 		}
 	}
@@ -108,7 +108,7 @@ public class LoginImpl implements ILogin {
 		return user;
 	}
 
-	public ISystemTenant getApp() {
+	public ITenant getApp() {
 		return soft;
 	}
 

@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jiongsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.security.ITenant;
 
 public class SmartyView extends AbstractView {
 
@@ -33,7 +33,7 @@ public class SmartyView extends AbstractView {
 		String tplPath = null;
 		String contextPath = "";
 		try {
-			ISystemTenant soft = Demsy.me().getSoft();
+			ITenant soft = Demsy.me().getTenant();
 			String softCode = Demsy.appconfig.getDefaultSoftCode();
 			if (soft != null) {
 				softCode = soft.getCode();

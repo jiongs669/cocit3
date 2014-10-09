@@ -6,7 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
 
 /* *
  *类名：AlipayNotify
@@ -92,7 +92,7 @@ public class AlipayNotify {
 	private static String verifyResponse(String notify_id) {
 		// 获取远程服务器ATN结果，验证是否是支付宝服务器发来的请求
 		String transport = AlipayConfig.transport;
-		String partner = SoftConfigManager.me().getAlipayPartner();
+		String partner = TenantPreferenceManager.me().getAlipayPartner();
 		String veryfy_url = "";
 		if (transport.equalsIgnoreCase("https")) {
 			veryfy_url = HTTPS_VERIFY_URL;

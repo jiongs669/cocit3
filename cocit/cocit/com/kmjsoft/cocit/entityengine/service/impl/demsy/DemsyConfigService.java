@@ -1,12 +1,12 @@
 package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
 import com.kmjsoft.cocit.entityengine.service.impl.BaseConfigService;
 
 public class DemsyConfigService extends BaseConfigService {
-	private SoftConfigManager demsyConfigManager;
+	private TenantPreferenceManager demsyConfigManager;
 
-	DemsyConfigService(SoftConfigManager manager) {
+	DemsyConfigService(TenantPreferenceManager manager) {
 		demsyConfigManager = manager;
 	}
 

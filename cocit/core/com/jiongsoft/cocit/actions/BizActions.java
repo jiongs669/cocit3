@@ -1,9 +1,9 @@
 package com.jiongsoft.cocit.actions;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.moduleManager;
-import static com.jiongsoft.cocit.Demsy.uIEngine;
 import static com.jiongsoft.cocit.mvc.MvcConst.VW_BIZ;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.uIEngine;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ID;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ORDER_BY;
 import static com.kmjsoft.cocit.entity.EntityConst.F_SOFT_ID;
@@ -24,7 +24,6 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.ConfigException;
 import com.jiongsoft.cocit.lang.Dates;
@@ -49,15 +48,16 @@ import com.jiongsoft.cocit.mvc.ui.widget.UIBizGrid;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizModule;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizSystem;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIToolbarMenu;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 import com.kmjsoft.cocit.entity.security.IModule;
 import com.kmjsoft.cocit.entityengine.manager.BizConst;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.util.ExcelUtil;
@@ -461,7 +461,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			IBizManager bizManager = getBizManager(moduleID);
 			IModule mdl = bizManager.getModule();
 
-			IAction action = moduleManager.getAction(mdl, actionID);
+			IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
 			log.tracef("获取模块操作 [actionMode=%s]", actionID);
 
 			Class bizClass = entityDefManager.getType(moduleManager.getSystem(mdl));
@@ -499,10 +499,10 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 
 			log.tracef("加载并注入业务数据 [dataID=%s]", dataID);
 
-			UIBizFormModel dataModel = uIEngine.makeSystemFormView(mdl, action, data).setDacorator(pageID).setAjaxData(ajaxData);
-			if (action != null) {
-				dataModel.setTemplate(action.getTemplate());
-				dataModel.getModel().setName(action.getName());
+			UIBizFormModel dataModel = uIEngine.makeSystemFormView(mdl, entityAction, data).setDacorator(pageID).setAjaxData(ajaxData);
+			if (entityAction != null) {
+				dataModel.setTemplate(entityAction.getPageTemplate());
+				dataModel.getModel().setName(entityAction.getName());
 			}
 
 			if (!ajaxData) {
@@ -575,20 +575,20 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			IBizManager bizManager = getBizManager(moduleID);
 			IModule mdl = bizManager.getModule();
 
-			IAction action = moduleManager.getAction(mdl, actionID);
-			if (action == null) {
+			IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+			if (entityAction == null) {
 				try {
-					action = moduleManager.getAction(mdl, Long.parseLong(actionID));
+					entityAction = moduleManager.getAction(mdl, Long.parseLong(actionID));
 				} catch (Throwable e) {
 					log.warnf("获取模块操作出错! %s", e);
 				}
 			}
-			if (action == null) {
+			if (entityAction == null) {
 				throw new DemsyException("业务操作不存在! [actionID=%s]", actionID);
 			}
 
-			if (!Str.isEmpty(action.getError())) {
-				errorInfo.append(action.getError());
+			if (!Str.isEmpty(entityAction.getError())) {
+				errorInfo.append(entityAction.getError());
 			}
 			log.tracef("获取模块操作 [actionID=%s]", actionID);
 
@@ -598,11 +598,11 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			Mirror mirror = Mirror.me(bizClass);
 			Object data = dataNode.inject(mirror, null, null);
 
-			Map<String, String> fieldMode = entityDefManager.getMode(bizManager.getSystem(), action, data);
+			Map<String, String> fieldMode = entityDefManager.getMode(bizManager.getSystem(), entityAction, data);
 
 			Long softID = (Long) Obj.getValue(data, F_SOFT_ID);
 			List list = null;
-			switch (action.getTypeCode()) {
+			switch (entityAction.getTypeCode()) {
 			case BizConst.TYPE_BZ_DEL:
 				if (Str.isEmpty(dataID)) {
 					throw new DemsyException("请先选中待删除的记录!");
@@ -641,13 +641,13 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 				data = dataNode.inject(mirror, null, fieldMode);
 				entityDefManager.loadFieldValue(data, moduleManager.getSystem(mdl));
 
-				entityDefManager.validate(bizManager.getSystem(), action, data, fieldMode);
+				entityDefManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
 
 				if (Cls.hasField(bizClass, F_SOFT_ID) && (softID == null || softID <= 0)) {
-					Obj.setValue(data, F_SOFT_ID, mdl.getTenantGuid());
+					Obj.setValue(data, F_SOFT_ID, mdl.getTenantOwnerGuid());
 				}
 
-				executor.exec(bizManager, data, action);
+				executor.exec(bizManager, data, entityAction);
 			} else {
 				data = null;
 				if (Cls.hasField(bizClass, F_SOFT_ID) && (softID == null || softID <= 0)) {
@@ -655,46 +655,46 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 						data = list.get(0);
 						dataNode.inject(mirror, data, fieldMode);
 
-						entityDefManager.validate(bizManager.getSystem(), action, data, fieldMode);
+						entityDefManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
 
-						Obj.setValue(data, F_SOFT_ID, mdl.getTenantGuid());
-						executor.exec(bizManager, data, action);
+						Obj.setValue(data, F_SOFT_ID, mdl.getTenantOwnerGuid());
+						executor.exec(bizManager, data, entityAction);
 					} else {
 						for (Object ele : list) {
 							dataNode.inject(mirror, ele, fieldMode);
 
-							entityDefManager.validate(bizManager.getSystem(), action, ele, fieldMode);
+							entityDefManager.validate(bizManager.getSystem(), entityAction, ele, fieldMode);
 
-							Obj.setValue(ele, F_SOFT_ID, mdl.getTenantGuid());
+							Obj.setValue(ele, F_SOFT_ID, mdl.getTenantOwnerGuid());
 						}
-						executor.exec(bizManager, list, action);
+						executor.exec(bizManager, list, entityAction);
 					}
 				} else {
 					if (list.size() == 1) {
 						data = list.get(0);
 						dataNode.inject(mirror, data, fieldMode);
 
-						entityDefManager.validate(bizManager.getSystem(), action, data, fieldMode);
+						entityDefManager.validate(bizManager.getSystem(), entityAction, data, fieldMode);
 
-						executor.exec(bizManager, data, action);
+						executor.exec(bizManager, data, entityAction);
 					} else {
 						for (Object ele : list) {
 							dataNode.inject(mirror, ele, fieldMode);
 
-							entityDefManager.validate(bizManager.getSystem(), action, ele, fieldMode);
+							entityDefManager.validate(bizManager.getSystem(), entityAction, ele, fieldMode);
 						}
-						executor.exec(bizManager, list, action);
+						executor.exec(bizManager, list, entityAction);
 					}
 				}
 
 			}
 
-			String info = action.getInfo();
+			String info = entityAction.getInfo();
 			if (Str.isEmpty(info)) {
 				info = "操作成功! ";
 			}
 
-			log.debugf("执行业务逻辑<%s>成功. [moduleID=%s, action=%s]", title, mdl, action);
+			log.debugf("执行业务逻辑<%s>成功. [moduleID=%s, action=%s]", title, mdl, entityAction);
 
 			return new Status(true, info, null, Obj.getId(data));
 		} catch (Throwable e) {
@@ -741,20 +741,20 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 				IBizManager bizManager = getBizManager(moduleID);
 				IModule mdl = bizManager.getModule();
 
-				IAction action = moduleManager.getAction(mdl, actionID);
-				if (action == null) {
+				IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+				if (entityAction == null) {
 					try {
-						action = moduleManager.getAction(mdl, Long.parseLong(actionID));
+						entityAction = moduleManager.getAction(mdl, Long.parseLong(actionID));
 					} catch (Throwable e) {
 						log.warnf("获取模块操作出错! %s", e);
 					}
 				}
-				if (action == null) {
+				if (entityAction == null) {
 					throw new DemsyException("业务操作不存在! [actionID=%s]", actionID);
 				}
 
-				if (!Str.isEmpty(action.getError())) {
-					info.append(action.getError());
+				if (!Str.isEmpty(entityAction.getError())) {
+					info.append(entityAction.getError());
 				}
 				log.tracef("获取模块操作 [actionID=%s]", actionID);
 
@@ -801,10 +801,10 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	public void exportToXls(final String moduleParam, final String actionParam, @Param("::" + UI_BZFORM_PREFIX) ObjcetNaviNode dataNode) throws DemsyException {
 
 		exec("导出数据到Excel", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				File file = null;
 				try {
-					Map<String, IEntityField> fieldMap = entityDefManager.getFieldsMap(manager.getSystem());
+					Map<String, IEntityColumn> fieldMap = entityDefManager.getFieldsMap(manager.getSystem());
 					Demsy ctx = Demsy.me();
 					String filename = Demsy.appconfig.getTempDir() + File.separator + "exportToXls" + File.separator
 					// + entityManager.getSystem().getName() + "("
@@ -830,7 +830,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 						row = new String[fields.length];
 						count = 0;
 						for (String fld : fields) {
-							IEntityField bzfld = fieldMap.get(fld);
+							IEntityColumn bzfld = fieldMap.get(fld);
 							row[count++] = Obj.getStringValue(v, fld, bzfld.getPattern());
 						}
 						excelResult.add(row);
@@ -876,20 +876,20 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			IBizManager bizManager = getBizManager(moduleID);
 			IModule mdl = bizManager.getModule();
 
-			IAction action = moduleManager.getAction(mdl, actionID);
-			if (action == null) {
+			IEntityAction entityAction = moduleManager.getAction(mdl, actionID);
+			if (entityAction == null) {
 				try {
-					action = moduleManager.getAction(mdl, Long.parseLong(actionID));
+					entityAction = moduleManager.getAction(mdl, Long.parseLong(actionID));
 				} catch (Throwable e) {
 					log.warnf("获取模块操作出错! %s", e);
 				}
 			}
-			if (action == null) {
+			if (entityAction == null) {
 				throw new DemsyException("业务操作不存在! [actionID=%s]", actionID);
 			}
 
-			if (!Str.isEmpty(action.getError())) {
-				errorInfo.append(action.getError());
+			if (!Str.isEmpty(entityAction.getError())) {
+				errorInfo.append(entityAction.getError());
 			}
 			log.tracef("获取模块操作 [actionID=%s]", actionID);
 
@@ -900,23 +900,23 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			if (!Str.isEmpty(dataID)) {
 				list = this.list(bizManager, bizClass, dataID, actionID, null);
 			} else {
-				String params = action.getParams();
+				String params = entityAction.getParams();
 				list = this.list(bizManager, bizClass, dataID, actionID, CndExpr.make(params));
 			}
 
-			UIBizFormModel dataModel = uIEngine.makeSystemFormView(mdl, action, null).setDacorator("").setAjaxData(ajaxData);
+			UIBizFormModel dataModel = uIEngine.makeSystemFormView(mdl, entityAction, null).setDacorator("").setAjaxData(ajaxData);
 			String submitUrl = MvcUtil.contextPath(URL_BZ_SAVE, moduleParam, actionID + ":");
 			dataModel.set("nextToken", Demsy.me().addToken());
 			dataModel.set("submitUrl", submitUrl);
-			if (action != null) {
-				if (!Str.isEmpty(action.getTemplate()))
-					dataModel.setTemplate(action.getTemplate());
+			if (entityAction != null) {
+				if (!Str.isEmpty(entityAction.getPageTemplate()))
+					dataModel.setTemplate(entityAction.getPageTemplate());
 				else {
-					IAction actionLib = action.getActionDefinition();
-					if (actionLib != null && !Str.isEmpty(actionLib.getTemplate()))
-						dataModel.setTemplate(actionLib.getTemplate());
+					IEntityAction actionLib = entityAction.getActionDefinition();
+					if (actionLib != null && !Str.isEmpty(actionLib.getPageTemplate()))
+						dataModel.setTemplate(actionLib.getPageTemplate());
 				}
-				dataModel.getModel().setName(action.getName());
+				dataModel.getModel().setName(entityAction.getName());
 			}
 			dataModel.setData(list);
 
@@ -939,8 +939,8 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 			return new Status(false, "不允许重复提交数据，请先刷新页面！");
 		}
 		Status ret = exec("保存", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
-				return manager.save(obj, action.getMode());
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
+				return manager.save(obj, entityAction.getMode());
 			}
 
 		});
@@ -980,7 +980,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 
 		final StringBuffer fkerror = new StringBuffer();
 		return exec("删除", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				try {
 					List list;
 					if (obj instanceof List)
@@ -991,8 +991,8 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 					}
 
 					IEntityDefinition sys = manager.getSystem();
-					List<? extends IEntityField> exportFlds = entityDefManager.getFieldsOfExport(sys);
-					for (IEntityField fk : exportFlds) {
+					List<? extends IEntityColumn> exportFlds = entityDefManager.getFieldsOfExport(sys);
+					for (IEntityColumn fk : exportFlds) {
 						IEntityDefinition slaveSys = fk.getSystem();
 						if (entityDefManager.isSlave(slaveSys)) {
 							Class slaveType = entityDefManager.getType(slaveSys);
@@ -1005,7 +1005,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 						}
 					}
 
-					return manager.delete(list, action.getMode());
+					return manager.delete(list, entityAction.getMode());
 				} catch (Throwable e) {
 					if (fkerror.length() > 0) {
 						throw new DemsyException("正在删除的数据可能被【" + fkerror.toString() + "】等字段引用! 错误详情:\n" + Ex.msg(e));
@@ -1023,7 +1023,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("清空", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				List list = null;
 				if (obj instanceof List)
 					list = (List) obj;
@@ -1039,7 +1039,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 					expr = getBizCndExpr(manager.orm(), manager.getType());
 				}
 
-				return manager.deleteMore(action.getMode(), expr);
+				return manager.deleteMore(entityAction.getMode(), expr);
 			}
 		});
 	}
@@ -1050,7 +1050,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("上移排序", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				List listCurrent;
 				if (obj instanceof List)
 					listCurrent = (List) obj;
@@ -1061,7 +1061,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 
 				Pager pager = new Pager(manager.getType());
 				pager.setQueryExpr(getBizCndOrderExpr(manager.orm(), manager.getType()));
-				List listAll = manager.query(pager, action.getMode());
+				List listAll = manager.query(pager, entityAction.getMode());
 
 				orderby(listAll, listCurrent, false);
 				// listAll.addAll(listCurrent);
@@ -1077,7 +1077,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("取消排序", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				List listCurrent;
 				if (obj instanceof List)
 					listCurrent = (List) obj;
@@ -1103,8 +1103,8 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("下移排序", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
-				IOrm orm = manager.orm();
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
+				ExtOrm orm = manager.orm();
 				List listCurrent;
 				if (obj instanceof List)
 					listCurrent = (List) obj;
@@ -1115,7 +1115,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 
 				Pager pager = new Pager(manager.getType());
 				pager.setQueryExpr(getBizCndOrderExpr(orm, manager.getType()));
-				List listAll = manager.query(pager, action.getMode());
+				List listAll = manager.query(pager, entityAction.getMode());
 
 				orderby(listAll, listCurrent, true);
 				// listAll.addAll(listCurrent);
@@ -1131,7 +1131,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("颠倒排序", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
 				List listCurrent;
 				if (obj instanceof List)
 					listCurrent = (List) obj;
@@ -1248,8 +1248,8 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("同步执行", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
-				return manager.run(obj, action.getMode());
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
+				return manager.run(obj, entityAction.getMode());
 			}
 
 		});
@@ -1266,8 +1266,8 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 		// security.checkLogin(IUserRole.ROLE_USER);
 
 		return exec("异步执行", moduleParam, actionParam, dataNode, new LogicExecutor() {
-			public Object exec(IBizManager manager, Object obj, IAction action) throws DemsyException {
-				manager.asynRun(obj, action.getMode());
+			public Object exec(IBizManager manager, Object obj, IEntityAction entityAction) throws DemsyException {
+				manager.asynRun(obj, entityAction.getMode());
 				return null;
 			}
 
@@ -1275,7 +1275,7 @@ public class BizActions extends ModuleActions implements BizConst, MvcConst {
 	}
 
 	private interface LogicExecutor {
-		Object exec(IBizManager manager, Object data, IAction action) throws DemsyException;
+		Object exec(IBizManager manager, Object data, IEntityAction entityAction) throws DemsyException;
 	}
 
 	private interface WidgetBuilder {

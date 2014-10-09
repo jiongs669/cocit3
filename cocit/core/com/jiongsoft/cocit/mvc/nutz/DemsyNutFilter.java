@@ -11,9 +11,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.security.SecurityException;
+import com.kmjsoft.cocit.Demsy;
 
 /**
  * @deprecated

@@ -2,8 +2,6 @@ package com.kmjsoft.cocit.entity.security;
 
 import java.util.Date;
 
-import com.jiongsoft.cocit.entitydef.field.Upload;
-
 /**
  * <b> 用户: </b> 使用DEMSY系统功能的人。
  * <p>
@@ -19,20 +17,31 @@ import com.jiongsoft.cocit.entitydef.field.Upload;
  */
 public interface IUser extends IPrincipal {
 
+	/**
+	 * 用户名：是{@link #getDataGuid()}的别名。
+	 * 
+	 * @return
+	 */
 	String getUsername();
 
 	/**
-	 * 获取加密后的密码
+	 * 
+	 * 用户名：是{@link #getDataGuid()}的别名。
+	 * 
+	 * @param username
+	 */
+	void setUsername(String username);
+
+	/**
+	 * 密码：加密后的密码
 	 * 
 	 * @return
 	 */
 	String getPassword();
 
-	Upload getImage();
+	String getImage();
 
-	Upload getLogo();
-
-	void setUsername(String username);
+	String getLogo();
 
 	/**
 	 * 设置原始密码：即尚未加密的密码
@@ -46,8 +55,6 @@ public interface IUser extends IPrincipal {
 	public Date getExpiredFrom();
 
 	public Date getExpiredTo();
-
-	public boolean isDisabled();
 
 	public boolean isLocked();
 

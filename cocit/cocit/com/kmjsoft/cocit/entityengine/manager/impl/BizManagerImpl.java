@@ -1,23 +1,23 @@
 package com.kmjsoft.cocit.entityengine.manager.impl;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.security;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.security;
 
 import java.util.List;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.actionplugin.IActionPlugin;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IAction;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entityengine.bizplugin.ActionPlugin;
 import com.kmjsoft.cocit.entityengine.manager.IBizManager;
 import com.kmjsoft.cocit.entityengine.manager.IBizSession;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 
 /**
@@ -43,7 +43,7 @@ public class BizManagerImpl implements IBizManager {
 		return bizSession;
 	}
 
-	public IOrm orm() {
+	public ExtOrm orm() {
 		return bizSession.orm();
 	}
 
@@ -60,7 +60,7 @@ public class BizManagerImpl implements IBizManager {
 		this.classOfEntity = entityDefManager.getType(entityDefinition);
 	}
 
-	BizManagerImpl(BizManagerImpl parent, IOrm orm) {
+	BizManagerImpl(BizManagerImpl parent, ExtOrm orm) {
 		this.bizSession = parent.bizSession.me(orm);
 		this.bizModule = parent.bizModule;
 		this.entityDefinition = parent.entityDefinition;
@@ -68,7 +68,7 @@ public class BizManagerImpl implements IBizManager {
 	}
 
 	@Override
-	public IBizManager me(final IOrm orm) {
+	public IBizManager me(final ExtOrm orm) {
 		class OrmBizManager extends BizManagerImpl {
 			OrmBizManager() {
 				super(BizManagerImpl.this, orm);
@@ -252,13 +252,13 @@ public class BizManagerImpl implements IBizManager {
 	 * 
 	 * @return
 	 */
-	protected ActionPlugin[] loadPlugins(String actionID) {
-		IAction action = Demsy.entityDefManager.getAction(this.entityDefinition.getId(), actionID);
+	protected IActionPlugin[] loadPlugins(String actionID) {
+		IEntityAction entityAction = Demsy.entityDefManager.getAction(this.entityDefinition.getId(), actionID);
 
-		if (action == null)
+		if (entityAction == null)
 			return null;
 
-		return Demsy.moduleManager.getPlugins(action);
+		return Demsy.moduleManager.getPlugins(entityAction);
 	}
 
 	public Class getType() {

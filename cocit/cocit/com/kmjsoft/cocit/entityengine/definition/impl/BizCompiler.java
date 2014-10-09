@@ -1,7 +1,7 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.contextDir;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.contextDir;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,15 +38,15 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.nutz.lang.Files;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.mvc.servlet.StaticResourceFilter;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 
 public abstract class BizCompiler {
 	protected static Log log = Logs.getLog(BizCompiler.class);
@@ -84,7 +84,7 @@ public abstract class BizCompiler {
 	protected String checkSrc(IEntityDefinition system) {
 		if (system.isDisabled())
 			return system.getName() + "(" + system.getCode() + "," + system.getId() + ")系统被停用;";
-		if (!Str.isEmpty(system.getEntityClass()))
+		if (!Str.isEmpty(system.getEntityClassName()))
 			return system.getName() + "(" + system.getCode() + "," + system.getId() + ")是内置模块;";
 
 		return "";
@@ -104,7 +104,7 @@ public abstract class BizCompiler {
 	 *         <p>
 	 *         非空——表示不可以
 	 */
-	protected String checkSrc(IEntityDefinition system, IEntityField field) {
+	protected String checkSrc(IEntityDefinition system, IEntityColumn field) {
 		String prop = engine.getPropName(field);
 		String name = field.getName() + "(" + prop + ")";
 		if (field.isDisabled())
@@ -175,7 +175,7 @@ public abstract class BizCompiler {
 	 * 
 	 * @return 源代码片段
 	 */
-	protected String genSrcOfTargetAnnotation(IEntityField fld) {
+	protected String genSrcOfTargetAnnotation(IEntityColumn fld) {
 		StringBuffer src = new StringBuffer();
 
 		String mappedBy = engine.getPropName(fld);
@@ -200,7 +200,7 @@ public abstract class BizCompiler {
 	 * 
 	 * @return 源代码片段
 	 */
-	private String genSrcOfAnnotation(IEntityField fld) {
+	private String genSrcOfAnnotation(IEntityColumn fld) {
 		StringBuffer src = new StringBuffer();
 
 		src.append("\n");
@@ -334,8 +334,8 @@ public abstract class BizCompiler {
 		src.append(genSrcOfClassDeclare(system));
 
 		// 检查字段
-		List<IEntityField> checkedFields = new LinkedList();
-		List<? extends IEntityField> fields = engine.getFieldsOfEnabled(system);
+		List<IEntityColumn> checkedFields = new LinkedList();
+		List<? extends IEntityColumn> fields = engine.getFieldsOfEnabled(system);
 		if (fields != null && fields.size() > 0) {
 			List<String> disFlds = new LinkedList();
 			List<String> refFlds = new LinkedList();
@@ -345,7 +345,7 @@ public abstract class BizCompiler {
 			List<String> empTypeFlds = new LinkedList();
 			List<String> otherFlds = new LinkedList();
 			List<String> formalFields = new LinkedList();
-			for (IEntityField fld : fields) {
+			for (IEntityColumn fld : fields) {
 				String prop = engine.getPropName(fld);
 
 				info = fld.getName() + "(" + fld.getPropName() + "," + fld.getId() + ")";
@@ -395,7 +395,7 @@ public abstract class BizCompiler {
 		// }
 
 		// 生成属性声明语句
-		for (IEntityField fld : checkedFields) {
+		for (IEntityColumn fld : checkedFields) {
 			src.append(genSrcOfAnnotation(fld));
 			src.append(genSrcOfPropDeclare(engine.getClassName(fld), engine.getPropName(fld), fld.getName()));
 		}
@@ -406,7 +406,7 @@ public abstract class BizCompiler {
 		// }
 
 		// 生成属性 GETTER/SETTER F语句
-		for (IEntityField fld : checkedFields) {
+		for (IEntityColumn fld : checkedFields) {
 			src.append(genSrcOfPropGetterSetter(engine.getClassName(fld), engine.getPropName(fld), fld.getName()));
 		}
 		// for (IBizField exportField : checkedExportFields) {
@@ -417,11 +417,11 @@ public abstract class BizCompiler {
 		// src.append(genSrcOfPropGetterSetter(type, prop,
 		// exportField.getName()));
 		// }
-		List<? extends IEntityField> gridFields = engine.getFieldsOfGrid(system, null);
+		List<? extends IEntityColumn> gridFields = engine.getFieldsOfGrid(system, null);
 		if (gridFields.size() > 0) {
 			String propType = null;
 			String propName = null;
-			for (IEntityField fld : gridFields) {
+			for (IEntityColumn fld : gridFields) {
 				if (engine.isString(fld)) {
 					propType = "String";
 					propName = engine.getPropName(fld);
@@ -559,8 +559,8 @@ public abstract class BizCompiler {
 		if (!collectedSystems.contains(targetSystem)) {
 			collectedSystems.add(targetSystem);
 		}
-		List<? extends IEntityField> fields = engine.getFieldsOfSystemFK(targetSystem);
-		for (IEntityField fld : fields) {
+		List<? extends IEntityColumn> fields = engine.getFieldsOfSystemFK(targetSystem);
+		for (IEntityColumn fld : fields) {
 			if (!fld.isDisabled()) {
 				IEntityDefinition refSys = fld.getRefrenceSystem();
 				if (!collectedSystems.contains(refSys) && !refSys.isDisabled()) {

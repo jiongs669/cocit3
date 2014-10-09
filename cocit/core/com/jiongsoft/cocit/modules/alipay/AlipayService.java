@@ -2,7 +2,7 @@ package com.jiongsoft.cocit.modules.alipay;
 
 import java.util.Map;
 
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
 
 /* *
  *类名：AlipayService
@@ -35,10 +35,10 @@ public class AlipayService {
 	public static String getAlipayPayGateway(Map sParaTemp, String service) {
 
 		sParaTemp.put("service", service);
-		sParaTemp.put("partner", SoftConfigManager.me().getAlipayPartner());
-		sParaTemp.put("return_url", SoftConfigManager.me().getAlipayReturnUrl());
-		sParaTemp.put("notify_url", SoftConfigManager.me().getAlipayNotifyUrl());
-		sParaTemp.put("seller_email", SoftConfigManager.me().getAlipaySellerEmail());
+		sParaTemp.put("partner", TenantPreferenceManager.me().getAlipayPartner());
+		sParaTemp.put("return_url", TenantPreferenceManager.me().getAlipayReturnUrl());
+		sParaTemp.put("notify_url", TenantPreferenceManager.me().getAlipayNotifyUrl());
+		sParaTemp.put("seller_email", TenantPreferenceManager.me().getAlipaySellerEmail());
 		sParaTemp.put("_input_charset", AlipayConfig.input_charset);
 
 		String strButtonName = "确认";
@@ -58,7 +58,7 @@ public class AlipayService {
 
 		// 增加基本配置
 		sParaTemp.put("service", "send_goods_confirm_by_platform");
-		sParaTemp.put("partner", SoftConfigManager.me().getAlipayPartner());
+		sParaTemp.put("partner", TenantPreferenceManager.me().getAlipayPartner());
 		sParaTemp.put("_input_charset", AlipayConfig.input_charset);
 		return AlipaySubmit.sendPostInfo(sParaTemp, ALIPAY_GATEWAY_NEW);
 	}

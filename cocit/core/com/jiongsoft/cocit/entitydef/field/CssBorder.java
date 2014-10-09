@@ -1,24 +1,24 @@
 package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(name = "边框", uiTemplate = "ui.widget.field.Composite")
+@CocColumn(name = "边框", uiTemplate = "ui.widget.field.Composite")
 public class CssBorder extends JsonField<CssBorder> {
 
-	@CocField(name = "边框宽度", order = 1, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "边框宽度", SN = 1, uiTemplate = "ui.widget.field.Spinner")
 	protected Integer width;
 
-	@CocField(name = "边框风格", order = 2, options = ":风格,solid:实线,dotted:点线,dashed:虚线,double:双线,groove:3D沟槽状,ridge:3D脊状,inset:3D内嵌边框,outset:3D外嵌")
+	@CocColumn(name = "边框风格", SN = 2, options = ":风格,solid:实线,dotted:点线,dashed:虚线,double:双线,groove:3D沟槽状,ridge:3D脊状,inset:3D内嵌边框,outset:3D外嵌")
 	protected String style;
 
-	@CocField(name = "边框颜色", order = 3, uiTemplate = "ui.widget.field.CssColor")
+	@CocColumn(name = "边框颜色", SN = 3, uiTemplate = "ui.widget.field.CssColor")
 	protected String color;
 
-	@CocField(name = "边框间隙", order = 4, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "边框间隙", SN = 4, uiTemplate = "ui.widget.field.Spinner")
 	protected Integer padding;
 
-	@CocField(name = "边框边距", order = 5, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "边框边距", SN = 5, uiTemplate = "ui.widget.field.Spinner")
 	protected Integer margin;
 
 	public CssBorder() {

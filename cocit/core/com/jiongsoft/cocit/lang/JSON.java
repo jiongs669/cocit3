@@ -28,7 +28,7 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.IDataEntity;
 
 public class JSON {
@@ -385,8 +385,8 @@ public class JSON {
 						is = Files.findFileAsStream(path);
 					}
 					// 安装软件特有的数据
-					if (Demsy.me().getSoft() != null) {
-						String path2 = Demsy.appconfig.getConfigDir() + "/" + Demsy.me().getSoft().getCode() + "/"
+					if (Demsy.me().getTenant() != null) {
+						String path2 = Demsy.appconfig.getConfigDir() + "/" + Demsy.me().getTenant().getCode() + "/"
 								+ json;
 						is2 = Files.findFileAsStream(path2);
 					}

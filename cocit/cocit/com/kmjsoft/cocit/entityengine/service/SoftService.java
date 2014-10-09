@@ -1,6 +1,6 @@
 package com.kmjsoft.cocit.entityengine.service;
 
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.orm.Orm;
 import com.kmjsoft.cocit.sms.SmsClient;
 
@@ -17,7 +17,7 @@ import com.kmjsoft.cocit.sms.SmsClient;
  * @author jiongs753
  * 
  */
-public interface SoftService extends EntityService<ISystemTenant> {
+public interface SoftService extends EntityService<ITenant> {
 	public Orm getOrm();
 
 	public String getCode();

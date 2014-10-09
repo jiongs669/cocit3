@@ -15,14 +15,14 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface CocCatalog {
 
-	public long id() default 0;
+	// public long id() default 0;
 
 	public String name() default "";
 
-	public String code() default "";
+	public String GUID() default "";
 
 	public String desc() default "";
 
-	public int orderby() default 1000;
+	public int SN() default 0;
 
 }

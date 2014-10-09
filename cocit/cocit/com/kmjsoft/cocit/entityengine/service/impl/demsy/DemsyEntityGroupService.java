@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.jiongsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.impl.entitydef.SystemDataGroup;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.impl.definition.EntityColumnGroup;
 import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
 import com.kmjsoft.cocit.entityengine.service.FieldGroupService;
 import com.kmjsoft.cocit.entityengine.service.FieldService;
 
 public class DemsyEntityGroupService implements FieldGroupService {
-	private SystemDataGroup entity;
+	private EntityColumnGroup entity;
 
 	private List<FieldService> dataFields;
 
-	DemsyEntityGroupService(SystemDataGroup e) {
+	DemsyEntityGroupService(EntityColumnGroup e) {
 		this.entity = e;
 		dataFields = new ArrayList();
 	}
@@ -47,12 +47,12 @@ public class DemsyEntityGroupService implements FieldGroupService {
 
 	@Override
 	public Date getOperatedDate() {
-		return entity.getOperatedDate();
+		return entity.getUpdatedDate();
 	}
 
 	@Override
 	public String getOperatedUser() {
-		return entity.getOperatedUser();
+		return entity.getUpdatedUser();
 	}
 
 	// @Override
@@ -96,7 +96,7 @@ public class DemsyEntityGroupService implements FieldGroupService {
 		return this.dataFields;
 	}
 
-	public SystemDataGroup getEntity() {
+	public EntityColumnGroup getEntity() {
 		return entity;
 	}
 }

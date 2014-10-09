@@ -11,36 +11,36 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 import com.kmjsoft.cocit.orm.annotation.CocGroup;
-import com.kmjsoft.cocit.orm.annotation.CocOperation;
-import com.kmjsoft.cocit.orm.annotation.CocTable;
+import com.kmjsoft.cocit.orm.annotation.CocAction;
+import com.kmjsoft.cocit.orm.annotation.CocEntity;
 
 @Entity
-@CocTable(name = "系统日志管理", code = "RunningLog", catalog = BIZCATA_DEMSY_ADMIN, orderby = ORDER_DEMSY_LOG//
+@CocEntity(name = "系统日志管理", GUID = "RunningLog", catalog = BIZCATA_DEMSY_ADMIN, SN = ORDER_DEMSY_LOG//
 , actions = {
 //
-                @CocOperation(name = "清空", typeCode = TYPE_BZ_CLEAR, mode = "clr") //
-                , @CocOperation(name = "详情", typeCode = TYPE_BZFORM_EDIT, mode = "v") //
+                @CocAction(name = "清空", type = TYPE_BZ_CLEAR, mode = "clr") //
+                , @CocAction(name = "详情", type = TYPE_BZFORM_EDIT, mode = "v") //
 }//
-, groups = { @CocGroup(name = "基本信息", code = "basic"//
+, groups = { @CocGroup(name = "基本信息", GUID = "basic"//
 , fields = {
 //
-                @CocField(property = "message") //
-                , @CocField(property = "remoteUri")//
-                , @CocField(property = "remoteIp")//
-                , @CocField(property = "remoteAddress")//
-                , @CocField(property = "datetime")//
-                , @CocField(property = "eslipse")//
-                , @CocField(property = "memEslipse")//
-                , @CocField(property = "level") //
-                , @CocField(property = "monitor")//
-                , @CocField(property = "threadname") //
-                , @CocField(property = "loginuser")//
-                , @CocField(property = "remoteUrl")//
-                , @CocField(property = "loggername") //
-                , @CocField(property = "locationinfo") //
-                , @CocField(property = "stacktrace") //
+                @CocColumn(propName = "message") //
+                , @CocColumn(propName = "remoteUri")//
+                , @CocColumn(propName = "remoteIp")//
+                , @CocColumn(propName = "remoteAddress")//
+                , @CocColumn(propName = "datetime")//
+                , @CocColumn(propName = "eslipse")//
+                , @CocColumn(propName = "memEslipse")//
+                , @CocColumn(propName = "level") //
+                , @CocColumn(propName = "monitor")//
+                , @CocColumn(propName = "threadname") //
+                , @CocColumn(propName = "loginuser")//
+                , @CocColumn(propName = "remoteUrl")//
+                , @CocColumn(propName = "loggername") //
+                , @CocColumn(propName = "locationinfo") //
+                , @CocColumn(propName = "stacktrace") //
 }) }// end groups
 )
 public class RunningLog {
@@ -49,58 +49,58 @@ public class RunningLog {
 	protected Long id;
 
 	@Column(length = 50)
-	@CocField(name = "登录用户")
+	@CocColumn(name = "登录用户")
 	protected String loginuser;
 
 	protected String fqnofctgrcls;
 
-	@CocField(name = "日志名称")
+	@CocColumn(name = "日志名称")
 	protected String loggername;
 
-	@CocField(name = "日志时间", pattern = "yyyy-MM-dd HH:mm:ss,SSS")
+	@CocColumn(name = "日志时间", pattern = "yyyy-MM-dd HH:mm:ss,SSS")
 	protected Date datetime;
 
 	@Column(length = 20)
-	@CocField(name = "日志级别", options = "TRACE:跟踪,DEBUG:调试,INFO:信息,WARN:警告,ERROR:错误,FATAL:致命")
+	@CocColumn(name = "日志级别", options = "TRACE:跟踪,DEBUG:调试,INFO:信息,WARN:警告,ERROR:错误,FATAL:致命")
 	protected String level;
 
 	@Column(length = 2000)
-	@CocField(name = "日志内容")
+	@CocColumn(name = "日志内容")
 	protected String message;
 
-	@CocField(name = "线程名称")
+	@CocColumn(name = "线程名称")
 	protected String threadname;
 
 	@Column(columnDefinition = "text")
-	@CocField(name = "异常信息")
+	@CocColumn(name = "异常信息")
 	protected String stacktrace;
 
 	protected String ndc;
 
-	@CocField(name = "信息来源")
+	@CocColumn(name = "信息来源")
 	protected String locationinfo;
 
-	@CocField(name = "远程URL")
+	@CocColumn(name = "远程URL")
 	protected String remoteUrl;
 
-	@CocField(name = "远程URI")
+	@CocColumn(name = "远程URI")
 	protected String remoteUri;
 
 	@Column(length = 64)
-	@CocField(name = "远程IP")
+	@CocColumn(name = "远程IP")
 	protected String remoteIp;
 
 	@Column(length = 64)
-	@CocField(name = "远程地址")
+	@CocColumn(name = "远程地址")
 	protected String remoteAddress;
 
-	@CocField(name = "内存消耗")
+	@CocColumn(name = "内存消耗")
 	protected long memEslipse;
 
-	@CocField(name = "时间消耗")
+	@CocColumn(name = "时间消耗")
 	protected long eslipse;
 
-	@CocField(name = "资源检测")
+	@CocColumn(name = "资源检测")
 	protected String monitor;
 
 	public String getMessage() {

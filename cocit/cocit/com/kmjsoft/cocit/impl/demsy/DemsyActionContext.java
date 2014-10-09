@@ -3,7 +3,7 @@ package com.kmjsoft.cocit.impl.demsy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.impl.BaseActionContext;
 import com.kmjsoft.cocit.util.Log;
 import com.kmjsoft.cocit.util.StringUtil;
@@ -101,8 +101,8 @@ public class DemsyActionContext extends BaseActionContext {
 
 	@Override
 	public Long getSoftID() {
-		if (demsyContext.getSoft() != null)
-			return demsyContext.getSoft().getId();
+		if (demsyContext.getTenant() != null)
+			return demsyContext.getTenant().getId();
 
 		return null;
 	}

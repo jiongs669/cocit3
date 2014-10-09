@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.ConfigException;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Str;
@@ -15,6 +14,7 @@ import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.mvc.ui.IUIView;
 import com.jiongsoft.cocit.mvc.ui.model.UIWidgetModel;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
+import com.kmjsoft.cocit.Demsy;
 
 public class BizView extends AbstractView {
 	private static Log log = Logs.getLog(BizView.class);

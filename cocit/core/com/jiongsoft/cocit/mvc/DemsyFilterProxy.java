@@ -1,9 +1,9 @@
 package com.jiongsoft.cocit.mvc;
 
-import static com.jiongsoft.cocit.Demsy.actionHandler;
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.initMe;
-import static com.jiongsoft.cocit.Demsy.initSw;
+import static com.kmjsoft.cocit.Demsy.actionHandler;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.initMe;
+import static com.kmjsoft.cocit.Demsy.initSw;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jiongsoft.cocit.Const;
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IAppConfig;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.ConfigException;
@@ -38,6 +37,7 @@ import com.jiongsoft.cocit.security.SecurityException;
 import com.jiongsoft.cocit.security.UnloginException;
 import com.jiongsoft.cocit.util.AntPathMatcher;
 import com.jiongsoft.cocit.util.PathMatcher;
+import com.kmjsoft.cocit.Demsy;
 
 public class DemsyFilterProxy implements Filter, Const, MvcConst {
 	protected transient static Log log = Logs.getLog(DemsyFilterProxy.class);

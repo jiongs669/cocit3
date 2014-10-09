@@ -26,10 +26,10 @@ import com.ckfinder.connector.handlers.command.RenameFolderCommand;
 import com.ckfinder.connector.handlers.command.ThumbnailCommand;
 import com.ckfinder.connector.handlers.command.XMLCommand;
 import com.ckfinder.connector.handlers.command.XMLErrorCommand;
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 public class CKFinder {
 	private static final Log log = Logs.get();

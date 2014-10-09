@@ -1,14 +1,14 @@
 package com.jiongsoft.cocit.actions;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.contextDir;
-import static com.jiongsoft.cocit.Demsy.dataSourceConfig;
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.moduleManager;
-import static com.jiongsoft.cocit.Demsy.orm;
-import static com.jiongsoft.cocit.Demsy.security;
-import static com.jiongsoft.cocit.Demsy.uIEngine;
 import static com.jiongsoft.cocit.mvc.MvcConst.MvcUtil.globalVariables;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.contextDir;
+import static com.kmjsoft.cocit.Demsy.dataSourceConfig;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.orm;
+import static com.kmjsoft.cocit.Demsy.security;
+import static com.kmjsoft.cocit.Demsy.uIEngine;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +24,10 @@ import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IAppConfig;
 import com.jiongsoft.cocit.config.IConfig;
 import com.jiongsoft.cocit.config.IDataSourceConfig;
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
 import com.jiongsoft.cocit.config.impl.BaseConfig;
 import com.jiongsoft.cocit.lang.Dates;
 import com.jiongsoft.cocit.lang.DemsyException;
@@ -41,13 +40,14 @@ import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.mvc.MvcConst;
 import com.jiongsoft.cocit.mvc.ObjcetNaviNode;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.NoTransConnCallback;
 import com.jiongsoft.cocit.util.BackupUtils;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.NoTransConnCallback;
 import com.kmjsoft.cocit.orm.expr.Expr;
 
 @Ok("json")
@@ -65,12 +65,12 @@ public class ConfigActions implements MvcConst {
 		Map ret = new HashMap();
 		ret.putAll(globalVariables);
 
-		ISystemTenant soft = null;
+		ITenant soft = null;
 		IModule module = null;
 		if (!Str.isEmpty(moduleID)) {
 			try {
 				module = moduleManager.getModule(Long.parseLong(moduleID));
-				soft = moduleManager.getSoft(module.getTenantGuid());
+				soft = moduleManager.getSoft(module.getTenantOwnerGuid());
 			} catch (Throwable e) {
 				log.trace("模块配置: 获取配置模块出错! " + e);
 			}
@@ -166,7 +166,7 @@ public class ConfigActions implements MvcConst {
 
 				IDataSourceConfig tmp = (IDataSourceConfig) ((IConfig) dataSourceConfig).copy();
 				dbnode.inject(Mirror.me(tmp), tmp, null);
-				IOrm orm = orm(tmp);
+				ExtOrm orm = orm(tmp);
 				return (Status) orm.run(new NoTransConnCallback() {
 					@Override
 					public Object invoke(Connection conn) throws Exception {
@@ -194,7 +194,7 @@ public class ConfigActions implements MvcConst {
 			uIEngine.clearCache();
 			moduleManager.clearCache();
 			entityDefManager.clearCache();
-			SoftConfigManager.clearCache();
+			TenantPreferenceManager.clearCache();
 			orm().clearMapping();
 
 			System.gc();
@@ -229,8 +229,8 @@ public class ConfigActions implements MvcConst {
 		}
 	}
 
-	private ISystemTenant getSoft(String softID) throws DemsyException {
-		ISystemTenant soft = null;
+	private ITenant getSoft(String softID) throws DemsyException {
+		ITenant soft = null;
 		if (!Str.isEmpty(softID)) {
 			soft = moduleManager.getSoft(Long.parseLong(softID));
 			if (soft == null) {

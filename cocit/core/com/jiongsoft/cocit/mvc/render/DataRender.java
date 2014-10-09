@@ -4,7 +4,6 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Obj;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.mvc.MvcConst;
@@ -15,7 +14,8 @@ import com.jiongsoft.cocit.mvc.ui.model.UIWidgetModel;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizGrid;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizGrid.UIGridFld;
 import com.jiongsoft.cocit.mvc.ui.widget.field.UIBizFld;
-import com.jiongsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.orm.Pager;
 
 /**
  * 

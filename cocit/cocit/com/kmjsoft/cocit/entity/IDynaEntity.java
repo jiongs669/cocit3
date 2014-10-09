@@ -13,5 +13,5 @@ public interface IDynaEntity extends IDataEntity {
 
 	void set(String extField, Object fieldValue);
 
-	public Properties getProperties();
+	Properties getProperties();
 }

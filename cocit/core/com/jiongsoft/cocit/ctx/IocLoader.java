@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.ctx;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.appconfig;
 
 import java.io.File;
 

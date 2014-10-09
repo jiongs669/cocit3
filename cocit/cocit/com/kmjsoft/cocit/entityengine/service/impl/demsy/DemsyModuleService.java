@@ -49,12 +49,12 @@ public class DemsyModuleService implements ModuleService {
 
 	@Override
 	public Date getOperatedDate() {
-		return entity.getOperatedDate();
+		return entity.getUpdatedDate();
 	}
 
 	@Override
 	public String getOperatedUser() {
-		return entity.getOperatedUser();
+		return entity.getUpdatedUser();
 	}
 
 	// @Override

@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.jiongsoft.cocit.Demsy;
+import com.kmjsoft.cocit.Demsy;
 
 public abstract class Http {
 	public static void writeHtml(String html) throws IOException {

@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.mvc;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.appconfig;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.nutz.json.Json;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IAppConfig;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.mvc.render.IRender;
 import com.jiongsoft.cocit.mvc.template.ITemplateEngine;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entityengine.manager.BizConst;
 
 public interface MvcConst {
@@ -359,7 +359,7 @@ public interface MvcConst {
 				uploadFolder = "/" + uploadFolder;
 			}
 
-			ISystemTenant soft = Demsy.me().getSoft();
+			ITenant soft = Demsy.me().getTenant();
 			if (soft == null || soft.getId() == null)
 				throw new DemsyException("非法软件编号");
 

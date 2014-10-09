@@ -42,8 +42,8 @@ import com.ckfinder.connector.errors.ErrorUtils;
 import com.ckfinder.connector.utils.AccessControlUtil;
 import com.ckfinder.connector.utils.FileUtils;
 import com.ckfinder.connector.utils.PathUtils;
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Str;
+import com.kmjsoft.cocit.Demsy;
 
 /**
  * Loads configuration from XML.

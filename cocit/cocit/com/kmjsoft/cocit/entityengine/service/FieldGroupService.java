@@ -2,7 +2,7 @@ package com.kmjsoft.cocit.entityengine.service;
 
 import java.util.List;
 
-import com.kmjsoft.cocit.entity.definition.IFieldGroup;
+import com.kmjsoft.cocit.entity.definition.IEntityColumnGroup;
 
 /**
  * 分组服务类：为字段分组提供一对一的服务。
@@ -16,7 +16,7 @@ import com.kmjsoft.cocit.entity.definition.IFieldGroup;
  * @author jiongs753
  * 
  */
-public interface FieldGroupService extends EntityService<IFieldGroup> {
+public interface FieldGroupService extends EntityService<IEntityColumnGroup> {
 
 	/**
 	 * 根据操作码计算数据分组编辑模式：该分组下的所有字段都将继承数据分组的编辑模式。

@@ -4,39 +4,39 @@ import java.io.IOException;
 
 import javax.persistence.Column;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Img;
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(uiTemplate = "ui.widget.field.Composite")
+@CocColumn(uiTemplate = "ui.widget.field.Composite")
 public class CssBox extends JsonField<CssBox> {
-	@CocField(name = "边框宽度", order = 1, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "边框宽度", SN = 1, uiTemplate = "ui.widget.field.Spinner")
 	protected Integer width;
 
-	@CocField(name = "边框高度", order = 2, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "边框高度", SN = 2, uiTemplate = "ui.widget.field.Spinner")
 	protected Integer height;
 
 	@Column(length = 2000)
-	@CocField(name = "样式编辑", order = 4)
+	@CocColumn(name = "样式编辑", SN = 4)
 	protected String style;
 
-	@CocField(name = "背景", order = 10, uiTemplate = "ui.widget.field.CssBackground")
+	@CocColumn(name = "背景", SN = 10, uiTemplate = "ui.widget.field.CssBackground")
 	protected CssBackground background;
 
-	@CocField(name = "边框", order = 11, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "边框", SN = 11, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder border;
 
-	@CocField(name = "顶边框", order = 12, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "顶边框", SN = 12, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderTop;
 
-	@CocField(name = "底边框", order = 13, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "底边框", SN = 13, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderBottom;
 
-	@CocField(name = "左边框", order = 14, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "左边框", SN = 14, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderLeft;
 
-	@CocField(name = "右边框", order = 15, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "右边框", SN = 15, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderRight;
 
 	// @CocField(name = "字体", order = 9, uiTemplate = "ui.widget.field.CssFont")

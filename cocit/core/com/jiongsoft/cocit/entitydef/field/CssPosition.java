@@ -1,29 +1,29 @@
 package com.jiongsoft.cocit.entitydef.field;
 
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(precision = 2000, uiTemplate = "ui.widget.field.Composite")
+@CocColumn(precision = 2000, uiTemplate = "ui.widget.field.Composite")
 public class CssPosition extends JsonField<CssPosition> {
 
-	@CocField(name = "区域", order = 1, options = "page:内容,top:顶部,bottom:底部")
+	@CocColumn(name = "区域", SN = 1, options = "page:内容,top:顶部,bottom:底部")
 	private String area;
 
-	@CocField(name = "位置", order = 2, options = "absolute:绝对位置,relative:相对位置")
+	@CocColumn(name = "位置", SN = 2, options = "absolute:绝对位置,relative:相对位置")
 	private String position;
 
-	@CocField(name = "对齐", order = 3, disabledNavi = true, options = "1:左,2:右,3:顶,4:底")
+	@CocColumn(name = "对齐", SN = 3, isDimension = true, options = "1:左,2:右,3:顶,4:底")
 	private Integer align;
 
-	@CocField(name = "距左", order = 4, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "距左", SN = 4, uiTemplate = "ui.widget.field.Spinner")
 	private Integer left;
 
-	@CocField(name = "距顶", order = 5, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "距顶", SN = 5, uiTemplate = "ui.widget.field.Spinner")
 	private Integer top;
 
-	@CocField(name = "宽度", order = 6, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "宽度", SN = 6, uiTemplate = "ui.widget.field.Spinner")
 	private Integer width;
 
-	@CocField(name = "高度", order = 7, uiTemplate = "ui.widget.field.Spinner")
+	@CocColumn(name = "高度", SN = 7, uiTemplate = "ui.widget.field.Spinner")
 	private Integer height;
 
 	public CssPosition() {

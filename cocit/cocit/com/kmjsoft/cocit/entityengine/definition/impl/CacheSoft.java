@@ -1,6 +1,6 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_ADMIN_CONFIG;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_ADMIN_MODULE;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_SOFT;
@@ -14,18 +14,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.entity.config.IPreferenceOfTenant;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.config.ITenantPreference;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.orm.expr.Expr;
 
 class CacheSoft {
 
-	ISystemTenant object;
+	ITenant object;
 
-	Map<String, IPreferenceOfTenant> configs;
+	Map<String, ITenantPreference> configs;
 
 	Map<String, CacheMdl> mdlGuidMap = new HashMap();
 
@@ -54,20 +54,20 @@ class CacheSoft {
 	}
 
 	CacheSoft(ModuleEngine engine, String domainOrCode) {
-		object = (ISystemTenant) Demsy.orm().load(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT), Expr.eq(F_DOMAIN, domainOrCode).or(Expr.eq(F_CODE, domainOrCode)));
+		object = (ITenant) Demsy.orm().load(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT), Expr.eq(F_DOMAIN, domainOrCode).or(Expr.eq(F_CODE, domainOrCode)));
 		this.cache(engine);
 	}
 
 	CacheSoft(ModuleEngine engine, Long id) {
-		object = (ISystemTenant) Demsy.orm().load(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT), id);
+		object = (ITenant) Demsy.orm().load(entityDefManager.getStaticType(BIZSYS_DEMSY_SOFT), id);
 		this.cache(engine);
 	}
 
-	Map<String, IPreferenceOfTenant> configs() {
+	Map<String, ITenantPreference> configs() {
 		if (configs == null) {
 			configs = new HashMap();
-			List<IPreferenceOfTenant> list = Demsy.orm().query(entityDefManager.getStaticType(BIZSYS_ADMIN_CONFIG), Expr.eq(F_SOFT_ID, object.getId()));
-			for (IPreferenceOfTenant c : list) {
+			List<ITenantPreference> list = Demsy.orm().query(entityDefManager.getStaticType(BIZSYS_ADMIN_CONFIG), Expr.eq(F_SOFT_ID, object.getId()));
+			for (ITenantPreference c : list) {
 				configs.put(c.getCode(), c);
 			}
 		}
@@ -75,7 +75,7 @@ class CacheSoft {
 		return configs;
 	}
 
-	ISystemTenant get() {
+	ITenant get() {
 		return object;
 	}
 

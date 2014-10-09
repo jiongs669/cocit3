@@ -8,6 +8,8 @@ package com.kmjsoft.cocit.entity;
 public interface INamedEntity extends IDataEntity {
 
 	String getName();
+	
+	void setName(String name);
 
 	/**
 	 * 序号：

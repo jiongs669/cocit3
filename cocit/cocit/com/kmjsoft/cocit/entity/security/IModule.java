@@ -1,10 +1,8 @@
 package com.kmjsoft.cocit.entity.security;
 
-import com.jiongsoft.cocit.config.IDataSourceConfig;
-import com.jiongsoft.cocit.entitydef.field.Upload;
-import com.kmjsoft.cocit.entity.INamedEntity;
-import com.kmjsoft.cocit.entity.ITenantKnown;
 import com.kmjsoft.cocit.entity.ITreeEntity;
+import com.kmjsoft.cocit.entity.config.IDataSource;
+import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 
 /**
  * <b>模块：</b> 也称为功能模块，即系统提供给用户使用的功能模块。
@@ -31,50 +29,56 @@ import com.kmjsoft.cocit.entity.ITreeEntity;
  * 
  * @author yongshan.ji
  */
-public interface IModule<T> extends INamedEntity, ITenantKnown, ITreeEntity<T> {
+public interface IModule extends ITreeEntity {
 	public static final int TYPE_FOLDER = 90;
 
 	public static final int TYPE_STATIC = 1;
 
-	public static final int TYPE_BIZ = 2;
+	public static final int TYPE_ENTITY = 2;
 
 	public static final int TYPE_WEB = 3;
 
-	public static final int TYPE_RPT = 4;
+	public static final int TYPE_REPORT = 4;
 
-	public static final int TYPE_WFL = 5;
+	public static final int TYPE_WORKFLOW = 5;
 
-	public static final int TYPE_DYN = 6;
+	public static final int TYPE_DYNAMIC = 6;
 
 	/**
-	 * 系统GUID：一个逻辑外键，关联到“系统实体（{@link ISystem}）”的“逻辑主键（{@link ISystem#getDataGuid()}）”。用来描述该模块属于哪个系统？
+	 * 系统GUID：逻辑外键，关联到“系统实体（{@link ISystem}）”的“逻辑主键（{@link ISystem#getDataGuid()}）”。
+	 * 
+	 * <p>
+	 * 
+	 * 用来描述该模块属于哪套系统？
 	 * 
 	 * @return
 	 */
 	String getSystemGuid();
 
 	/**
-	 * 数据源GUID：一个逻辑外键，关联到“数据源实体（{@link IDataSource}）”的“逻辑主键（{@link IDataSource#getDataGuid()}）”。用来描述该模块属于哪个系统？
+	 * 数据源GUID：逻辑外键，关联到“数据源实体（{@link IDataSource}）”的“逻辑主键（{@link IDataSource#getDataGuid()}）”。
+	 * 
+	 * <p>
+	 * 
+	 * 用来描述该模块使用哪个数据源（即连接到哪个数据库）？
 	 * 
 	 * @return
 	 */
 	String getDataSourceGuid();
-
-	boolean isDisabled();
 
 	/**
 	 * 获取模块徽标
 	 * 
 	 * @return
 	 */
-	Upload getLogo();
+	String getLogo();
 
 	/**
 	 * 获取模块图片
 	 * 
 	 * @return
 	 */
-	Upload getImage();
+	String getImage();
 
 	/**
 	 * 获取静态模块的模块访问路径，动态模块的模块访问路径是动态生成的，因此不存在固定的模块访问路径。
@@ -84,22 +88,29 @@ public interface IModule<T> extends INamedEntity, ITenantKnown, ITreeEntity<T> {
 	String getPath();
 
 	/**
-	 * 获取模块绑定的组件ID
+	 * 获取模块绑定的组件GUID
 	 * <p>
-	 * 可以绑定到模块使用的组件包括：业务系统/报表/流程/网站栏目等。
+	 * 可以绑定到模块使用的组件包括：实体定i/报表/流程/网站栏目等。
 	 * <UL>
-	 * <li>业务模块：绑定业务系统ID
-	 * <li>报表模块：绑定报表ID
-	 * <li>流程模块：绑定流程ID
-	 * <li>网站栏目：绑定网站栏目ID
+	 * <li>实体模块：绑定实体定义GUID（{@link IEntityDefinition#getDataGuid()}）
+	 * <li>报表模块：绑定报表GUID
+	 * <li>流程模块：绑定流程GUID
+	 * <li>网站栏目：绑定网站栏目GUID
 	 * </UL>
 	 * 
-	 * @return 组件ID
+	 * @return 组件GUID
 	 */
-	Long getRefID();
+	String getReferencedGuid();
 
 	/**
-	 * 获取模块绑定的操作ID列表，ID之间用竖线‘|’分隔。
+	 * 绑定名称：冗余字段
+	 * 
+	 * @return
+	 */
+	String getReferencedName();
+
+	/**
+	 * 获取模块绑定的操作GUID列表，GUID之间用竖线‘|’分隔。
 	 * <UL>
 	 * <LI>不同类型的模块级组件（如：业务系统/报表/流程/网站栏目等）可以拥有自己的组件操作，如：业务系统拥有业务操作。
 	 * <LI>组件被绑定到模块后，可以同时将组件操作的全部或部分绑定到模块上。
@@ -109,11 +120,9 @@ public interface IModule<T> extends INamedEntity, ITenantKnown, ITreeEntity<T> {
 	 * 
 	 * @return
 	 */
-	String getRefActions();
+	String getReferencedActionsRule();
 
 	public int getType();
-
-	boolean isHidden();
 
 	/**
 	 * 模块访问路径前缀：如Cocit版本平台访问路径前缀/coc；Demsy版本平台访问路径/bz
@@ -121,4 +130,6 @@ public interface IModule<T> extends INamedEntity, ITenantKnown, ITreeEntity<T> {
 	 * @return
 	 */
 	public String getPathPrefix();
+
+	public String getUiTemplate();
 }

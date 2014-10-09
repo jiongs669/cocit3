@@ -8,13 +8,13 @@ import java.util.Map;
 
 import org.nutz.lang.Mirror;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IAppConfig;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 public abstract class Plugins {
 	public static final Log log = Logs.getLog(Plugins.class);

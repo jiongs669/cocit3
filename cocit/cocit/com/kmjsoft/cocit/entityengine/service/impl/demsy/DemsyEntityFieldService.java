@@ -1,7 +1,7 @@
 // $codepro.audit.disable unnecessaryCast
 package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 
-import static com.jiongsoft.cocit.Demsy.moduleManager;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,12 +11,12 @@ import java.util.Map;
 
 import org.nutz.json.Json;
 
-import com.jiongsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.config.IPreferenceOfTenant;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.config.ITenantPreference;
 import com.kmjsoft.cocit.entity.impl.config.Dic;
 import com.kmjsoft.cocit.entity.impl.config.DicCategory;
-import com.kmjsoft.cocit.entity.impl.entitydef.AbstractSystemData;
-import com.kmjsoft.cocit.entity.impl.entitydef.SFTSystem;
+import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
+import com.kmjsoft.cocit.entity.impl.definition.EntityColumn;
 import com.kmjsoft.cocit.entityengine.definition.impl.BizEngine;
 import com.kmjsoft.cocit.entityengine.service.FieldService;
 import com.kmjsoft.cocit.entityengine.service.TableService;
@@ -26,11 +26,11 @@ import com.kmjsoft.cocit.util.ObjectUtil;
 import com.kmjsoft.cocit.util.StringUtil;
 
 public class DemsyEntityFieldService implements FieldService {
-	private AbstractSystemData entity;
+	private EntityColumn entity;
 
 	private KeyValue[] dicOptions;
 
-	DemsyEntityFieldService(AbstractSystemData entity) {
+	DemsyEntityFieldService(EntityColumn entity) {
 		this.entity = entity;
 	}
 
@@ -51,12 +51,12 @@ public class DemsyEntityFieldService implements FieldService {
 
 	@Override
 	public Date getOperatedDate() {
-		return entity.getOperatedDate();
+		return entity.getUpdatedDate();
 	}
 
 	@Override
 	public String getOperatedUser() {
-		return entity.getOperatedUser();
+		return entity.getUpdatedUser();
 	}
 
 	// @Override
@@ -210,7 +210,7 @@ public class DemsyEntityFieldService implements FieldService {
 			}
 		} else if (str.charAt(0) == '{') {
 			String key = str.substring(1, str.length() - 1);
-			IPreferenceOfTenant config = moduleManager.getSoftConfig(key);
+			ITenantPreference config = moduleManager.getSoftConfig(key);
 			if (config != null && !StringUtil.isNil(config.getValue())) {
 				return convertStringToOptions(config.getValue());
 			}
@@ -253,7 +253,7 @@ public class DemsyEntityFieldService implements FieldService {
 
 	@Override
 	public TableService getFkEntityTable() {
-		SFTSystem sys = entity.getRefrenceSystem();
+		EntityDefinition sys = entity.getRefrenceSystem();
 		if (sys == null)
 			return null;
 
@@ -272,7 +272,7 @@ public class DemsyEntityFieldService implements FieldService {
 
 	@Override
 	public boolean isManyToMany() {
-		return entity.isSysMultiple();
+		return entity.isFkMultipleValue();
 	}
 
 	@Override
@@ -287,7 +287,7 @@ public class DemsyEntityFieldService implements FieldService {
 		return StringUtil.toArray(types, "|,; ");
 	}
 
-	public AbstractSystemData getEntity() {
+	public EntityColumn getEntity() {
 		return entity;
 	}
 

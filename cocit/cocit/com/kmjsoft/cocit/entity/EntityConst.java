@@ -12,13 +12,11 @@ public interface EntityConst {
 
 	static final String F_ID = "id";
 
-	static final String F_GUID = "entityGuid";
+	static final String F_GUID = "dataGuid";
 
-	static final String F_TIME_ID = "timeID";
+	static final String F_CREATED = "createdDate";
 
-	static final String F_CREATED = "created";
-
-	static final String F_CREATED_BY = "createdBy";
+	static final String F_CREATED_BY = "createdUser";
 
 	static final String F_CREATED_IP = "createdIP";
 

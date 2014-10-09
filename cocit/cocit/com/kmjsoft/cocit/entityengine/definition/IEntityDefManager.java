@@ -8,12 +8,12 @@ import com.jiongsoft.cocit.entitydef.field.IRuntimeField;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Nodes;
 import com.jiongsoft.cocit.lang.Option;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.definition.IFieldDataType;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.definition.IFieldGroup;
-import com.kmjsoft.cocit.entity.security.IAction;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.definition.IEntityColumnGroup;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 
 /**
@@ -27,15 +27,15 @@ public interface IEntityDefManager {
 
 	List<Class<?>> listTypes();
 
-	IEntityDefinition setupSystemFromDB(ISystemTenant soft, String tableName);
+	IEntityDefinition setupSystemFromDB(ITenant soft, String tableName);
 
-	List<IEntityDefinition> setupSystemFromPackage(ISystemTenant soft) throws DemsyException;
+	List<IEntityDefinition> setupSystemFromPackage(ITenant soft) throws DemsyException;
 
-	IEntityDefinition setupSystemFromClass(ISystemTenant soft, Class classOfEntity) throws DemsyException;
+	IEntityDefinition setupSystemFromClass(ITenant soft, Class classOfEntity) throws DemsyException;
 
 	void parseSystemByAnnotation(Class klass, IEntityDefinition system);
 
-	List setupFromPackage(ISystemTenant soft);
+	List setupFromPackage(ITenant soft);
 
 	/**
 	 * 获取业务实体扩展类
@@ -53,7 +53,7 @@ public interface IEntityDefManager {
 	 * @param type
 	 * @return
 	 */
-	List setupFromJson(ISystemTenant soft, Class<?> type);
+	List setupFromJson(ITenant soft, Class<?> type);
 
 	/**
 	 * 安装JSON数据到业务系统中
@@ -65,7 +65,7 @@ public interface IEntityDefManager {
 	 *            JSON格式的业务数据
 	 * @return
 	 */
-	<T> List<T> setupFromJson(ISystemTenant soft, Class<T> type, String json);
+	<T> List<T> setupFromJson(ITenant soft, Class<T> type, String json);
 
 	/**
 	 * 从文件夹中导入JSON数据，文件名即为类名。
@@ -74,7 +74,7 @@ public interface IEntityDefManager {
 	 * @param folder
 	 * @return
 	 */
-	int importFromJson(ISystemTenant soft, String folder);
+	int importFromJson(ITenant soft, String folder);
 
 	/**
 	 * 导出满足条件的数据到文件夹，文件格式为JSON
@@ -86,7 +86,7 @@ public interface IEntityDefManager {
 	 * @return 导出了多少条数据
 	 * @throws IOException
 	 */
-	int exportToJson(ISystemTenant soft, String folder, CndExpr expr) throws IOException;
+	int exportToJson(ITenant soft, String folder, CndExpr expr) throws IOException;
 
 	/**
 	 * 获取业务字段类型库，key为字段编码。
@@ -102,7 +102,7 @@ public interface IEntityDefManager {
 	 * 
 	 * @return 业务系统集合
 	 */
-	List<? extends IEntityDefinition> getSystems(ISystemTenant soft);
+	List<? extends IEntityDefinition> getSystems(ITenant soft);
 
 	/**
 	 * 根据业务系统ID获取业务系统对象
@@ -126,9 +126,9 @@ public interface IEntityDefManager {
 	 *            业务系统
 	 * @return 字段分组的集合
 	 */
-	List<? extends IFieldGroup> getFieldGroups(IEntityDefinition system);
+	List<? extends IEntityColumnGroup> getFieldGroups(IEntityDefinition system);
 
-	void validateSystems(ISystemTenant soft) throws DemsyException;
+	void validateSystems(ITenant soft) throws DemsyException;
 
 	/**
 	 * 只编译业务系统，但不 copy 类文件到/WEB-INF/classes下
@@ -159,9 +159,9 @@ public interface IEntityDefManager {
 	 *            业务系统
 	 * @return 属性名称
 	 */
-	IEntityField getFieldOfUnSelfTree(IEntityDefinition system);
+	IEntityColumn getFieldOfUnSelfTree(IEntityDefinition system);
 
-	IEntityField getFieldOfSelfTree(IEntityDefinition system);
+	IEntityColumn getFieldOfSelfTree(IEntityDefinition system);
 
 	/**
 	 * 获取系统字段：不受安全系统的限制。
@@ -170,21 +170,21 @@ public interface IEntityDefManager {
 	 *            业务系统
 	 * @return 系统字段列表
 	 */
-	List<? extends IEntityField> getFields(IEntityDefinition system);
+	List<? extends IEntityColumn> getFields(IEntityDefinition system);
 
-	List<? extends IEntityField> getFields(IFieldGroup group);
+	List<? extends IEntityColumn> getFields(IEntityColumnGroup group);
 
-	List<? extends IEntityField> getFieldsOfEnabled(IEntityDefinition system);
+	List<? extends IEntityColumn> getFieldsOfEnabled(IEntityDefinition system);
 
-	List<? extends IEntityField> getFieldsOfEnabled(IFieldGroup group);
+	List<? extends IEntityColumn> getFieldsOfEnabled(IEntityColumnGroup group);
 
-	List<? extends IEntityField> getFieldsOfGrid(IEntityDefinition system, String fields);
+	List<? extends IEntityColumn> getFieldsOfGrid(IEntityDefinition system, String fields);
 
 	/**
 	 * @param system
 	 * @return
 	 */
-	List<? extends IEntityField> getFieldsOfSystemFK(IEntityDefinition system, Class fkType);
+	List<? extends IEntityColumn> getFieldsOfSystemFK(IEntityDefinition system, Class fkType);
 
 	/**
 	 * 获取系统外键字段：即外键引用其他业务系统
@@ -193,7 +193,7 @@ public interface IEntityDefManager {
 	 *            业务系统
 	 * @return
 	 */
-	List<? extends IEntityField> getFieldsOfSystemFK(IEntityDefinition system);
+	List<? extends IEntityColumn> getFieldsOfSystemFK(IEntityDefinition system);
 
 	/**
 	 * 获取所有外键字段：包括外键系统引用和字典字段
@@ -202,13 +202,13 @@ public interface IEntityDefManager {
 	 *            业务系统
 	 * @return
 	 */
-	List<? extends IEntityField> getFieldsOfFK(IEntityDefinition system);
+	List<? extends IEntityColumn> getFieldsOfFK(IEntityDefinition system);
 
-	List<? extends IEntityField> getFieldsOfNavi(IEntityDefinition system);
+	List<? extends IEntityColumn> getFieldsOfNavi(IEntityDefinition system);
 
-	Map<String, IEntityField> getFieldsMap(IEntityDefinition system);
+	Map<String, IEntityColumn> getFieldsMap(IEntityDefinition system);
 
-	Map<String, IEntityField> getFieldsMap(List<? extends IEntityField> list);
+	Map<String, IEntityColumn> getFieldsMap(List<? extends IEntityColumn> list);
 
 	/**
 	 * 获取引用了指定系统的字段
@@ -217,39 +217,39 @@ public interface IEntityDefManager {
 	 *            业务系统
 	 * @return 系统被哪些外间字段引用？
 	 */
-	List<? extends IEntityField> getFieldsOfExport(IEntityDefinition system);
+	List<? extends IEntityColumn> getFieldsOfExport(IEntityDefinition system);
 
 	List<? extends IEntityDefinition> getSystemsOfSlave(IEntityDefinition system);
 
-	List<? extends IEntityField> getFieldsOfSlave(IEntityDefinition system);
+	List<? extends IEntityColumn> getFieldsOfSlave(IEntityDefinition system);
 
 	boolean isSlave(IEntityDefinition system);
 
 	// List<? extends IBizField> getChildren(IBizField field);
 
-	boolean isNumber(IEntityField field);
+	boolean isNumber(IEntityColumn field);
 
-	boolean isInteger(IEntityField field);
+	boolean isInteger(IEntityColumn field);
 
-	boolean isRichText(IEntityField field);
+	boolean isRichText(IEntityColumn field);
 
-	boolean isText(IEntityField field);
+	boolean isText(IEntityColumn field);
 
-	boolean isDate(IEntityField field);
+	boolean isDate(IEntityColumn field);
 
-	boolean isString(IEntityField field);
+	boolean isString(IEntityColumn field);
 
-	boolean isUpload(IEntityField field);
+	boolean isUpload(IEntityColumn field);
 
-	boolean isImage(IEntityField field);
+	boolean isImage(IEntityColumn field);
 
-	boolean isMultiUpload(IEntityField field);
+	boolean isMultiUpload(IEntityColumn field);
 
-	boolean isMultiImage(IEntityField field);
+	boolean isMultiImage(IEntityColumn field);
 
-	boolean isSubSystem(IEntityField field);
+	boolean isSubSystem(IEntityColumn field);
 
-	boolean isFakeSubSystem(IEntityField field);
+	boolean isFakeSubSystem(IEntityColumn field);
 
 	boolean isBuildin(IEntityDefinition system, String prop);
 
@@ -258,79 +258,79 @@ public interface IEntityDefManager {
 	 * 
 	 * @return
 	 */
-	boolean isManyToOne(IEntityField field);
+	boolean isManyToOne(IEntityColumn field);
 
 	/**
 	 * 判断字段是否为一对一的字段
 	 * 
 	 * @return
 	 */
-	abstract boolean isOneToOne(IEntityField field);
+	abstract boolean isOneToOne(IEntityColumn field);
 
 	/**
 	 * 判断字段是否为一对多的字段
 	 * 
 	 * @return
 	 */
-	abstract boolean isOneToMany(IEntityField field);
+	abstract boolean isOneToMany(IEntityColumn field);
 
 	/**
 	 * 判断字段是否为多对多的字段
 	 * 
 	 * @return
 	 */
-	abstract boolean isManyToMany(IEntityField field);
+	abstract boolean isManyToMany(IEntityColumn field);
 
 	/**
 	 * 判断字段是否为多对一的字段
 	 * 
 	 * @return
 	 */
-	boolean isV1Dic(IEntityField field);
+	boolean isV1Dic(IEntityColumn field);
 
-	boolean isBoolean(IEntityField field);
+	boolean isBoolean(IEntityColumn field);
 
-	boolean isEnabled(IEntityField field);
+	boolean isEnabled(IEntityColumn field);
 
-	boolean isGridField(IEntityField field);
+	boolean isGridField(IEntityColumn field);
 
-	boolean isSystemFK(IEntityField field);
+	boolean isSystemFK(IEntityColumn field);
 
-	boolean isFieldRef(IEntityField field);
+	boolean isFieldRef(IEntityColumn field);
 
-	String getPropName(IEntityField field);
+	String getPropName(IEntityColumn field);
 
-	int getGridWidth(IEntityField field);
+	int getGridWidth(IEntityColumn field);
 
-	int getPrecision(IEntityField field);
+	int getPrecision(IEntityColumn field);
 
-	Class getGenericType(IEntityField field) throws DemsyException;
+	Class getGenericType(IEntityColumn field) throws DemsyException;
 
-	Class getType(IEntityField field) throws DemsyException;
+	Class getType(IEntityColumn field) throws DemsyException;
 
-	String getMode(IEntityField field, IAction action, boolean mustPriority, String defaultMode);
+	String getMode(IEntityColumn field, IEntityAction entityAction, boolean mustPriority, String defaultMode);
 
-	String getMode(IFieldGroup group, IAction action);
+	String getMode(IEntityColumnGroup group, IEntityAction entityAction);
 
 	Nodes makeNaviNodes(IEntityDefinition system, String idField, boolean removeSelfLeaf);
 
-	Nodes makeOptionNodes(IEntityField field, String mode, Object data, String idField);
+	Nodes makeOptionNodes(IEntityColumn field, String mode, Object data, String idField);
 
-	List<String> makeCascadeExpr(Object obj, IEntityField field, String mode);
+	List<String> makeCascadeExpr(Object obj, IEntityColumn field, String mode);
 
-	Option[] getOptions(IEntityField field);
+	Option[] getOptions(IEntityColumn field);
 
-	String[] getCascadeMode(IEntityField field, Object data);
+	String[] getCascadeMode(IEntityColumn field, Object data);
 
 	int getModeValue(String mode);
 
-	Map<String, String> getMode(IEntityDefinition system, IAction action, Object data);
+	Map<String, String> getMode(IEntityDefinition system, IEntityAction entityAction, Object data);
 
-	void validate(IEntityDefinition system, IAction action, Object data, Map<String, String> fieldMode) throws DemsyException;
+	void validate(IEntityDefinition system, IEntityAction entityAction, Object data, Map<String, String> fieldMode) throws DemsyException;
 
 	void loadFieldValue(Object obj, IEntityDefinition system);
 
-	IEntityField getField(Long fieldID);
+	IEntityColumn getField(Long fieldID);
 
 	IEntityDefinition getSystem(String systemCode);
 
@@ -346,7 +346,7 @@ public interface IEntityDefManager {
 	 * @param runtimeCustom
 	 * @return
 	 */
-	List<? extends IEntityField> makeFields(IRuntimeField runtimeCustom);
+	List<? extends IEntityColumn> makeFields(IRuntimeField runtimeCustom);
 
-	IAction getAction(Long systemID, String opMode);
+	IEntityAction getAction(Long systemID, String opMode);
 }

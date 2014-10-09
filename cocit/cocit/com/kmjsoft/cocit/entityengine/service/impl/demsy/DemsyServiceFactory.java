@@ -6,10 +6,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import com.jiongsoft.cocit.Demsy;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
-import com.kmjsoft.cocit.entity.impl.entitydef.BizAction;
-import com.kmjsoft.cocit.entity.impl.entitydef.SFTSystem;
+import com.kmjsoft.cocit.Demsy;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
+import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
+import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
 import com.kmjsoft.cocit.entity.impl.security.Module;
 import com.kmjsoft.cocit.entity.impl.security.Tenant;
 import com.kmjsoft.cocit.entity.security.IModule;
@@ -60,7 +60,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 	}
 
-	private DemsyEntityTableService makeBizTable(SFTSystem system) {
+	private DemsyEntityTableService makeBizTable(EntityDefinition system) {
 		DemsyEntityTableService ret = new DemsyEntityTableService(system);
 
 		return ret;
@@ -77,7 +77,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 		if (module == null)
 			return null;
 
-		SFTSystem mainSystem = (SFTSystem) moduleEngine.getSystem(module);
+		EntityDefinition mainSystem = (EntityDefinition) moduleEngine.getSystem(module);
 
 		//
 		TableService mainDataTable = this.makeBizTable(mainSystem);
@@ -85,9 +85,9 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 		//
 		List<TableService> childrenDataTables = new ArrayList();
-		List<IEntityField> fkFields = bizEngine.getFieldsOfSlave(mainSystem);
-		for (IEntityField fkField : fkFields) {
-			SFTSystem fkSystem = (SFTSystem) fkField.getSystem();
+		List<IEntityColumn> fkFields = bizEngine.getFieldsOfSlave(mainSystem);
+		for (IEntityColumn fkField : fkFields) {
+			EntityDefinition fkSystem = (EntityDefinition) fkField.getSystem();
 
 			DemsyEntityTableService bizTable = this.makeBizTable(fkSystem);
 			childrenDataTables.add(bizTable);
@@ -106,14 +106,14 @@ public class DemsyServiceFactory implements ServiceFactory {
 
 	@Override
 	public TableService getTable(Serializable tableID) {
-		SFTSystem system;
+		EntityDefinition system;
 		if (tableID == null)
 			return null;
 
 		if (tableID instanceof Long)
-			system = (SFTSystem) bizEngine.getSystem((Long) tableID);
+			system = (EntityDefinition) bizEngine.getSystem((Long) tableID);
 		else
-			system = (SFTSystem) bizEngine.getSystem(tableID.toString());
+			system = (EntityDefinition) bizEngine.getSystem(tableID.toString());
 
 		// TODO:应通过模块表达式来解析数据表对象，目前暂时不支持模块对数据表的引用表达式。
 
@@ -125,7 +125,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 		if (opMode == null)
 			return null;
 
-		BizAction action = (BizAction) bizEngine.getAction(table.getID(), opMode);
+		EntityAction action = (EntityAction) bizEngine.getAction(table.getID(), opMode);
 		if (action == null)
 			return null;
 
@@ -137,7 +137,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 		if (opMode == null)
 			return null;
 
-		BizAction action = (BizAction) moduleEngine.getAction((IModule) module.getEntity(), opMode);
+		EntityAction action = (EntityAction) moduleEngine.getAction((IModule) module.getEntity(), opMode);
 		if (action == null)
 			return null;
 
@@ -148,7 +148,7 @@ public class DemsyServiceFactory implements ServiceFactory {
 	public TableService getTable(ModuleService moduleService) {
 		Module module = (Module) moduleService.getEntity();
 
-		SFTSystem system = (SFTSystem) moduleEngine.getSystem(module);
+		EntityDefinition system = (EntityDefinition) moduleEngine.getSystem(module);
 
 		return this.makeBizTable(system);
 	}

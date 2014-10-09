@@ -2,7 +2,7 @@ package com.kmjsoft.cocit.entityengine.service;
 
 import java.util.Map;
 
-import com.kmjsoft.cocit.entity.definition.IEntityField;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 import com.kmjsoft.cocit.util.KeyValue;
 
 /**
@@ -18,7 +18,7 @@ import com.kmjsoft.cocit.util.KeyValue;
  * @author jiongs753
  * 
  */
-public interface FieldService extends EntityService<IEntityField> {
+public interface FieldService extends EntityService<IEntityColumn> {
 
 	/**
 	 * 字符串字段：长度在255以内为字符串字段，长度超过255的为文本字段。

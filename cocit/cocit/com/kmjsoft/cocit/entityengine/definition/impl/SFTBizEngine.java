@@ -29,27 +29,27 @@ import com.jiongsoft.cocit.lang.JSON;
 import com.jiongsoft.cocit.lang.Obj;
 import com.jiongsoft.cocit.lang.Option;
 import com.jiongsoft.cocit.lang.Str;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.kmjsoft.cocit.entity.BaseEntity;
+import com.kmjsoft.cocit.entity.DataEntity;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.definition.IFieldDataType;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 import com.kmjsoft.cocit.entity.impl.config.Dic;
 import com.kmjsoft.cocit.entity.impl.config.DicCategory;
-import com.kmjsoft.cocit.entity.impl.entitydef.AbstractSystemData;
-import com.kmjsoft.cocit.entity.impl.entitydef.ActionDefinition;
-import com.kmjsoft.cocit.entity.impl.entitydef.BizAction;
-import com.kmjsoft.cocit.entity.impl.entitydef.BizCatalog;
-import com.kmjsoft.cocit.entity.impl.entitydef.SFTSystem;
-import com.kmjsoft.cocit.entity.impl.entitydef.SystemDataGroup;
-import com.kmjsoft.cocit.entity.impl.entitydef.SystemDataType;
-import com.kmjsoft.cocit.entity.security.IAction;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.impl.definition.ActionDefinition;
+import com.kmjsoft.cocit.entity.impl.definition.EntityAction;
+import com.kmjsoft.cocit.entity.impl.definition.EntityCatalog;
+import com.kmjsoft.cocit.entity.impl.definition.EntityDefinition;
+import com.kmjsoft.cocit.entity.impl.definition.EntityColumn;
+import com.kmjsoft.cocit.entity.impl.definition.EntityColumnGroup;
+import com.kmjsoft.cocit.entity.impl.definition.SystemDataType;
+import com.kmjsoft.cocit.entity.security.ITenant;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.annotation.CocCatalog;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 import com.kmjsoft.cocit.orm.annotation.CocGroup;
-import com.kmjsoft.cocit.orm.annotation.CocOperation;
-import com.kmjsoft.cocit.orm.annotation.CocTable;
+import com.kmjsoft.cocit.orm.annotation.CocAction;
+import com.kmjsoft.cocit.orm.annotation.CocEntity;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.Expr;
 
@@ -72,11 +72,11 @@ public class SFTBizEngine extends BizEngine {
 	public String getExtendClassName(IEntityDefinition system) {
 		String extClass = system.getExtendClass();
 		if (Str.isEmpty(extClass)) {
-			return BaseEntity.class.getName();
+			return DataEntity.class.getName();
 		} else {
 			extClass = extClass.substring(extClass.lastIndexOf(".") + 1);
 			if (extClass.equals("AbstractSFTEntity")) {
-				return BaseEntity.class.getName();
+				return DataEntity.class.getName();
 			}
 		}
 		if (extClass.indexOf(".") < 0) {
@@ -89,23 +89,23 @@ public class SFTBizEngine extends BizEngine {
 	public String getExtendSimpleClassName(IEntityDefinition system) {
 		String extClass = system.getExtendClass();
 		if (Str.isEmpty(extClass)) {
-			return BaseEntity.class.getSimpleName();
+			return DataEntity.class.getSimpleName();
 		} else {
 			extClass = extClass.substring(extClass.lastIndexOf(".") + 1);
 			if (extClass.equals("AbstractSFTEntity")) {
-				return BaseEntity.class.getSimpleName();
+				return DataEntity.class.getSimpleName();
 			}
 		}
 		return extClass;
 	}
 
 	@Override
-	public String getTargetPropName(IEntityField field) {
+	public String getTargetPropName(IEntityColumn field) {
 		return ("childrenMapping_" + Integer.toHexString(field.getSystem().getCode().hashCode()) + "_" + getPropName(field)).toLowerCase();
 	}
 
-	protected Option[] geDicOptions(IEntityField field) {
-		AbstractSystemData fld = (AbstractSystemData) field;
+	protected Option[] geDicOptions(IEntityColumn field) {
+		EntityColumn fld = (EntityColumn) field;
 		DicCategory dicc = fld.getDicCategory();
 
 		List<Option> oplist = new ArrayList();
@@ -123,18 +123,18 @@ public class SFTBizEngine extends BizEngine {
 		return ret;
 	}
 
-	protected boolean isMappingToMaster(IEntityField fld) {
-		AbstractSystemData data = (AbstractSystemData) fld;
+	protected boolean isMappingToMaster(IEntityColumn fld) {
+		EntityColumn data = (EntityColumn) fld;
 		return data.isMappingToMaster() || data.isMapping();
 	}
 
-	public boolean isGridField(IEntityField fld) {
-		AbstractSystemData data = (AbstractSystemData) fld;
+	public boolean isGridField(IEntityColumn fld) {
+		EntityColumn data = (EntityColumn) fld;
 		return data.isGridField() || data.isShowInGrid();
 	}
 
 	@Override
-	public IEntityDefinition setupSystemFromClass(ISystemTenant soft, Class klass) throws DemsyException {
+	public IEntityDefinition setupSystemFromClass(ITenant soft, Class klass) throws DemsyException {
 		return setupSystemFromClass(soft.getDataGuid(), klass, true);
 	}
 
@@ -143,7 +143,7 @@ public class SFTBizEngine extends BizEngine {
 		if (klass == null) {
 			return null;
 		}
-		CocTable sysann = (CocTable) klass.getAnnotation(CocTable.class);
+		CocEntity sysann = (CocEntity) klass.getAnnotation(CocEntity.class);
 		Entity entity = (Entity) klass.getAnnotation(Entity.class);
 		if (sysann == null || entity == null) {
 			return null;
@@ -152,15 +152,15 @@ public class SFTBizEngine extends BizEngine {
 		if (log.isTraceEnabled())
 			log.tracef("安装业务系统... [%s]", klass.getSimpleName());
 
-		IOrm orm = orm();
+		ExtOrm orm = orm();
 
 		// 解析业务系统
-		int sysOrder = sysann.orderby();
-		String sysCode = sysann.code();
+		int sysOrder = sysann.SN();
+		String sysCode = sysann.GUID();
 		if (Str.isEmpty(sysCode)) {
 			sysCode = "_" + klass.getSimpleName();
 		}
-		SFTSystem system = (SFTSystem) orm.load(SFTSystem.class, CndExpr.eq(F_CODE, sysCode));
+		EntityDefinition system = (EntityDefinition) orm.load(EntityDefinition.class, CndExpr.eq(F_CODE, sysCode));
 		if (system != null && !autoUpdate) {
 			return system;
 		}
@@ -170,15 +170,15 @@ public class SFTBizEngine extends BizEngine {
 		Mirror me = Mirror.me(klass);
 
 		// 计算业务操作
-		List<BizAction> newActions = new LinkedList();
-		CocOperation[] actanns = sysann.actions();
+		List<EntityAction> newActions = new LinkedList();
+		CocAction[] actanns = sysann.actions();
 		if (actanns != null) {
 			int actionOrder = sysOrder * 100;
 			for (int i = 0; i < actanns.length; i++) {
-				CocOperation actann = actanns[i];
+				CocAction actann = actanns[i];
 
 				if (Str.isEmpty(actann.jsonData())) {
-					BizAction action = this.parseBizAction(orm, soft, system, actann, actionOrder++);
+					EntityAction action = this.parseBizAction(orm, soft, system, actann, actionOrder++);
 					orm.save(action);
 					newActions.add(action);
 				} else {
@@ -187,8 +187,8 @@ public class SFTBizEngine extends BizEngine {
 
 			}
 		}
-		List<SystemDataGroup> newGroups = new LinkedList();
-		List<IEntityField> newFields = new LinkedList();
+		List<EntityColumnGroup> newGroups = new LinkedList();
+		List<IEntityColumn> newFields = new LinkedList();
 		CocGroup[] grpanns = sysann.groups();
 		if (grpanns != null) {
 			int groupOrder = sysOrder * 10;
@@ -196,16 +196,16 @@ public class SFTBizEngine extends BizEngine {
 			int gridOrder = 100;
 			for (int i = 0; i < grpanns.length; i++) {
 				CocGroup grpann = grpanns[i];
-				SystemDataGroup group = this.parseBizGroup(orm, soft, system, grpann, groupOrder++);
+				EntityColumnGroup group = this.parseBizGroup(orm, soft, system, grpann, groupOrder++);
 				orm.save(group);
 				newGroups.add(group);
 
 				// 计算业务字段
-				CocField[] fldanns = grpann.fields();
+				CocColumn[] fldanns = grpann.fields();
 				if (fldanns != null) {
 					for (int j = 0; j < fldanns.length; j++) {
-						CocField fldann = fldanns[j];
-						AbstractSystemData field = this.parseBizField(orm, soft, me, system, group, fldann, gridOrder++, fieldOrder++, fieldLibs);
+						CocColumn fldann = fldanns[j];
+						EntityColumn field = this.parseBizField(orm, soft, me, system, group, fldann, gridOrder++, fieldOrder++, fieldLibs);
 						orm.save(field);
 						newFields.add(field);
 					}
@@ -215,21 +215,21 @@ public class SFTBizEngine extends BizEngine {
 
 		// 清除垃圾数据
 		// if (false) {
-		List<BizAction> oldActions = orm.query(BizAction.class, Expr.eq(F_SYSTEM, system));
-		for (BizAction a : oldActions) {
+		List<EntityAction> oldActions = orm.query(EntityAction.class, Expr.eq(F_SYSTEM, system));
+		for (EntityAction a : oldActions) {
 			if (!newActions.contains(a)) {
 				orm.delete(a);
 			}
 		}
 		// }
-		List<AbstractSystemData> oldFields = orm.query(AbstractSystemData.class, Expr.eq(F_SYSTEM, system));
-		for (AbstractSystemData a : oldFields) {
+		List<EntityColumn> oldFields = orm.query(EntityColumn.class, Expr.eq(F_SYSTEM, system));
+		for (EntityColumn a : oldFields) {
 			if (!newFields.contains(a)) {
 				orm.delete(a);
 			}
 		}
-		List<SystemDataGroup> oldGroups = orm.query(SystemDataGroup.class, Expr.eq(F_SYSTEM, system));
-		for (SystemDataGroup a : oldGroups) {
+		List<EntityColumnGroup> oldGroups = orm.query(EntityColumnGroup.class, Expr.eq(F_SYSTEM, system));
+		for (EntityColumnGroup a : oldGroups) {
 			if (!newGroups.contains(a)) {
 				orm.delete(a);
 			}
@@ -239,11 +239,11 @@ public class SFTBizEngine extends BizEngine {
 	}
 
 	public void parseSystemByAnnotation(Class klass, IEntityDefinition system) {
-		IOrm orm = orm();
-		String tenantId = system.getTenantGuid();
+		ExtOrm orm = orm();
+		String tenantId = system.getTenantOwnerGuid();
 
 		Map<String, IFieldDataType> fieldLibs = this.getFieldTypes();
-		CocTable sysann = (CocTable) klass.getAnnotation(CocTable.class);
+		CocEntity sysann = (CocEntity) klass.getAnnotation(CocEntity.class);
 		if (sysann == null) {
 			return;
 		}
@@ -253,15 +253,15 @@ public class SFTBizEngine extends BizEngine {
 		Mirror me = Mirror.me(klass);
 
 		// 计算业务操作
-		List<BizAction> newActions = new LinkedList();
-		CocOperation[] actanns = sysann.actions();
+		List<EntityAction> newActions = new LinkedList();
+		CocAction[] actanns = sysann.actions();
 		if (actanns != null) {
 			int actionOrder = sysOrder * 100;
 			for (int i = 0; i < actanns.length; i++) {
-				CocOperation actann = actanns[i];
+				CocAction actann = actanns[i];
 
 				if (Str.isEmpty(actann.jsonData())) {
-					BizAction action = this.parseBizAction(orm, tenantId, system, actann, actionOrder++);
+					EntityAction action = this.parseBizAction(orm, tenantId, system, actann, actionOrder++);
 					orm.save(action);
 					newActions.add(action);
 				} else {
@@ -270,8 +270,8 @@ public class SFTBizEngine extends BizEngine {
 
 			}
 		}
-		List<SystemDataGroup> newGroups = new LinkedList();
-		List<IEntityField> newFields = new LinkedList();
+		List<EntityColumnGroup> newGroups = new LinkedList();
+		List<IEntityColumn> newFields = new LinkedList();
 		CocGroup[] grpanns = sysann.groups();
 		if (grpanns != null) {
 			int groupOrder = sysOrder * 10;
@@ -279,16 +279,16 @@ public class SFTBizEngine extends BizEngine {
 			int gridOrder = 100;
 			for (int i = 0; i < grpanns.length; i++) {
 				CocGroup grpann = grpanns[i];
-				SystemDataGroup group = this.parseBizGroup(orm, tenantId, system, grpann, groupOrder++);
+				EntityColumnGroup group = this.parseBizGroup(orm, tenantId, system, grpann, groupOrder++);
 				orm.save(group);
 				newGroups.add(group);
 
 				// 计算业务字段
-				CocField[] fldanns = grpann.fields();
+				CocColumn[] fldanns = grpann.fields();
 				if (fldanns != null) {
 					for (int j = 0; j < fldanns.length; j++) {
-						CocField fldann = fldanns[j];
-						AbstractSystemData field = this.parseBizField(orm, tenantId, me, system, group, fldann, gridOrder++, fieldOrder++, fieldLibs);
+						CocColumn fldann = fldanns[j];
+						EntityColumn field = this.parseBizField(orm, tenantId, me, system, group, fldann, gridOrder++, fieldOrder++, fieldLibs);
 						orm.save(field);
 						newFields.add(field);
 					}
@@ -297,37 +297,37 @@ public class SFTBizEngine extends BizEngine {
 		}
 	}
 
-	private SFTSystem parseSystem(IOrm orm, String soft, Class klass, SFTSystem system, CocTable sysann, int sysOrder, String code) {
+	private EntityDefinition parseSystem(ExtOrm orm, String soft, Class klass, EntityDefinition system, CocEntity sysann, int sysOrder, String code) {
 		if (system == null) {
-			system = new SFTSystem();
+			system = new EntityDefinition();
 		}
 		system.setName(sysann.name());
 
 		system.setCode(code);
-		system.setSortExpr(sysann.sortExpr());
+		system.setSortExpr(sysann.dataSortExpr());
 		system.setLayout(sysann.layout());
 		system.setSerialNumber(sysOrder);
-		system.setTemplate(sysann.template());
+		system.setPageTemplate(sysann.uiTemplate());
 		system.setPathPrefix(sysann.pathPrefix());
 		system.setMappingClass(klass.getName());
 		system.setExtendClass(klass.getSuperclass().getSimpleName());
 		system.setBuildin(true);
 
-		BizCatalog catalog;
+		EntityCatalog catalog;
 		if (!Str.isEmpty(sysann.catalog())) {
-			catalog = (BizCatalog) orm.load(BizCatalog.class, Expr.eq(F_CODE, sysann.catalog()));
+			catalog = (EntityCatalog) orm.load(EntityCatalog.class, Expr.eq(F_CODE, sysann.catalog()));
 		} else {
 			catalog = parseCatalog(orm, soft, klass.getPackage());
 		}
 		system.setCatalog(catalog);
-		system.setTenantGuid(soft);
+		system.setTenantOwnerGuid(soft);
 
 		Obj.makeSetupGuid(system, code);
 
 		return system;
 	}
 
-	private BizCatalog parseCatalog(IOrm orm, String soft, Package pkg) {
+	private EntityCatalog parseCatalog(ExtOrm orm, String soft, Package pkg) {
 		if (pkg == null)
 			return null;
 		CocCatalog ann = pkg.getAnnotation(CocCatalog.class);
@@ -335,7 +335,7 @@ public class SFTBizEngine extends BizEngine {
 			return null;
 
 		// 计算code
-		String code = ann.code();
+		String code = ann.GUID();
 		String pkgname = pkg.getName();
 		int dot = pkgname.lastIndexOf(".");
 		String ppkgname = pkgname.substring(0, dot);
@@ -344,12 +344,12 @@ public class SFTBizEngine extends BizEngine {
 		}
 
 		// 计算对象
-		BizCatalog obj = (BizCatalog) orm.load(BizCatalog.class, CndExpr.eq(F_CODE, code));
+		EntityCatalog obj = (EntityCatalog) orm.load(EntityCatalog.class, CndExpr.eq(F_CODE, code));
 		if (obj == null) {
-			obj = new BizCatalog();
+			obj = new EntityCatalog();
 			obj.setName(ann.name());
 			obj.setCode(code);
-			obj.setSerialNumber(ann.orderby());
+			obj.setSerialNumber(ann.SN());
 			obj.setBuildin(true);
 			obj.setParent(parseCatalog(orm, soft, Package.getPackage(ppkgname)));
 		}
@@ -361,11 +361,11 @@ public class SFTBizEngine extends BizEngine {
 		return obj;
 	}
 
-	private AbstractSystemData parseBizField(IOrm orm, String soft, Mirror me, IEntityDefinition system, SystemDataGroup group, CocField fldann, int gridOrder, int fieldOrder, Map fieldLibs) {
-		String prop = fldann.property();
+	private EntityColumn parseBizField(ExtOrm orm, String soft, Mirror me, IEntityDefinition system, EntityColumnGroup group, CocColumn fldann, int gridOrder, int fieldOrder, Map fieldLibs) {
+		String prop = fldann.propName();
 
-		AbstractSystemData field = (AbstractSystemData) orm.load(AbstractSystemData.class, CndExpr.eq(F_PROP_NAME, prop).and(CndExpr.eq(F_SYSTEM, system)));
-		field = (AbstractSystemData) this.parseBizField(soft, me, prop, system, field);
+		EntityColumn field = (EntityColumn) orm.load(EntityColumn.class, CndExpr.eq(F_PROP_NAME, prop).and(CndExpr.eq(F_SYSTEM, system)));
+		field = (EntityColumn) this.parseBizField(soft, me, prop, system, field);
 		field.setDataGroup(group);
 
 		Field f = null;
@@ -373,10 +373,10 @@ public class SFTBizEngine extends BizEngine {
 			f = me.getField(prop);
 		} catch (NoSuchFieldException iglore) {
 		}
-		if (f == null || f.getAnnotation(CocField.class) == null) {
+		if (f == null || f.getAnnotation(CocColumn.class) == null) {
 			copyProperties(fldann, field);
-			if (!Str.isEmpty(fldann.fkTable())) {
-				field.setRefrenceSystem((SFTSystem) setupSystemFromClass(soft, getStaticType(fldann.fkTable()), false));
+			if (!Str.isEmpty(fldann.fkEntity())) {
+				field.setRefrenceSystem((EntityDefinition) setupSystemFromClass(soft, getStaticType(fldann.fkEntity()), false));
 				field.setType((SystemDataType) fieldLibs.get("System"));
 			}
 		}
@@ -397,33 +397,33 @@ public class SFTBizEngine extends BizEngine {
 		return field;
 	}
 
-	private SystemDataGroup parseBizGroup(IOrm orm, String soft, IEntityDefinition system, CocGroup grpann, int groupOrder) {
-		SystemDataGroup group = (SystemDataGroup) orm.load(SystemDataGroup.class, CndExpr.eq(F_CODE, grpann.code()).and(CndExpr.eq(F_SYSTEM, system)));
+	private EntityColumnGroup parseBizGroup(ExtOrm orm, String soft, IEntityDefinition system, CocGroup grpann, int groupOrder) {
+		EntityColumnGroup group = (EntityColumnGroup) orm.load(EntityColumnGroup.class, CndExpr.eq(F_CODE, grpann.GUID()).and(CndExpr.eq(F_SYSTEM, system)));
 		if (group == null) {
-			group = new SystemDataGroup();
+			group = new EntityColumnGroup();
 		}
-		group.setSystem((SFTSystem) system);
+		group.setSystem((EntityDefinition) system);
 		group.setName(grpann.name());
-		group.setCode(grpann.code());
+		group.setCode(grpann.GUID());
 		group.setSerialNumber(groupOrder);
-		group.setTenantGuid(soft);
+		group.setTenantOwnerGuid(soft);
 		group.setBuildin(true);
 
-		Obj.makeSetupGuid(group, system.getCode(), grpann.code());
+		Obj.makeSetupGuid(group, system.getCode(), grpann.GUID());
 
 		return group;
 	}
 
-	private BizAction parseBizAction(IOrm orm, String soft, IEntityDefinition system, CocOperation actann, int actionOrder) {
-		BizAction action = (BizAction) orm.load(BizAction.class, CndExpr.eq(F_TYPE_CODE, actann.typeCode()).and(CndExpr.eq(F_MODE, actann.mode())).and(CndExpr.eq(F_SYSTEM, system.getId())));
+	private EntityAction parseBizAction(ExtOrm orm, String soft, IEntityDefinition system, CocAction actann, int actionOrder) {
+		EntityAction action = (EntityAction) orm.load(EntityAction.class, CndExpr.eq(F_TYPE_CODE, actann.type()).and(CndExpr.eq(F_MODE, actann.mode())).and(CndExpr.eq(F_SYSTEM, system.getId())));
 		if (action == null) {
-			action = new BizAction();
+			action = new EntityAction();
 		}
 		action.setSystem(system);
 		action.setName(actann.name());
-		action.setTypeCode(actann.typeCode());
+		action.setTypeCode(actann.type());
 		action.setMode(actann.mode());
-		action.setCode(actann.code());
+		action.setCode(actann.GUID());
 		action.setSerialNumber(actionOrder);
 		action.setTargetUrl(actann.targetUrl());
 		action.setTargetWindow(actann.targetWindow());
@@ -434,34 +434,34 @@ public class SFTBizEngine extends BizEngine {
 		}
 		action.setImage(new Upload(actann.image()));
 		action.setLogo(new Upload(actann.logo()));
-		action.setTemplate(actann.template());
+		action.setPageTemplate(actann.pageTemplate());
 		action.setInfo(actann.info());
 		action.setError(actann.error());
 		action.setWarn(actann.warn());
 		action.setParams(actann.params());
 		action.setDisabled(actann.disabled());
 
-		IAction actionLib = (IAction) orm.load(ActionDefinition.class, CndExpr.eq(F_TYPE_CODE, actann.typeCode()));
+		IEntityAction actionLib = (IEntityAction) orm.load(ActionDefinition.class, CndExpr.eq(F_TYPE_CODE, actann.type()));
 		action.setActionLib((ActionDefinition) actionLib);
-		action.setTenantGuid(soft);
+		action.setTenantOwnerGuid(soft);
 		action.setBuildin(true);
-		Obj.makeSetupGuid(action, system.getCode(), "" + actann.typeCode(), actann.mode());
+		Obj.makeSetupGuid(action, system.getCode(), "" + actann.type(), actann.mode());
 
 		return action;
 	}
 
-	private List<BizAction> parseBizAction(IOrm orm, String soft, IEntityDefinition system, String jsonData, int actionOrder) {
-		List<BizAction> actions = JSON.loadFromJson(BizAction.class, jsonData);
-		List<BizAction> ret = new ArrayList();
-		for (BizAction newAction : actions) {
+	private List<EntityAction> parseBizAction(ExtOrm orm, String soft, IEntityDefinition system, String jsonData, int actionOrder) {
+		List<EntityAction> actions = JSON.loadFromJson(EntityAction.class, jsonData);
+		List<EntityAction> ret = new ArrayList();
+		for (EntityAction newAction : actions) {
 			this.parseBizAction(ret, orm, soft, system, newAction, null, actionOrder++);
 		}
 
 		return ret;
 	}
 
-	private void parseBizAction(List<BizAction> list, IOrm orm, String soft, IEntityDefinition system, BizAction newAction, BizAction parentAction, int actionOrder) {
-		BizAction action = (BizAction) orm.load(BizAction.class, CndExpr.eq(F_TYPE_CODE, newAction.getTypeCode()).and(CndExpr.eq(F_MODE, newAction.getMode())).and(CndExpr.eq(F_SYSTEM, system.getId())));
+	private void parseBizAction(List<EntityAction> list, ExtOrm orm, String soft, IEntityDefinition system, EntityAction newAction, EntityAction parentAction, int actionOrder) {
+		EntityAction action = (EntityAction) orm.load(EntityAction.class, CndExpr.eq(F_TYPE_CODE, newAction.getTypeCode()).and(CndExpr.eq(F_MODE, newAction.getMode())).and(CndExpr.eq(F_SYSTEM, system.getId())));
 		if (action == null) {
 			action = newAction;
 		}
@@ -476,46 +476,46 @@ public class SFTBizEngine extends BizEngine {
 		action.setPlugin(newAction.getPlugin());
 		action.setImage(newAction.getImage());
 		action.setLogo(newAction.getLogo());
-		action.setTemplate(newAction.getTemplate());
+		action.setPageTemplate(newAction.getPageTemplate());
 		action.setInfo(newAction.getInfo());
 		action.setError(newAction.getError());
 		action.setWarn(newAction.getWarn());
 		action.setDisabled(newAction.isDisabled());
 		action.setParentAction(parentAction);
 
-		IAction actionLib = (IAction) orm.load(ActionDefinition.class, CndExpr.eq(F_TYPE_CODE, newAction.getTypeCode()));
+		IEntityAction actionLib = (IEntityAction) orm.load(ActionDefinition.class, CndExpr.eq(F_TYPE_CODE, newAction.getTypeCode()));
 		action.setActionLib((ActionDefinition) actionLib);
-		action.setTenantGuid(soft);
+		action.setTenantOwnerGuid(soft);
 		action.setBuildin(true);
 		Obj.makeSetupGuid(action, system.getCode(), "" + newAction.getTypeCode(), newAction.getMode());
 
 		orm.save(action);
 		list.add(action);
 
-		List<BizAction> children = newAction.getChildren();
+		List<EntityAction> children = newAction.getChildren();
 		if (children != null)
-			for (BizAction newchild : children) {
+			for (EntityAction newchild : children) {
 				this.parseBizAction(list, orm, soft, system, newchild, action, actionOrder++);
 			}
 	}
 
-	public IEntityField parseBizField(String soft, Mirror entityObj, String fldProp, IEntityDefinition bzSystem, IEntityField oldBzField) {
+	public IEntityColumn parseBizField(String soft, Mirror entityObj, String fldProp, IEntityDefinition bzSystem, IEntityColumn oldBzField) {
 		Map<String, IFieldDataType> fieldLibs = this.getFieldTypes();
 
-		AbstractSystemData newBzField = (AbstractSystemData) oldBzField;
+		EntityColumn newBzField = (EntityColumn) oldBzField;
 		if (newBzField == null) {
-			newBzField = new AbstractSystemData();
+			newBzField = new EntityColumn();
 		}
 		newBzField.setPropName(fldProp);
 		newBzField.setCode(fldProp);
-		newBzField.setSystem((SFTSystem) bzSystem);
+		newBzField.setSystem((EntityDefinition) bzSystem);
 
 		Class type = String.class;
 		Class[] genericTypes = null;
 
 		try {
 			// 字段注释
-			CocField annBzFld = null;
+			CocColumn annBzFld = null;
 			Column annColumn = null;
 			ManyToOne manyToOne = null;
 			try {
@@ -523,7 +523,7 @@ public class SFTBizEngine extends BizEngine {
 				if (f != null) {
 					type = f.getType();
 					annColumn = f.getAnnotation(Column.class);
-					annBzFld = f.getAnnotation(CocField.class);
+					annBzFld = f.getAnnotation(CocColumn.class);
 					manyToOne = f.getAnnotation(ManyToOne.class);
 					genericTypes = Mirror.getGenericTypes(f);
 				} else {
@@ -543,7 +543,7 @@ public class SFTBizEngine extends BizEngine {
 				if (m != null) {
 					type = m.getReturnType();
 					annColumn = m.getAnnotation(Column.class);
-					annBzFld = m.getAnnotation(CocField.class);
+					annBzFld = m.getAnnotation(CocColumn.class);
 					manyToOne = m.getAnnotation(ManyToOne.class);
 				}
 			}
@@ -565,19 +565,19 @@ public class SFTBizEngine extends BizEngine {
 
 			// 解析字段类型
 			IFieldDataType fieldLib;
-			if (annBzFld != null && !Str.isEmpty(annBzFld.fkTable())) {
-				newBzField.setRefrenceSystem((SFTSystem) setupSystemFromClass(soft, getStaticType(annBzFld.fkTable()), false));
+			if (annBzFld != null && !Str.isEmpty(annBzFld.fkEntity())) {
+				newBzField.setRefrenceSystem((EntityDefinition) setupSystemFromClass(soft, getStaticType(annBzFld.fkEntity()), false));
 				fieldLib = fieldLibs.get("System");
 			} else if (manyToOne != null) {
-				newBzField.setRefrenceSystem((SFTSystem) setupSystemFromClass(soft, type, false));
+				newBzField.setRefrenceSystem((EntityDefinition) setupSystemFromClass(soft, type, false));
 				fieldLib = fieldLibs.get("System");
 			} else if (annBzFld != null && !Str.isEmpty(annBzFld.type())) {
 				fieldLib = fieldLibs.get(annBzFld.type());
 			} else if (SubSystem.class.isAssignableFrom(type)) {// 子系统字段
 				if (genericTypes != null && genericTypes.length > 0) {
-					newBzField.setRefrenceSystem((SFTSystem) setupSystemFromClass(soft, genericTypes[0], false));
+					newBzField.setRefrenceSystem((EntityDefinition) setupSystemFromClass(soft, genericTypes[0], false));
 				}
-				newBzField.setRefrenceFields(annBzFld.refrenceFields());
+				newBzField.setRefrenceFields(annBzFld.fkField());
 				type = Cls.getObjectType(type);
 				fieldLib = fieldLibs.get(type.getSimpleName());
 			} else {
@@ -589,16 +589,16 @@ public class SFTBizEngine extends BizEngine {
 			int dot = fldProp.indexOf(".");
 			if (dot > 0) {
 				String parentProp = fldProp.substring(0, dot);
-				AbstractSystemData parentField = (AbstractSystemData) orm().load(AbstractSystemData.class, CndExpr.eq(F_PROP_NAME, parentProp).and(CndExpr.eq(F_SYSTEM, bzSystem)));
+				EntityColumn parentField = (EntityColumn) orm().load(EntityColumn.class, CndExpr.eq(F_PROP_NAME, parentProp).and(CndExpr.eq(F_SYSTEM, bzSystem)));
 
-				SFTSystem refSystem = parentField.getRefrenceSystem();
+				EntityDefinition refSystem = parentField.getRefrenceSystem();
 				String refProp = fldProp.substring(dot + 1);
 				newBzField.setRefrenceSystem(refSystem);
-				newBzField.setRefrenceData((AbstractSystemData) orm().load(AbstractSystemData.class, CndExpr.eq(F_PROP_NAME, refProp).and(CndExpr.eq(F_SYSTEM, refSystem))));
+				newBzField.setRefrenceData((EntityColumn) orm().load(EntityColumn.class, CndExpr.eq(F_PROP_NAME, refProp).and(CndExpr.eq(F_SYSTEM, refSystem))));
 			}
 
 			newBzField.setType((SystemDataType) fieldLib);
-			newBzField.setTenantGuid(soft);
+			newBzField.setTenantOwnerGuid(soft);
 
 			return newBzField;
 		} catch (Throwable e) {
@@ -608,10 +608,10 @@ public class SFTBizEngine extends BizEngine {
 
 	}
 
-	private void copyProperties(CocField ann, AbstractSystemData fld) {
+	private void copyProperties(CocColumn ann, EntityColumn fld) {
 		fld.setName(ann.name());
 		fld.setGridField(ann.gridField());
-		fld.setPassword(ann.password());
+		fld.setPassword(ann.isPassword());
 		fld.setMode(ann.mode());
 		fld.setUiTemplate(ann.uiTemplate());
 		fld.setOptions(ann.options());
@@ -619,13 +619,13 @@ public class SFTBizEngine extends BizEngine {
 		fld.setRegexpMask(ann.regexpMask());
 		fld.setMappingToMaster(ann.isFkChild());
 		fld.setDisabled(ann.disabled());
-		fld.setDisabledNavi(ann.disabledNavi());
+		fld.setDisabledNavi(ann.isDimension());
 		fld.setCascadeMode(ann.cascadeMode());
 		fld.setGroupBy(ann.groupBy());
 		fld.setFileType(ann.uploadType());
 		fld.setDefaultValue(ann.defalutValue());
-		if (ann.order() > 0)
-			fld.setSerialNumber(ann.order());
+		if (ann.SN() > 0)
+			fld.setSerialNumber(ann.SN());
 		if (ann.gridOrder() > 0)
 			fld.setGridOrder(ann.gridOrder());
 		fld.setTransientField(ann.isTransient());
@@ -634,7 +634,7 @@ public class SFTBizEngine extends BizEngine {
 		// fld.setPrivacy(ann.privacy() ? "1" : "0");
 	}
 
-	private void makeFields(IRuntimeField runtimeCustom, List<AbstractSystemData> fields) {
+	private void makeFields(IRuntimeField runtimeCustom, List<EntityColumn> fields) {
 		if (runtimeCustom == null)
 			return;
 
@@ -643,16 +643,16 @@ public class SFTBizEngine extends BizEngine {
 		if (runtimeCustom.getCustomFields() == null)
 			return;
 
-		List<AbstractSystemData> list = (List<AbstractSystemData>) runtimeCustom.getCustomFields().getList();
+		List<EntityColumn> list = (List<EntityColumn>) runtimeCustom.getCustomFields().getList();
 
 		if (list != null) {
-			Map<String, AbstractSystemData> map = new HashMap();
-			for (AbstractSystemData fld : fields) {
+			Map<String, EntityColumn> map = new HashMap();
+			for (EntityColumn fld : fields) {
 				String prop = fld.getPropName();
 				if (map.get(prop) == null)
 					map.put(prop, fld);
 			}
-			for (AbstractSystemData fld : list) {
+			for (EntityColumn fld : list) {
 				String prop = fld.getPropName();
 				if (map.get(prop) == null) {
 					map.put(prop, fld);
@@ -662,8 +662,8 @@ public class SFTBizEngine extends BizEngine {
 		}
 	}
 
-	public List<? extends IEntityField> makeFields(IRuntimeField runtimeCustom) {
-		List<AbstractSystemData> fields = new LinkedList();
+	public List<? extends IEntityColumn> makeFields(IRuntimeField runtimeCustom) {
+		List<EntityColumn> fields = new LinkedList();
 
 		Map<String, IFieldDataType> types = this.getFieldTypes();
 		try {
@@ -672,7 +672,7 @@ public class SFTBizEngine extends BizEngine {
 			log.errorf("创建运行时自定义字段出错！", e);
 		}
 
-		for (AbstractSystemData f : fields) {
+		for (EntityColumn f : fields) {
 			if (f.getType() == null) {
 				f.setType(types.get("String"));
 			}

@@ -1,9 +1,9 @@
 package com.jiongsoft.cocit.mvc.ui;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
-import static com.jiongsoft.cocit.Demsy.moduleManager;
 import static com.jiongsoft.cocit.mvc.MvcConst.URL_UI;
+import static com.kmjsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.moduleManager;
 import static com.kmjsoft.cocit.entity.EntityConst.F_CREATED;
 import static com.kmjsoft.cocit.entity.EntityConst.F_ORDER_BY;
 
@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.entitydef.field.Dataset;
 import com.jiongsoft.cocit.lang.Cls;
 import com.jiongsoft.cocit.lang.Dates;
@@ -26,18 +25,19 @@ import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
 import com.jiongsoft.cocit.mvc.MvcConst.MvcUtil;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.jiongsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.IDataEntity;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.definition.IFieldDataType;
-import com.kmjsoft.cocit.entity.definition.IEntityField;
+import com.kmjsoft.cocit.entity.definition.IEntityColumn;
 import com.kmjsoft.cocit.entity.security.IModule;
 import com.kmjsoft.cocit.entity.web.IWebContent;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
 import com.kmjsoft.cocit.entity.webdef.IPage;
 import com.kmjsoft.cocit.entity.webdef.IPageBlock;
 import com.kmjsoft.cocit.entity.webdef.IUIViewComponent;
+import com.kmjsoft.cocit.orm.ExtOrm;
+import com.kmjsoft.cocit.orm.Pager;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.orm.expr.ExprRule;
@@ -90,7 +90,7 @@ public class UIBlockContext {
 	private IEntityDefinition system;
 
 	// 栏目字段
-	private IEntityField catalogField;
+	private IEntityColumn catalogField;
 
 	// 栏目业务系统类
 	private Class catalogType;
@@ -286,7 +286,7 @@ public class UIBlockContext {
 			return;
 
 		Demsy me = Demsy.me();
-		IOrm orm = Demsy.orm();
+		ExtOrm orm = Demsy.orm();
 
 		// 获取数据源
 		this.datasource = getDataset(block);
@@ -355,7 +355,7 @@ public class UIBlockContext {
 		groupBy = datasource.getGroupBy();
 
 		// 解析栏目模块
-		Map<String, IEntityField> fldmap = entityDefManager.getFieldsMap(system);
+		Map<String, IEntityColumn> fldmap = entityDefManager.getFieldsMap(system);
 		for (String srcRule : srcRuleArray) {
 			// 构造查询条件
 			ExprRule exprRule = new ExprRule(srcRule);
@@ -371,7 +371,7 @@ public class UIBlockContext {
 
 				// 栏目模块解析成功
 				if (catalogField != null && entityDefManager.isSystemFK(catalogField)) {
-					catalogModule = moduleManager.getModule(Demsy.me().getSoft(), catalogField.getRefrenceSystem());
+					catalogModule = moduleManager.getModule(Demsy.me().getTenant(), catalogField.getRefrenceSystem());
 					catalogSystem = moduleManager.getSystem(catalogModule);
 					catalogType = entityDefManager.getType(catalogSystem);
 
@@ -411,10 +411,10 @@ public class UIBlockContext {
 
 			// 添加全动态外键字段作为板块数据集查询条件
 			if (isFullDynaCatalogModule) {
-				List<? extends IEntityField> fields = entityDefManager.getFieldsOfEnabled(system);
+				List<? extends IEntityColumn> fields = entityDefManager.getFieldsOfEnabled(system);
 				IEntityDefinition refSystem = moduleManager.getSystem(catalogModule);
 				Class refType = entityDefManager.getType(refSystem);
-				for (IEntityField fld : fields) {
+				for (IEntityColumn fld : fields) {
 					if (entityDefManager.getType(fld).equals(refType)) {
 						srcRuleArray.add(entityDefManager.getPropName(fld) + ".id eq " + catalogModule.getId());
 
@@ -425,10 +425,10 @@ public class UIBlockContext {
 
 			// 按上级板块过滤数据集：即查询主从属表
 			if (this.isInherit() && parent.module != null && parent.itemObjs != null && parent.itemObjs.size() > 0) {
-				List<? extends IEntityField> fields = entityDefManager.getFieldsOfEnabled(system);
+				List<? extends IEntityColumn> fields = entityDefManager.getFieldsOfEnabled(system);
 				IEntityDefinition parentSystem = moduleManager.getSystem(parent.module);
 				Class parentType = entityDefManager.getType(parentSystem);
-				for (IEntityField fld : fields) {
+				for (IEntityColumn fld : fields) {
 					if (entityDefManager.getType(fld).equals(parentType)) {
 
 						for (Object parentItem : parent.itemObjs) {
@@ -452,7 +452,7 @@ public class UIBlockContext {
 				}
 
 				// 解析外键字段
-				IEntityField fkFld = null;
+				IEntityColumn fkFld = null;
 				String fkSubFldName = null;
 				int dot = fkFldName.indexOf(".");
 				if (dot > 0) {
@@ -544,7 +544,7 @@ public class UIBlockContext {
 
 	private String getImageField(IEntityDefinition system) {
 		IFieldDataType fldlib = entityDefManager.getFieldTypes().get("Upload");
-		for (IEntityField f : entityDefManager.getFieldsOfEnabled(system)) {
+		for (IEntityColumn f : entityDefManager.getFieldsOfEnabled(system)) {
 			if (fldlib != null && !fldlib.equals(f.getType())) {
 				continue;
 			}
@@ -626,7 +626,7 @@ public class UIBlockContext {
 			}
 		}
 		if (obj instanceof IDataEntity) {
-			Date updated = ((IDataEntity) obj).getOperatedDate();
+			Date updated = ((IDataEntity) obj).getUpdatedDate();
 			short days = 3;
 			if (updated != null && new Date().getTime() - updated.getTime() <= days * 86400000) {
 				if (titleLen != null && titleLen > 2)
@@ -660,7 +660,7 @@ public class UIBlockContext {
 				Pager pager = this.getPager(expr);
 
 				// 获取业务管理器并查询数据
-				IOrm orm = Demsy.orm();
+				ExtOrm orm = Demsy.orm();
 				if (orm != null) {
 					if (log.isTraceEnabled()) {
 						itemObjs = orm.query(pager);
@@ -874,7 +874,7 @@ public class UIBlockContext {
 		return catalogObj;
 	}
 
-	public IEntityField getCatalogField() {
+	public IEntityColumn getCatalogField() {
 		return catalogField;
 	}
 

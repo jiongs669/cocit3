@@ -30,13 +30,13 @@ import java.util.Map;
 
 import org.nutz.lang.Mirror;
 
-import com.jiongsoft.cocit.Demsy;
-import com.jiongsoft.cocit.orm.mapping.EnMapping;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
-import com.kmjsoft.cocit.entity.BaseEntity;
+import com.kmjsoft.cocit.entity.DataEntity;
 import com.kmjsoft.cocit.entity.IDataEntity;
 import com.kmjsoft.cocit.entity.IDynaEntity;
 import com.kmjsoft.cocit.orm.expr.Expr;
+import com.kmjsoft.cocit.orm.mapping.EnMapping;
 
 public abstract class Obj {
 
@@ -692,8 +692,8 @@ public abstract class Obj {
 	}
 
 	public static void setId(EnMapping mapping, Object obj, Serializable id) {
-		if (obj instanceof BaseEntity) {
-			((BaseEntity) obj).setId((Long) id);
+		if (obj instanceof DataEntity) {
+			((DataEntity) obj).setId((Long) id);
 			return;
 		}
 		String field = F_ID;

@@ -1,6 +1,5 @@
 package com.kmjsoft.cocit.entity.definition;
 
-import com.kmjsoft.cocit.entity.INamedEntity;
 import com.kmjsoft.cocit.entity.ITreeEntity;
 
 /**
@@ -9,6 +8,6 @@ import com.kmjsoft.cocit.entity.ITreeEntity;
  * @author jiongsoft
  * 
  */
-public interface IEntityCatalog extends INamedEntity, ITreeEntity {
+public interface IEntityCatalog extends ITreeEntity {
 
 }

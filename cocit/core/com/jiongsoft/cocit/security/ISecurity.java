@@ -3,7 +3,7 @@ package com.jiongsoft.cocit.security;
 import javax.servlet.http.HttpServletRequest;
 
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 
@@ -77,7 +77,7 @@ public interface ISecurity {
 	 * @throws SecurityException
 	 *             将会抛出安全异常。如用户名不存在；用户名密码不匹配；用户已被锁定等
 	 */
-	ILogin login(HttpServletRequest request, ISystemTenant app, String realm, String username, String password) throws SecurityException;
+	ILogin login(HttpServletRequest request, ITenant app, String realm, String username, String password) throws SecurityException;
 
 	/**
 	 * 获取登录信息
@@ -86,7 +86,7 @@ public interface ISecurity {
 	 *            应用系统
 	 * @return 返回Session中的登录信息
 	 */
-	ILogin login(HttpServletRequest request, ISystemTenant app);
+	ILogin login(HttpServletRequest request, ITenant app);
 
 	/**
 	 * 注销已经登录的用户会话对象
@@ -95,7 +95,7 @@ public interface ISecurity {
 	 *            应用系统
 	 * @return 返回登录信息
 	 */
-	ILogin logout(HttpServletRequest request, ISystemTenant app);
+	ILogin logout(HttpServletRequest request, ITenant app);
 
 	// ***用户 API***
 
@@ -118,7 +118,7 @@ public interface ISecurity {
 	 * @throws SecurityException
 	 *             将会抛出安全异常。如用户名不存在；用户名密码不匹配；用户已被锁定等
 	 */
-	IUser checkUser(ISystemTenant soft, String realm, String username, String password) throws SecurityException;
+	IUser checkUser(ITenant soft, String realm, String username, String password) throws SecurityException;
 
 	/**
 	 * 获取指定模块的外键字典数据过滤器，用来过滤模块外键字段的数据选项。

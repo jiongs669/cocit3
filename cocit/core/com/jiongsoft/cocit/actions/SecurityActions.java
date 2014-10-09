@@ -1,7 +1,7 @@
 package com.jiongsoft.cocit.actions;
 
-import static com.jiongsoft.cocit.Demsy.security;
 import static com.jiongsoft.cocit.mvc.MvcConst.MvcUtil.globalVariables;
+import static com.kmjsoft.cocit.Demsy.security;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,20 +10,20 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.DemsyException;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.lang.Status;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
-import com.jiongsoft.cocit.orm.IOrm;
 import com.jiongsoft.cocit.security.ILogin;
 import com.jiongsoft.cocit.security.IRootUserFactory;
 import com.jiongsoft.cocit.security.SecurityException;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.Expr;
 import com.kmjsoft.cocit.util.StringUtil;
 
@@ -40,7 +40,7 @@ public class SecurityActions extends ModuleActions {
 		context.putAll(globalVariables);
 		Demsy ctx = Demsy.me();
 
-		ISystemTenant soft = ctx.getSoft();
+		ITenant soft = ctx.getTenant();
 
 		if (soft != null) {
 			// context.put("realmNodes", moduleEngine.makeNodesByRealm(soft));
@@ -66,7 +66,7 @@ public class SecurityActions extends ModuleActions {
 		String user = ctx.request().getParameter(ILogin.PARAM_USER);
 		String pwd = ctx.request().getParameter(ILogin.PARAM_PWD);
 		try {
-			ILogin login = security.login(ctx.request(), ctx.getSoft(), realm, user, pwd);
+			ILogin login = security.login(ctx.request(), ctx.getTenant(), realm, user, pwd);
 
 			String uri = (String) ctx.request().getSession().getAttribute("lasturi");
 			ctx.request().getSession().removeAttribute("lasturi");
@@ -86,9 +86,9 @@ public class SecurityActions extends ModuleActions {
 		log.debugf("注销...");
 
 		Demsy ctx = Demsy.me();
-		ILogin login = security.login(ctx.request(), ctx.getSoft());
+		ILogin login = security.login(ctx.request(), ctx.getTenant());
 
-		security.logout(ctx.request(), ctx.getSoft());
+		security.logout(ctx.request(), ctx.getTenant());
 
 		log.debugf("注销成功. [%s]", login);
 		return new Status(true, "注销成功.", null, login);
@@ -101,7 +101,7 @@ public class SecurityActions extends ModuleActions {
 		context.putAll(globalVariables);
 		Demsy ctx = Demsy.me();
 
-		ISystemTenant soft = ctx.getSoft();
+		ITenant soft = ctx.getTenant();
 
 		if (soft != null) {
 			// context.put("realmNodes", moduleEngine.makeNodesByRealm(soft));
@@ -131,7 +131,7 @@ public class SecurityActions extends ModuleActions {
 				throw new DemsyException("尚未登录，请先登录!");
 			}
 
-			security.login(ctx.request(), ctx.getSoft(), ctx.login().getRealm(), username, oldpwd);
+			security.login(ctx.request(), ctx.getTenant(), ctx.login().getRealm(), username, oldpwd);
 
 			if (security.isRootUser(username)) {
 				IRootUserFactory f = security.getRootUserFactory();
@@ -142,8 +142,8 @@ public class SecurityActions extends ModuleActions {
 				user.setRawPassword2(pwd2);
 				f.saveUser(user);
 			} else {
-				IOrm orm = Demsy.orm();
-				user = (IUser) orm.load(user.getClass(), Expr.eq(EntityConst.F_SOFT_ID, ctx.getSoft()).and(Expr.eq(EntityConst.F_CODE, username)));
+				ExtOrm orm = Demsy.orm();
+				user = (IUser) orm.load(user.getClass(), Expr.eq(EntityConst.F_SOFT_ID, ctx.getTenant()).and(Expr.eq(EntityConst.F_CODE, username)));
 				if (user == null) {
 					throw new DemsyException("登录用户不存在!");
 				}

@@ -2,10 +2,10 @@ package com.kmjsoft.cocit.entityengine.service.impl.demsy;
 
 import java.util.Date;
 
-import com.jiongsoft.cocit.Demsy;
-import com.jiongsoft.cocit.config.SoftConfigManager;
+import com.jiongsoft.cocit.config.TenantPreferenceManager;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.impl.security.Tenant;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entityengine.service.ConfigManager;
 import com.kmjsoft.cocit.entityengine.service.EntityManager;
 import com.kmjsoft.cocit.entityengine.service.ModuleService;
@@ -20,7 +20,7 @@ public class DemsySoftService extends BaseSoftService {
 
 	DemsySoftService(Tenant tenant) {
 		this.entity = tenant;
-		config = new DemsyConfigService(SoftConfigManager.me());
+		config = new DemsyConfigService(TenantPreferenceManager.me());
 	}
 
 	// @Override
@@ -50,12 +50,12 @@ public class DemsySoftService extends BaseSoftService {
 
 	@Override
 	public Date getOperatedDate() {
-		return entity.getOperatedDate();
+		return entity.getUpdatedDate();
 	}
 
 	@Override
 	public String getOperatedUser() {
-		return entity.getOperatedUser();
+		return entity.getUpdatedUser();
 	}
 
 	// @Override
@@ -97,7 +97,7 @@ public class DemsySoftService extends BaseSoftService {
 	}
 
 	@Override
-	public ISystemTenant getEntity() {
+	public ITenant getEntity() {
 		return entity;
 	}
 

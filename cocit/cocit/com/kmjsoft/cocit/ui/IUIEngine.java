@@ -16,10 +16,9 @@ import com.jiongsoft.cocit.mvc.ui.widget.UIBizModule;
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizSystem;
 import com.jiongsoft.cocit.mvc.ui.widget.UIPageView;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIToolbarMenu;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.security.IModule;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.web.IStatistic;
 import com.kmjsoft.cocit.entity.web.IWebContentCatalog;
 import com.kmjsoft.cocit.entity.webdef.IPage;
@@ -27,6 +26,7 @@ import com.kmjsoft.cocit.entity.webdef.IPageBlock;
 import com.kmjsoft.cocit.entity.webdef.IStyle;
 import com.kmjsoft.cocit.entity.webdef.IStyleItem;
 import com.kmjsoft.cocit.entity.webdef.IUIViewComponent;
+import com.kmjsoft.cocit.orm.ExtOrm;
 
 public interface IUIEngine {
 
@@ -44,7 +44,7 @@ public interface IUIEngine {
 	 * @return
 	 * @throws DemsyException
 	 */
-	public UIWidgetModel makeFunctionMenuView(ISystemTenant soft) throws DemsyException;
+	public UIWidgetModel makeFunctionMenuView(ITenant soft) throws DemsyException;
 
 	/**
 	 * 创建模块主界面
@@ -111,11 +111,11 @@ public interface IUIEngine {
 	 * 获取模块业务表单
 	 * 
 	 * @param moduleID
-	 * @param action
+	 * @param entityAction
 	 * @return
 	 * @throws DemsyException
 	 */
-	public UIBizFormModel makeSystemFormView(IModule module, IAction action, Object data) throws DemsyException;
+	public UIBizFormModel makeSystemFormView(IModule module, IEntityAction entityAction, Object data) throws DemsyException;
 
 	/*
 	 * 获取内置模块业务窗体模型
@@ -178,9 +178,9 @@ public interface IUIEngine {
 
 	public IPage loadIndexPage();
 
-	public void addClickNum(IOrm orm, IStatistic obj);
+	public void addClickNum(ExtOrm orm, IStatistic obj);
 
-	public void addCommentNum(IOrm orm, IStatistic obj);
+	public void addCommentNum(ExtOrm orm, IStatistic obj);
 
 	public IStyle makeStyle(String styleID, FakeSubSystem<? extends IStyleItem> styleItems);
 

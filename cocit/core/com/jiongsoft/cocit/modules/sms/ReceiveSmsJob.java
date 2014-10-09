@@ -4,10 +4,10 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Ex;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 /**
  * 定时接收短信

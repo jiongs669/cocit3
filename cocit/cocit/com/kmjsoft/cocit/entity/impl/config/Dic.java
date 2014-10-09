@@ -2,81 +2,39 @@ package com.kmjsoft.cocit.entity.impl.config;
 
 import static com.kmjsoft.cocit.entity.EntityConst.BIZCATA_BASE;
 
-import java.util.List;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
-import com.kmjsoft.cocit.entity.BaseNamedEntity;
+import com.kmjsoft.cocit.entity.TreeEntity;
+import com.kmjsoft.cocit.entity.config.IDic;
 import com.kmjsoft.cocit.entityengine.manager.BizConst;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 import com.kmjsoft.cocit.orm.annotation.CocGroup;
-import com.kmjsoft.cocit.orm.annotation.CocOperation;
-import com.kmjsoft.cocit.orm.annotation.CocTable;
+import com.kmjsoft.cocit.orm.annotation.CocAction;
+import com.kmjsoft.cocit.orm.annotation.CocEntity;
 
 @Entity
-@CocTable(name = "字典数据维护", code = "Dic", catalog = BIZCATA_BASE, orderby = 101, buildin = true//
-, actions = { @CocOperation(jsonData = "CommonBizAction.data.js"), //
-		@CocOperation(name = "设置", typeCode = BizConst.TYPE_BZ_AUTO_MAKED_UPDATE_MENUS, mode = "set") //
+@CocEntity(name = "字典数据维护", GUID = "Dic", catalog = BIZCATA_BASE, SN = 101, isBuildin = true//
+, actions = { @CocAction(jsonData = "CommonBizAction.data.js"), //
+		@CocAction(name = "设置", type = BizConst.TYPE_BZ_AUTO_MAKED_UPDATE_MENUS, mode = "set") //
 }//
-, groups = { @CocGroup(name = "基本信息", code = "basic"//
+, groups = { @CocGroup(name = "基本信息", GUID = "basic"//
 , fields = {
 //
-		@CocField(property = "category") //
-		, @CocField(name = "名称", property = "name", mode = "c:M e:M", tostring = true)//
-		, @CocField(name = "编号", property = "code", mode = "c:M e:M")//
-		, @CocField(property = "extCode") //
-		, @CocField(name = "描述", property = "desc", gridField = false) //
-		, @CocField(name = "停用状态", property = "disabled", disabledNavi = true, mode = "set:E", options = "1:停用,0:启用") //
-		, @CocField(name = "人工顺序", property = "orderby", mode = "*:N v:P", gridField = false) //
-		, @CocField(name = "创建时间", property = "created", mode = "*:N v:P") //
-		, @CocField(name = "创建帐号", property = "createdBy", mode = "*:N v:P", gridField = false) //
-		, @CocField(name = "更新时间", property = "updated", mode = "*:N v:P") //
-		, @CocField(name = "更新帐号", property = "updatedBy", mode = "*:N v:P", gridField = false) //
+		@CocColumn(propName = "category") //
+		, @CocColumn(name = "名称", propName = "name", mode = "c:M e:M")//
+		, @CocColumn(name = "编号", propName = "code", mode = "c:M e:M")//
+		, @CocColumn(propName = "extCode") //
+		, @CocColumn(name = "描述", propName = "desc", gridField = false) //
+		, @CocColumn(name = "停用状态", propName = "disabled", isDimension = true, mode = "set:E", options = "1:停用,0:启用") //
+		, @CocColumn(name = "人工顺序", propName = "orderby", mode = "*:N v:P", gridField = false) //
+		, @CocColumn(name = "创建时间", propName = "created", mode = "*:N v:P") //
+		, @CocColumn(name = "创建帐号", propName = "createdBy", mode = "*:N v:P", gridField = false) //
+		, @CocColumn(name = "更新时间", propName = "updated", mode = "*:N v:P") //
+		, @CocColumn(name = "更新帐号", propName = "updatedBy", mode = "*:N v:P", gridField = false) //
 
 }) //
 }// end groups
 )
-public class Dic extends BaseNamedEntity {
-	public static final byte MASK_DISABLED = 2;// 2^2
+public class Dic extends TreeEntity implements IDic {
 
-	@ManyToOne
-	@CocField(name = "字典分类")
-	protected DicCategory category;
-
-	@ManyToOne
-	protected Dic parent;
-
-	@OneToMany(mappedBy = "parent")
-	protected List<Dic> children;
-
-	@Column(length = 255)
-	@CocField(name = "扩展编号")
-	protected String extCode;
-
-	public DicCategory getCategory() {
-		return category;
-	}
-
-	public void setCategory(DicCategory category) {
-		this.category = category;
-	}
-
-	public String getExtCode() {
-		return extCode;
-	}
-
-	public void setExtCode(String extCode) {
-		this.extCode = extCode;
-	}
-
-	public void setParent(Dic parent) {
-		this.parent = parent;
-	}
-
-	public void setChildren(List<Dic> children) {
-		this.children = children;
-	}
 }

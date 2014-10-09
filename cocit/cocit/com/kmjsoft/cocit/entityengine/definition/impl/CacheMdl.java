@@ -1,12 +1,12 @@
 package com.kmjsoft.cocit.entityengine.definition.impl;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_ADMIN_MODULE;
 import static com.kmjsoft.cocit.entity.EntityConst.F_CODE;
 import static com.kmjsoft.cocit.entity.EntityConst.F_GUID;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Str;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.security.IModule;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.Expr;
@@ -46,7 +46,7 @@ class CacheMdl {
 		if (object != null && Demsy.appconfig.isProductMode()) {
 			soft.mdlIdMap.put(object.getId(), this);
 			soft.mdlGuidMap.put(object.getDataGuid(), this);
-			if (object.getType() == IModule.TYPE_BIZ) {
+			if (object.getType() == IModule.TYPE_ENTITY) {
 				soft.mdlBizIdMap.put(object.getRefID(), this);
 			}
 		}

@@ -7,7 +7,7 @@ package com.kmjsoft.cocit.entity;
  * 
  * @param <T>
  */
-public interface ITreeEntity extends IDataEntity {
+public interface ITreeEntity extends INamedEntity {
 
 	/**
 	 * 父亲GUID：逻辑外键，关联到 {@link #getDataGuid()}
@@ -16,6 +16,14 @@ public interface ITreeEntity extends IDataEntity {
 	 */
 	public String getParentGuid();
 
-	public void setParent(String parentGuid);
+	public void setParentGuid(String parentGuid);
 
+	/**
+	 * 冗余字段：租户名称
+	 * 
+	 * @return
+	 */
+	String getParentName();
+
+	void setParentName(String parentName);
 }

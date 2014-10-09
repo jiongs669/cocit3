@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.IConfig;
 import com.jiongsoft.cocit.config.impl.BaseConfig;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.security.IRootUserFactory;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.impl.security.BaseUser;
 import com.kmjsoft.cocit.entity.security.IUser;
 

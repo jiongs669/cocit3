@@ -8,7 +8,7 @@ import java.util.Map;
 import com.jiongsoft.cocit.mvc.ui.model.UIWidgetModel;
 import com.jiongsoft.cocit.mvc.ui.widget.field.UIGroupFld;
 import com.jiongsoft.cocit.mvc.ui.widget.menu.UIButtonMenu;
-import com.kmjsoft.cocit.entity.security.IAction;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 
 /**
  * 业务表单：是一个业务窗体，用来表示业务窗体为一个表单。
@@ -38,17 +38,17 @@ public class UIBizForm extends UIBizModel {
 
 	protected final List<UIGroupFld> groups = new LinkedList();
 
-	protected UIWidgetModel<UIButtonMenu, IAction> buttonMenu;// 嵌入式表单按钮
+	protected UIWidgetModel<UIButtonMenu, IEntityAction> buttonMenu;// 嵌入式表单按钮
 
 	public UIBizForm(Map ctx, Serializable id) {
 		super(ctx, id);
 	}
 
-	public UIWidgetModel<UIButtonMenu, IAction> getButtonMenu() {
+	public UIWidgetModel<UIButtonMenu, IEntityAction> getButtonMenu() {
 		return buttonMenu;
 	}
 
-	public void setButtonMenu(UIWidgetModel<UIButtonMenu, IAction> buttonMenu) {
+	public void setButtonMenu(UIWidgetModel<UIButtonMenu, IEntityAction> buttonMenu) {
 		this.buttonMenu = buttonMenu;
 	}
 

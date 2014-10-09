@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 
-import static com.jiongsoft.cocit.Demsy.*;
+import static com.kmjsoft.cocit.Demsy.*;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.config.ILogConfig;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
+import com.kmjsoft.cocit.Demsy;
 
 public class LogConfig implements ILogConfig {
 	private static Log log = Logs.getLog(LogConfig.class);

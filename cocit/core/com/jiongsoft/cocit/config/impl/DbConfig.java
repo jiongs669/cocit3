@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.config.impl;
 
-import static com.jiongsoft.cocit.Demsy.appconfig;
+import static com.kmjsoft.cocit.Demsy.appconfig;
 
 import java.io.File;
 import java.util.HashMap;

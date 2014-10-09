@@ -2,24 +2,24 @@ package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.mvc.MvcConst.MvcUtil;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(name = "背景", uiTemplate = "ui.widget.field.Composite")
+@CocColumn(name = "背景", uiTemplate = "ui.widget.field.Composite")
 public class CssBackground extends JsonField<CssBackground> {
 
-	@CocField(name = "背景颜色", uiTemplate = "ui.widget.field.CssColor", order = 1)
+	@CocColumn(name = "背景颜色", uiTemplate = "ui.widget.field.CssColor", SN = 1)
 	protected String color;
 
-	@CocField(name = "背景图片", uploadType = "*.jpg;*.gif;*.png", order = 2)
+	@CocColumn(name = "背景图片", uploadType = "*.jpg;*.gif;*.png", SN = 2)
 	protected Upload image;
 
-	@CocField(name = "图片平铺", options = ":平铺,repeat-x:横向,repeat-y:纵向,no-repeat:不平铺,inherit: 继承", order = 3)
+	@CocColumn(name = "图片平铺", options = ":平铺,repeat-x:横向,repeat-y:纵向,no-repeat:不平铺,inherit: 继承", SN = 3)
 	protected String repeat;
 
-	@CocField(name = "水平对齐", options = ":水平,left:居左,center:居中,right:居右", order = 4)
+	@CocColumn(name = "水平对齐", options = ":水平,left:居左,center:居中,right:居右", SN = 4)
 	protected String positionX;
 
-	@CocField(name = "垂直对齐", options = ":垂直,top:居顶,center:居中,bottom:居底", order = 5)
+	@CocColumn(name = "垂直对齐", options = ":垂直,top:居顶,center:居中,bottom:居底", SN = 5)
 	protected String positionY;
 
 	public CssBackground() {

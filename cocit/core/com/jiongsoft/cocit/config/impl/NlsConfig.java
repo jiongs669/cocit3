@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.config.impl;
 
-import static com.jiongsoft.cocit.Demsy.*;
+import static com.kmjsoft.cocit.Demsy.*;
 
 import com.jiongsoft.cocit.config.IConfig;
 import com.jiongsoft.cocit.config.INlsConfig;

@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.jiongsoft.cocit.config.IDataSourceConfig;
 import com.jiongsoft.cocit.lang.Nodes;
-import com.jiongsoft.cocit.orm.IOrm;
-import com.kmjsoft.cocit.entity.config.IPreferenceOfTenant;
+import com.kmjsoft.cocit.entity.actionplugin.IActionPlugin;
+import com.kmjsoft.cocit.entity.config.ITenantPreference;
+import com.kmjsoft.cocit.entity.definition.IEntityAction;
 import com.kmjsoft.cocit.entity.definition.IEntityCatalog;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
-import com.kmjsoft.cocit.entity.security.IAction;
 import com.kmjsoft.cocit.entity.security.IModule;
 import com.kmjsoft.cocit.entity.security.ISystem;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
-import com.kmjsoft.cocit.entityengine.bizplugin.ActionPlugin;
+import com.kmjsoft.cocit.entity.security.ITenant;
+import com.kmjsoft.cocit.orm.ExtOrm;
 
 /**
  * 组件库：用于获取经过安全认证后的组件。
@@ -40,13 +40,13 @@ public interface IModuleManager {
 	 * 
 	 * @return
 	 */
-	ISystemTenant getSoftByDefault();
+	ITenant getSoftByDefault();
 
-	ISystemTenant getSoft(String domainOrCode);
+	ITenant getSoft(String domainOrCode);
 
-	ISystemTenant getSoft(Long id);
+	ITenant getSoft(Long id);
 
-	List<? extends IModule> getModules(ISystemTenant soft);
+	List<? extends IModule> getModules(ITenant soft);
 
 	/**
 	 * 根据功能模块ID获取功能模块
@@ -68,7 +68,7 @@ public interface IModuleManager {
 	 * @param system
 	 * @return
 	 */
-	IModule getModule(ISystemTenant soft, IEntityDefinition system);
+	IModule getModule(ITenant soft, IEntityDefinition system);
 
 	/**
 	 * 获取从属模块
@@ -85,9 +85,9 @@ public interface IModuleManager {
 	 * @param opID
 	 * @return
 	 */
-	IAction getAction(IModule module, Serializable opID);
+	IEntityAction getAction(IModule module, Serializable opID);
 
-	ActionPlugin[] getPlugins(IAction action);
+	IActionPlugin[] getPlugins(IEntityAction entityAction);
 
 	/**
 	 * 创建软件功能模块菜单
@@ -96,9 +96,9 @@ public interface IModuleManager {
 	 * @param optimize
 	 * @return
 	 */
-	Nodes makeNodesByModule(ISystemTenant soft);
+	Nodes makeNodesByModule(ITenant soft);
 
-	Nodes makeNodesByModule(ISystemTenant soft, byte role);
+	Nodes makeNodesByModule(ITenant soft, byte role);
 
 	/**
 	 * 创建模块操作菜单
@@ -121,9 +121,9 @@ public interface IModuleManager {
 	 * 
 	 * @param soft
 	 */
-	void upgradeModules(ISystemTenant soft);
+	void upgradeModules(ITenant soft);
 
-	void upgradeWebContent(ISystemTenant soft);
+	void upgradeWebContent(ITenant soft);
 
 	/**
 	 * 安装软件功能模块
@@ -132,7 +132,7 @@ public interface IModuleManager {
 	 */
 	void setupDemsy();
 
-	IPreferenceOfTenant getSoftConfig(String key);
+	ITenantPreference getSoftConfig(String key);
 
 	// Nodes makeNodesByRealm(ITenant soft);
 
@@ -142,19 +142,19 @@ public interface IModuleManager {
 
 	IModule getModule(String tenantGuid, IEntityDefinition refrenceSystem);
 
-	IAction getActionComponent(Long actionLib);
+	IEntityAction getActionComponent(Long actionLib);
 
 	IDataSourceConfig getDataSource(Long dataSource);
 
-	IModule makeModule(IOrm orm, ISystemTenant soft, IEntityCatalog catalog);
+	IModule makeModule(ExtOrm orm, ITenant soft, IEntityCatalog catalog);
 
-	IModule makeModule(IOrm orm, ISystemTenant soft, IEntityDefinition system);
+	IModule makeModule(ExtOrm orm, ITenant soft, IEntityDefinition system);
 
-	void increase(IOrm orm, Object obj, String field);
+	void increase(ExtOrm orm, Object obj, String field);
 
-	void decrease(IOrm orm, Object obj, String field);
+	void decrease(ExtOrm orm, Object obj, String field);
 
-	void increase(IOrm orm, Object obj, String field, int value);
+	void increase(ExtOrm orm, Object obj, String field, int value);
 
-	void decrease(IOrm orm, Object obj, String field, int value);
+	void decrease(ExtOrm orm, Object obj, String field, int value);
 }

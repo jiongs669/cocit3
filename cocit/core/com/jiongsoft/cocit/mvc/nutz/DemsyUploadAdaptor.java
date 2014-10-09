@@ -35,8 +35,8 @@ import org.nutz.mvc.upload.injector.MapSelfInjector;
 import org.nutz.mvc.upload.injector.ReaderInjector;
 import org.nutz.mvc.upload.injector.TempFileInjector;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.lang.Ex;
+import com.kmjsoft.cocit.Demsy;
 
 /**
  * 与{@link org.nutz.mvc.upload.UploadAdaptor}的区别：

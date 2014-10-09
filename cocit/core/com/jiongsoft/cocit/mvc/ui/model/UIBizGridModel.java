@@ -3,7 +3,7 @@ package com.jiongsoft.cocit.mvc.ui.model;
 import java.io.Serializable;
 
 import com.jiongsoft.cocit.mvc.ui.widget.UIBizGrid;
-import com.jiongsoft.cocit.orm.Pager;
+import com.kmjsoft.cocit.orm.Pager;
 
 /**
  * GRID业务模型：窗体为GRID,数据为分页数据

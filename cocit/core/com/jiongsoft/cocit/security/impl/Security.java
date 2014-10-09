@@ -1,6 +1,6 @@
 package com.jiongsoft.cocit.security.impl;
 
-import static com.jiongsoft.cocit.Demsy.entityDefManager;
+import static com.kmjsoft.cocit.Demsy.entityDefManager;
 import static com.kmjsoft.cocit.entity.EntityConst.BIZSYS_DEMSY_SOFT;
 import static com.kmjsoft.cocit.entity.EntityConst.F_CODE;
 import static com.kmjsoft.cocit.entity.EntityConst.F_SOFT_ID;
@@ -15,27 +15,27 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.jiongsoft.cocit.Demsy;
 import com.jiongsoft.cocit.entitydef.field.Dataset;
 import com.jiongsoft.cocit.lang.Obj;
 import com.jiongsoft.cocit.lang.Str;
 import com.jiongsoft.cocit.log.Log;
 import com.jiongsoft.cocit.log.Logs;
-import com.jiongsoft.cocit.orm.IOrm;
 import com.jiongsoft.cocit.security.ILogin;
 import com.jiongsoft.cocit.security.IPasswordEncoder;
 import com.jiongsoft.cocit.security.IRootUserFactory;
 import com.jiongsoft.cocit.security.ISecurity;
 import com.jiongsoft.cocit.security.SecurityException;
 import com.jiongsoft.cocit.security.UnloginException;
+import com.kmjsoft.cocit.Demsy;
 import com.kmjsoft.cocit.entity.EntityConst;
 import com.kmjsoft.cocit.entity.definition.IEntityDefinition;
 import com.kmjsoft.cocit.entity.security.IModule;
 import com.kmjsoft.cocit.entity.security.IPermission;
-import com.kmjsoft.cocit.entity.security.ISystemTenant;
+import com.kmjsoft.cocit.entity.security.ITenant;
 import com.kmjsoft.cocit.entity.security.IUser;
 import com.kmjsoft.cocit.entityengine.definition.impl.RootUserFactory;
 import com.kmjsoft.cocit.entityengine.service.SecurityManager;
+import com.kmjsoft.cocit.orm.ExtOrm;
 import com.kmjsoft.cocit.orm.expr.CndExpr;
 import com.kmjsoft.cocit.orm.expr.CndType;
 import com.kmjsoft.cocit.orm.expr.CombCndExpr;
@@ -55,7 +55,7 @@ public class Security implements ISecurity {
 
 	private Map<Long, Map<String, PermissionItem>> dynamicPermissions = new HashMap();
 
-	private IOrm orm() {
+	private ExtOrm orm() {
 		return Demsy.orm();
 	}
 
@@ -71,7 +71,7 @@ public class Security implements ISecurity {
 		return defaultPasswordEncoder.encodePassword(rawPwd, username);
 	}
 
-	protected String genLoginKey(ISystemTenant app) {
+	protected String genLoginKey(ITenant app) {
 		if (app == null) {
 			return ILogin.SESSION_KEY_LOGIN_INFO;
 		}
@@ -79,7 +79,7 @@ public class Security implements ISecurity {
 	}
 
 	@Override
-	public ILogin login(HttpServletRequest request, ISystemTenant app, String realm, String username, String password) throws SecurityException {
+	public ILogin login(HttpServletRequest request, ITenant app, String realm, String username, String password) throws SecurityException {
 		HttpSession session = request.getSession();
 		LoginImpl login = new LoginImpl(this, request, app, realm, username, password);
 		session.setAttribute(genLoginKey(app), login);
@@ -91,12 +91,12 @@ public class Security implements ISecurity {
 	}
 
 	@Override
-	public ILogin login(HttpServletRequest request, ISystemTenant app) {
+	public ILogin login(HttpServletRequest request, ITenant app) {
 		return (ILogin) request.getSession().getAttribute(genLoginKey(app));
 	}
 
 	@Override
-	public ILogin logout(HttpServletRequest request, ISystemTenant app) {
+	public ILogin logout(HttpServletRequest request, ITenant app) {
 		HttpSession session = request.getSession();
 		String key = genLoginKey(app);
 		ILogin login = (ILogin) session.getAttribute(key);
@@ -110,7 +110,7 @@ public class Security implements ISecurity {
 	}
 
 	@Override
-	public IUser checkUser(ISystemTenant soft, String realmCode, String username, String pwd) throws SecurityException {
+	public IUser checkUser(ITenant soft, String realmCode, String username, String pwd) throws SecurityException {
 		log.debugf("获取用户......[soft=%s, realm=%s, user=%s]", soft, realmCode, username);
 
 		// 获取超级用户
@@ -211,7 +211,7 @@ public class Security implements ISecurity {
 
 		// 动态内存授权
 		if (!igloreDynamic) {
-			Map dynitems = this.dynamicPermissions.get(me.getSoft().getId());
+			Map dynitems = this.dynamicPermissions.get(me.getTenant().getId());
 			if (dynitems != null) {
 				Iterator<PermissionItem> it = dynitems.values().iterator();
 				while (it.hasNext()) {
@@ -224,7 +224,7 @@ public class Security implements ISecurity {
 		}
 
 		// 数据库授权
-		List<PermissionItem> items = this.getModulePermissions(me.getSoft().getId(), module.getId());
+		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), module.getId());
 		if (items != null) {
 			for (PermissionItem p : items) {
 				long now = new Date().getTime();
@@ -250,10 +250,10 @@ public class Security implements ISecurity {
 
 	@Override
 	public void addPermission(String key, byte roleID, long moduleID, String action) {
-		Map<String, PermissionItem> map = this.dynamicPermissions.get(Demsy.me().getSoft().getId());
+		Map<String, PermissionItem> map = this.dynamicPermissions.get(Demsy.me().getTenant().getId());
 		if (map == null) {
 			map = new HashMap();
-			dynamicPermissions.put(Demsy.me().getSoft().getId(), map);
+			dynamicPermissions.put(Demsy.me().getTenant().getId(), map);
 		}
 		String key1 = key + "." + action;
 		// if (map.get(key1) != null) {
@@ -279,7 +279,7 @@ public class Security implements ISecurity {
 		}
 
 		List<CndExpr> exprs = new LinkedList();
-		List<PermissionItem> items = this.getModulePermissions(me.getSoft().getId(), module.getId());
+		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), module.getId());
 		if (items != null) {
 			for (PermissionItem p : items) {
 				long now = new Date().getTime();
@@ -324,7 +324,7 @@ public class Security implements ISecurity {
 		}
 
 		List<CndExpr> exprs = new LinkedList();
-		List<PermissionItem> items = this.getModulePermissions(me.getSoft().getId(), module.getId());
+		List<PermissionItem> items = this.getModulePermissions(me.getTenant().getId(), module.getId());
 		if (items != null) {
 			for (PermissionItem p : items) {
 				long now = new Date().getTime();
@@ -463,7 +463,7 @@ public class Security implements ISecurity {
 	 * @return
 	 */
 	private Map<Long, List<PermissionItem>> loadPermissions(Long softID) {
-		IOrm orm = orm();
+		ExtOrm orm = orm();
 		Demsy me = Demsy.me();
 
 		IEntityDefinition sys = entityDefManager.getSystem(EntityConst.BIZSYS_ADMIN_PERMISSION);
@@ -471,7 +471,7 @@ public class Security implements ISecurity {
 
 		Map<Long, List<PermissionItem>> softPermissions = new HashMap();
 
-		List<IPermission> permissions = orm.query(type, Expr.eq(F_SOFT_ID, me.getSoft()));
+		List<IPermission> permissions = orm.query(type, Expr.eq(F_SOFT_ID, me.getTenant()));
 		for (IPermission p : permissions) {
 			if (p.isDisabled())
 				continue;

@@ -1,35 +1,35 @@
 package com.jiongsoft.cocit.entitydef.field;
 
 import com.jiongsoft.cocit.lang.Str;
-import com.kmjsoft.cocit.orm.annotation.CocField;
+import com.kmjsoft.cocit.orm.annotation.CocColumn;
 
-@CocField(uiTemplate = "ui.widget.field.Composite")
+@CocColumn(uiTemplate = "ui.widget.field.Composite")
 public class Css extends JsonField<Css> {
-	@CocField(name = "宽度", order = 1)
+	@CocColumn(name = "宽度", SN = 1)
 	protected String width;
 
-	@CocField(name = "高度", order = 2)
+	@CocColumn(name = "高度", SN = 2)
 	protected String height;
 
-	@CocField(name = "背景", order = 3, uiTemplate = "ui.widget.field.CssBackground")
+	@CocColumn(name = "背景", SN = 3, uiTemplate = "ui.widget.field.CssBackground")
 	protected CssBackground background;
 
-	@CocField(name = "边框", order = 4, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "边框", SN = 4, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder border;
 
-	@CocField(name = "上边框", order = 5, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "上边框", SN = 5, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderTop;
 
-	@CocField(name = "下边框", order = 6, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "下边框", SN = 6, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderBottom;
 
-	@CocField(name = "左边框", order = 7, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "左边框", SN = 7, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderLeft;
 
-	@CocField(name = "右边框", order = 8, uiTemplate = "ui.widget.field.CssBorder")
+	@CocColumn(name = "右边框", SN = 8, uiTemplate = "ui.widget.field.CssBorder")
 	protected CssBorder borderRight;
 
-	@CocField(name = "字体", order = 9, uiTemplate = "ui.widget.field.CssFont")
+	@CocColumn(name = "字体", SN = 9, uiTemplate = "ui.widget.field.CssFont")
 	protected CssFont font;
 
 	public Css() {
